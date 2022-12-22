@@ -1,0 +1,18 @@
+# Builds the website every night to make sure the information is up-to-date
+name: Nightly build
+on:
+  schedule:
+    # every day at 4:00 -- ready for my morning coffee
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ReadTheDocs nightly build
+        uses: dfm/rtds-action@v1
+        with:
+          webhook_url: ${{ secrets.RTD_WEBHOOK_URL }}
+          webhook_token: ${{ secrets.RTD_WEBHOOK_TOKEN }}
+          commit_ref: ${{ github.ref }}

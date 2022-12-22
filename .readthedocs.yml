@@ -1,0 +1,15 @@
+version: 2
+
+python:
+  version: "3.9"
+  install:
+    - method: pip
+      path: .
+      extra_requirements:
+        - rtd
+    - requirements: requirements.txt
+
+sphinx:
+  builder: html
+  configuration: book/source/conf.py
+  fail_on_warning: true
