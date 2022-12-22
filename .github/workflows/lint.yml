@@ -17,10 +17,3 @@ jobs:
         run: |
           pip install -r requirements.txt
           sphinx-build book book/_build/html
-
-      - name: Check that links are valid
-        uses: lycheeverse/lychee-action@v1.5.4
-        with:
-          fail: true
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
