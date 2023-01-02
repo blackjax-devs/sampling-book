@@ -7,6 +7,11 @@ email: remi@thetypicalset.com
 
 exclude_patterns: [README.md]
 
+parse:
+  myst_enable_extensions:
+    - dollarmath
+    - amsmath
+
 # Define the name of the latex output file for PDF builds
 latex:
   latex_documents:

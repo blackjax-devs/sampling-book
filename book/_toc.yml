@@ -11,3 +11,4 @@ parts:
   - file: models/mlp
   - file: models/hierarchical_bnn.md
   - file: models/LogisticRegression.md
+  - file: models/sparse_regression

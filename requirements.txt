@@ -1,3 +1,10 @@
+# Local package with utilities
+-e .
+# Dependencies for the notebooks
+aeppl
+aesara
+blackjax-nightly
+
 # Build the book
 ipython
 jupyter-cache
@@ -13,7 +20,9 @@ flax
 jax
 matplotlib
 numpy
+numpyro
 optax
+pandas
 seaborn
 scikit-learn
 tensorflow-probability[jax]
