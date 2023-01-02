@@ -26,7 +26,7 @@ def model(
     lambda_rv = srng.halfcauchy(0, 1, size=X_at.shape[-1])
 
     theta = tau_rv * lambda_rv
-    beta_rv = srng.normal(0, tau_rv * lambda_rv, size=X_at.shape[-1])
+    beta_rv = srng.normal(0, theta, size=X_at.shape[-1])
 
     eta = X_at @ beta_rv
     p = at.sigmoid(-eta)
