@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "samplingbook"
+authors= [{name = "The Blackjax team", email = "remi@thetypicalset.com"}]
+description = "Utilities for Blackjax's sampling book"
+requires-python = ">=3.7"
+dependencies = [
+    "aesara",
+    "aeppl",
+    "jax",
+    "jaxlib",
+    "numpy",
+    "pandas",
+]
+dynamic = ["version"]
+
+[project.urls]
+homepage = "https://github.com/blackjax-devs/sampling-book"
+
+[project.license]
+text="Apache License 2.0"
+files=["LICENSE"]
+
+[project.readme]
+file="README.md"
+content-type = "text/markdown"
+
+[tool.setuptools]
+platforms = [
+    "Linux",
+    "Mac OS-X",
+    "Unix",
+]
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "tests.*",
+]
+
+[tool.setuptools_scm]
+write_to = "src/_version.py"

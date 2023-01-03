@@ -1,1 +1,4 @@
 _build
+/book/models/.ipynb_checkpoints/
+/samplingbook.egg-info/
+*_version.py
