@@ -3,7 +3,7 @@ root: index
 parts:
 - caption: Algorithms
   chapters:
-  - file: algorithms/mcmc
+  - file: algorithms/cyclical_sgld.md
 - caption: Models
   chapters:
   - file: models/mlp
