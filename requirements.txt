@@ -6,9 +6,8 @@ jupytext
 # Dependencies for the notebooks
 blackjax-nightly
 datasets
-distrax
 fastprogress
 flax
 jax
 numpy
-tfp-nightly[jax]
+optax
