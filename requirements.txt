@@ -1,6 +1,14 @@
 # Build the book
+ipython
 jupyter-book
 jupytext
 
 # Dependencies for the notebooks
-# blackjax-nightly
+blackjax-nightly
+datasets
+distrax
+fastprogress
+flax
+jax
+numpy
+tfp-nightly[jax]

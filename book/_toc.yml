@@ -4,3 +4,6 @@ parts:
 - caption: Algorithms
   chapters:
   - file: algorithms/mcmc
+- caption: Models
+  chapters:
+  - file: models/mlp
