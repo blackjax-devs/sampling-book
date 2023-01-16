@@ -8,3 +8,4 @@ parts:
 - caption: Models
   chapters:
   - file: models/mlp
+  - file: models/hierarchical_bnn.md

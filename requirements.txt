@@ -6,8 +6,12 @@ jupytext
 # Dependencies for the notebooks
 blackjax-nightly
 datasets
+distrax
 fastprogress
 flax
 jax
+matplotlib
 numpy
 optax
+seaborn
+sklearn
