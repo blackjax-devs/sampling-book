@@ -9,3 +9,4 @@ parts:
   chapters:
   - file: models/mlp
   - file: models/hierarchical_bnn.md
+  - file: models/LogisticRegression.md
