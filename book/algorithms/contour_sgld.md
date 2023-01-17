@@ -89,7 +89,7 @@ import blackjax
 import blackjax.sgmcmc.gradients as gradients
 
 # Specify hyperparameters for SGLD
-total_iter = 50_000
+total_iter = 10_000
 thinning_factor = 10
 
 batch_size = 100
