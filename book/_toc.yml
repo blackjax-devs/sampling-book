@@ -5,6 +5,7 @@ parts:
   chapters:
   - file: algorithms/cyclical_sgld.md
   - file: algorithms/contour_sgld.md
+  - file: algorithms/Pathfinder.md
 - caption: Models
   chapters:
   - file: models/mlp
