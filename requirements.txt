@@ -14,4 +14,4 @@ matplotlib
 numpy
 optax
 seaborn
-sklearn
+scikit-learn
