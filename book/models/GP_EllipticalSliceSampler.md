@@ -4,14 +4,14 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.0
+    jupytext_version: 1.14.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
 file_format: mystnb
 mystnb:
-  execution_timeout: 400
+  execution_timeout: 200
 ---
 
 # Gaussian Regression with the Elliptical Slice Sampler
@@ -108,7 +108,7 @@ plt.show()
 
 ## Sampling
 
-The Elliptical Slice sampler samples a latent parameter from the Gaussian prior, builds an ellipse passing though the previous position and the latent variable, and samples points from this ellipse which it then corrects for the likelihood using slice sampling. More details can be found in the [original paper](https://arxiv.org/abs/1001.0175).
+The Elliptical Slice sampler samples a latent parameter from the Gaussian prior, builds an ellipse passing though the previous position and the latent variable, and samples points from this ellipse which it then corrects for the likelihood using slice sampling. More details can be found in the [original paper](https://arxiv.org/abs/1001.0175) {cite:p}`ellipticalslicesampling2010`.
 
 We compare the sampling time to NUTS, notice the difference in computation times. A couple of important considerations when using the elliptical slice sampler:
 - The Elliptical slice sampler takes as input the likelihood function and the mean and covariance $\Sigma$ parameters of the Gaussian prior separetley, since **the sampler assumes that the prior is Gaussian**. On the contrary case of NUTS, the algorithm takes as input the unnormalized posterior distribution, i.e. the likelihood times the prior density.
@@ -198,4 +198,9 @@ plt.title(
     "Histogram of theta parameter, i.e. location on the circumference of the ellipsis."
 )
 plt.show()
+```
+
+
+```{bibliography}
+:filter: docname in docnames
 ```
