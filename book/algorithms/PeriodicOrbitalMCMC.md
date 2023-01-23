@@ -4,16 +4,19 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.0
+    jupytext_version: 1.14.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
+file_format: mystnb
+mystnb:
+  execution_timeout: 200
 ---
 
 # Periodic Orbital MCMC
 
-Illustrating the usage of Algorithm 2 of [Neklyudov & Welling, (2021)](https://arxiv.org/abs/2010.08047) on the Banana density
+Illustrating the usage of Algorithm 2 of [Neklyudov & Welling, (2021)](https://arxiv.org/abs/2010.08047) {cite:p}`orbitalMCMC2020` on the Banana density
 
 $$
 p(x) = p(x_1, x_2) = N(x_1|0, 8)N(x_2|1/4x_1^2, 1).
@@ -29,7 +32,7 @@ Using any of these integrators amounts to doing vanilla HMC (traditionally done 
 
 The benefits of sampling the whole orbit instead of a single point in it are: efficiency, since we build a trajectory around an orbit and use all if it instead of discarding most of it; and wider reach, since even unlikely points will be sampled and given small weights, making the sampler more likely to explore the tails of our target. This at the cost of higher memory consumption since we have `period` samples per iteration, instead of only one, and the lack of diagnostics, theoretical guarantees and heuristic methods developed for traditional HMC and its adaptive mechanisms (such as NUTS) during the past decades.
 
-It is also illustrated the usage of normalizing flows, specifically the Masked Autoregressive flow ([MAF](https://arxiv.org/abs/1705.07057)), as a preconditioning step for the algorithm; using as a bijection function the ellipsis
+It is also illustrated the usage of normalizing flows, specifically the Masked Autoregressive flow ([MAF](https://arxiv.org/abs/1705.07057)) {cite:p}`maskedautoregressiveflow2017`, as a preconditioning step for the algorithm; using as a bijection function the ellipsis
 
 ```{math}
 \begin{align*}
@@ -166,7 +169,7 @@ plot_contour(logdensity, orbits=samples, weights=weights)
 
 ## McLachlan
 
-A different method of discretizing the solution to Hamilton's equations, see [Blanes, Casas & Sanz-Serna (2014)](https://arxiv.org/abs/1405.3153)
+A different method of discretizing the solution to Hamilton's equations, see [Blanes, Casas & Sanz-Serna (2014)](https://arxiv.org/abs/1405.3153) {cite:p}`Blanes_2014`
 
 ```{code-cell} python
 %%time
@@ -194,7 +197,7 @@ plot_contour(logdensity, orbits=samples, weights=weights)
 
 ## Yoshida
 
-A different method of discretizing the solution to Hamilton's equations, see [Blanes, Casas & Sanz-Serna (2014)](https://arxiv.org/abs/1405.3153)
+A different method of discretizing the solution to Hamilton's equations, see [Blanes, Casas & Sanz-Serna (2014)](https://arxiv.org/abs/1405.3153) {cite:p}`Blanes_2014`
 
 ```{code-cell} python
 %%time
@@ -297,7 +300,7 @@ plot_contour(logdensity, orbits=samples, weights=weights)
 
 The ellipsis used to build the orbit on the previous algorithm solves Hamilton's equations for $p(x,v) = N(x|0,I)N(v|0,I)$. We can use normalizing flows to approximate the pullback density of our target to a standard normal, thus allowing the algorithm to sample from a density similar to what it is targeting.
 
-To do this we parametrize a diffeomorphism as an [MAF](https://arxiv.org/abs/1705.07057) and optimize its parameters by minimizing the the Kullback-Liebler divergence between the pullback density and a standard normal (equivalently maximizing the Evidence Lower BOund (ELBO) or the Variational Lower Bound).
+To do this we parametrize a diffeomorphism as an [MAF](https://arxiv.org/abs/1705.07057) {cite:p}`maskedautoregressiveflow2017` and optimize its parameters by minimizing the the Kullback-Liebler divergence between the pullback density and a standard normal (equivalently maximizing the Evidence Lower BOund (ELBO) or the Variational Lower Bound).
 
 Once we have a diffeomorphism that "transports" our target to something close enough to a standard normal, we can use our orbital MCMC sampler travelling around the ellipsis to sample from our target pullback density (the target density "transported" to a standard normal). This will be equivalent to sampling using periodic orbital MCMC where the bijection used to move around the orbit is the composition of: first the inverse diffeomorphism which transports samples from our target to the standard normal, then the ellipsis solving Hamilton's equations for $p(x,v) = N(x|0,I)N(v|0,I)$, and finally the diffeomorphism which transports standard normal samples back to samples from our target. Formally, if there is a smooth, invertible transformation $T$ such that for $x$, a random variable distributed as our target density $\pi(x)$, we have that
 
@@ -468,4 +471,9 @@ The pushed samples are much better at targeting the banana density than the algo
 :tags: [hide-input]
 
 plot_contour(logdensity, orbits=samples, weights=weights)
+```
+
+
+```{bibliography}
+:filter: docname in docnames
 ```

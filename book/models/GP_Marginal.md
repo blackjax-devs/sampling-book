@@ -4,19 +4,19 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.0
+    jupytext_version: 1.14.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
 file_format: mystnb
 mystnb:
-  execution_timeout: 400
+  execution_timeout: 200
 ---
 
 # Bayesian Regression With Latent Gaussian Sampler
 
-In this example, we want to illustrate how to use the marginal sampler implementation [`mgrad_gaussian`](https://blackjax-devs.github.io/blackjax/mcmc.html#blackjax.mgrad_gaussian) of the article [Auxiliary gradient-based sampling algorithms](https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/rssb.12269). We do so by using the simulated data from the example [Gaussian Regression with the Elliptical Slice Sampler](https://blackjax-devs.github.io/blackjax/examples/GP_EllipticalSliceSampler.html). Please also refer to the complementary example [Bayesian Logistic Regression With Latent Gaussian Sampler](https://blackjax-devs.github.io/blackjax/examples/LogisticRegressionWithLatentGaussianSampler.html).
+In this example, we want to illustrate how to use the marginal sampler implementation [`mgrad_gaussian`](https://blackjax-devs.github.io/blackjax/mcmc.html#blackjax.mgrad_gaussian) of the article [Auxiliary gradient-based sampling algorithms](https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/rssb.12269) {cite:p}`auxgradientalgo2018`. We do so by using the simulated data from the example [Gaussian Regression with the Elliptical Slice Sampler](https://blackjax-devs.github.io/blackjax/examples/GP_Elliauxgradientalgo2018pticalSliceSampler.html). Please also refer to the complementary example [Bayesian Logistic Regression With Latent Gaussian Sampler](https://blackjax-devs.github.io/blackjax/examples/LogisticRegressionWithLatentGaussianSampler.html).
 
 ## Sampler Overview
 
@@ -237,4 +237,9 @@ plt.hist(np.array(predictive.reshape(-1)), bins=50, density=True, alpha=0.8)
 plt.xlabel("y")
 plt.title("Predictive distribution")
 plt.show()
+```
+
+
+```{bibliography}
+:filter: docname in docnames
 ```
