@@ -1,7 +1,7 @@
 # Local package with utilities
 -e .
 # Dependencies for the notebooks
-aeppl
+aeppl==0.0.50  # Waiting for #222 to be fixed on AePPL
 aesara
 blackjax-nightly
 
