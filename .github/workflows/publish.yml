@@ -38,6 +38,7 @@ jobs:
 
       - name: Build the book
         run: |
+          mkdir -p ./jupyter_cache
           jupyter-book build -nvW --keep-going book
 
       - name: Publish to GitHub Pages
