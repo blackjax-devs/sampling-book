@@ -129,7 +129,7 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="Pathfinder.html">
+  <a class="reference internal" href="pathfinder.html">
    Pathfinder
   </a>
  </li>
@@ -151,8 +151,13 @@ const thebe_selector_output = ".output, .cell_output"
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../models/LogisticRegression.html">
+  <a class="reference internal" href="../models/logistic_regression.html">
    Bayesian Logistic Regression
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../models/sparse_regression.html">
+   Sparse regression
   </a>
  </li>
 </ul>
@@ -453,7 +458,7 @@ title="Print to PDF"
                 
   <section class="tex2jax_ignore mathjax_ignore" id="cyclical-sgld">
 <h1>Cyclical SGLD<a class="headerlink" href="#cyclical-sgld" title="Permalink to this headline">#</a></h1>
-<p>In this example we will demonstrate how Blackjax can be used to create non-trivial samplers by implementing Cyclical SGLD <span id="id1">[<a class="reference internal" href="#id4" title="Ruqi Zhang, Chunyuan Li, Jianyi Zhang, Changyou Chen, and Andrew Gordon Wilson. Cyclical stochastic gradient mcmc for bayesian deep learning. In International Conference on Learning Representations. 2019.">ZLZ+19</a>]</span>. Stochastic Gradient MCMC algorithms are typically used to sample from the posterior distribution of Bayesian Neural Networks. They differ from other gradient-based MCMC algorithms in that they estimate the gradient with minibatches of data instead of the full dataset.</p>
+<p>In this example we will demonstrate how Blackjax can be used to create non-trivial samplers by implementing Cyclical SGLD <span id="id1">[<a class="reference internal" href="#id12" title="Ruqi Zhang, Chunyuan Li, Jianyi Zhang, Changyou Chen, and Andrew Gordon Wilson. Cyclical stochastic gradient mcmc for bayesian deep learning. In International Conference on Learning Representations. 2019.">ZLZ+19</a>]</span>. Stochastic Gradient MCMC algorithms are typically used to sample from the posterior distribution of Bayesian Neural Networks. They differ from other gradient-based MCMC algorithms in that they estimate the gradient with minibatches of data instead of the full dataset.</p>
 <p>However, SGMCMC algorithms are inefficient at exploring multimodal distributions which are typical of neural networks. To see this let’s consider a simple yet challenging example, an array of 25 gaussian distributions:</p>
 <div class="cell tag_remove-stdout docutils container">
 <div class="cell_input docutils container">
@@ -874,7 +879,7 @@ title="Print to PDF"
 </div>
 <div class="docutils container" id="id3">
 <dl class="citation">
-<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id1">ZLZ+19</a></span></dt>
+<dt class="label" id="id12"><span class="brackets"><a class="fn-backref" href="#id1">ZLZ+19</a></span></dt>
 <dd><p>Ruqi Zhang, Chunyuan Li, Jianyi Zhang, Changyou Chen, and Andrew Gordon Wilson. Cyclical stochastic gradient mcmc for bayesian deep learning. In <em>International Conference on Learning Representations</em>. 2019.</p>
 </dd>
 </dl>
