@@ -32,8 +32,8 @@ data_train, data_test = mnist_data["train"], mnist_data["test"]
 X_train = np.stack([np.array(example['image']) for example in data_train])
 y_train = np.array([example['label'] for example in data_train])
 
-X_test = np.stack([np.array(example['image']) for example in data_train])
-y_test = np.array([example['label'] for example in data_train])
+X_test = np.stack([np.array(example['image']) for example in data_test])
+y_test = np.array([example['label'] for example in data_test])
 ```
 
 Now we need to apply several transformations to the dataset before splitting it into a test and a test set:
