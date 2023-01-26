@@ -472,7 +472,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>The model is run on its <em>non-centered parametrization</em> <span id="id3">[<a class="reference internal" href="#id14" title="Omiros Papaspiliopoulos, Gareth O Roberts, and Martin Sköld. A general framework for the parametrization of hierarchical models. Statistical Science, pages 59–73, 2007.">PRSkold07</a>]</span> with data from the numerical version of the German credit dataset. The target posterior is defined by its likelihood. We implement the model using <a class="reference external" href="https://github.com/aesara-devs/aesara">Aesara</a>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">aesara.tensor</span> <span class="k">as</span> <span class="nn">at</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">aesara.tensor</span> <span class="k">as</span> <span class="nn">at</span>
 
 <span class="n">X_at</span> <span class="o">=</span> <span class="n">at</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
 
@@ -500,7 +500,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>We will use the sparse regression model on the German credit dataset <span id="id4">[<a class="reference internal" href="#id9" title="Dheeru Dua and Casey Graff. UCI machine learning repository. 2017. URL: http://archive.ics.uci.edu/ml.">DG17</a>]</span>. We use the numeric version that is adapted to models that cannot handle categorical data:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span>
   <span class="s2">&quot;https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data-numeric&quot;</span><span class="p">,</span>
@@ -514,17 +514,22 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>Each row in the dataset corresponds to a different customer. The dependent variable <span class="math notranslate nohighlight">\(y\)</span> is equal to <span class="math notranslate nohighlight">\(1\)</span> when the customer has good credit and <span class="math notranslate nohighlight">\(2\)</span> when it has bad credit; we encode it so a customer with good credit corresponds to <span class="math notranslate nohighlight">\(1\)</span>, a customer with bad credit <span class="math notranslate nohighlight">\(1\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">r_bad</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">y</span><span class="o">==</span><span class="mf">0.</span><span class="p">])</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r_bad</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">y</span><span class="o">==</span><span class="mf">0.</span><span class="p">])</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 <span class="n">r_good</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">y</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span>  <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r_bad</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">% of the customers in the dataset are classified as having bad credit.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>30.0% of the customers in the dataset are classified as having bad credit.
 </pre></div>
 </div>
 </div>
@@ -532,7 +537,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>The regressors are defined on different scales so we normalize their values, and add a column of <span class="math notranslate nohighlight">\(1\)</span> that corresponds to the intercept:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="n">X</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -550,7 +555,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>We generate a function that computes the model’s logdensity using <a class="reference external" href="https://github.com/aesara-devs/aeppl">AePPL</a>. We transform the values of <span class="math notranslate nohighlight">\(\tau\)</span> and <span class="math notranslate nohighlight">\(\lambda\)</span> so the sampler can operate on variables defined on the real line:</p>
 <div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">aesara</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">aesara</span>
 <span class="kn">import</span> <span class="nn">aeppl</span>
 <span class="kn">from</span> <span class="nn">aeppl.transforms</span> <span class="kn">import</span> <span class="n">TransformValuesRewrite</span><span class="p">,</span> <span class="n">LogTransform</span>
 
@@ -581,7 +586,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>Let us now define a utility function that builds a sampling loop:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
 
 <span class="k">def</span> <span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">):</span>
     <span class="n">keys</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
@@ -601,7 +606,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>The MEADS algorithm <span id="id5">[<a class="reference internal" href="#id10" title="Matthew D Hoffman and Pavel Sountsov. Tuning-free generalized hamiltonian monte carlo. In International Conference on Artificial Intelligence and Statistics, 7799–7813. PMLR, 2022.">HS22</a>]</span> is a combination of Generalized HMC with a parameter tuning procedure. Let us initialize the position of the chain first:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">num_chains</span> <span class="o">=</span> <span class="mi">128</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_chains</span> <span class="o">=</span> <span class="mi">128</span>
 <span class="n">num_warmup</span> <span class="o">=</span> <span class="mi">2000</span>
 <span class="n">num_samples</span> <span class="o">=</span> <span class="mi">2000</span>
 
@@ -619,7 +624,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>Here we will not use the adaptive version of the MEADS algorithm, but instead use their heuristics as an adaptation procedure for Generalized Hamiltonian Monte Carlo kernels:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">blackjax</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">blackjax</span>
 
 <span class="n">key_warmup</span><span class="p">,</span> <span class="n">key_sample</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
 <span class="n">meads</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">meads_adaptation</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">num_chains</span><span class="p">)</span>
@@ -637,9 +642,65 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>Let us look a high-level summary statistics for the inference, including the split-Rhat value and the number of effective samples:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">numpyro.diagnostics</span> <span class="kn">import</span> <span class="n">print_summary</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">numpyro.diagnostics</span> <span class="kn">import</span> <span class="n">print_summary</span>
 
 <span class="n">print_summary</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                   mean       std    median      5.0%     95.0%     n_eff     r_hat
+      beta[0]     -0.26      0.33     -0.19     -0.74      0.22     45.94      1.06
+      beta[1]     -0.81      0.12     -0.80     -1.02     -0.64     74.73      1.01
+      beta[2]      1.21      0.28      1.22      0.74      1.64     74.57      1.01
+      beta[3]     -0.71      0.17     -0.73     -1.00     -0.44     92.76      1.06
+      beta[4]      0.20      0.28      0.15     -0.19      0.62     36.80      1.00
+      beta[5]     -0.41      0.13     -0.41     -0.60     -0.20     63.17      1.01
+      beta[6]     -0.20      0.14     -0.19     -0.40      0.02     61.47      1.01
+      beta[7]     -0.22      0.16     -0.21     -0.50      0.03     54.92      1.02
+      beta[8]      0.01      0.08      0.00     -0.10      0.15     83.01      1.00
+      beta[9]      0.19      0.14      0.19     -0.03      0.41     69.27      1.02
+     beta[10]     -0.13      0.18     -0.09     -0.47      0.11     29.33      1.01
+     beta[11]     -0.28      0.11     -0.28     -0.46     -0.12     86.92      1.01
+     beta[12]      0.22      0.22      0.19     -0.12      0.53     59.19      1.05
+     beta[13]      0.01      0.09      0.00     -0.15      0.14     52.17      1.02
+     beta[14]     -0.07      0.07     -0.06     -0.17      0.05     84.17      1.04
+     beta[15]     -0.40      0.26     -0.42     -0.80      0.03     58.62      1.01
+     beta[16]      0.29      0.10      0.28      0.14      0.45     68.68      1.03
+     beta[17]     -0.35      0.16     -0.35     -0.63     -0.10     96.87      1.01
+     beta[18]      0.23      0.18      0.21     -0.04      0.50     47.77      1.01
+     beta[19]      0.33      0.24      0.32     -0.06      0.68     44.98      1.02
+     beta[20]      0.15      0.13      0.14     -0.05      0.34     29.72      1.02
+     beta[21]     -0.06      0.10     -0.05     -0.24      0.10     42.68      1.02
+     beta[22]     -0.04      0.16     -0.02     -0.36      0.20     56.69      1.02
+     beta[23]     -0.01      0.07     -0.00     -0.11      0.10     44.42      1.03
+     beta[24]      0.00      0.05      0.00     -0.09      0.10    116.34      1.00
+ log_lmbda[0]     -0.02      1.23      0.03     -2.19      1.93     42.31      1.04
+ log_lmbda[1]      1.10      0.71      1.00      0.02      2.25      8.97      1.12
+ log_lmbda[2]      1.33      0.74      1.21      0.21      2.37     61.13      1.04
+ log_lmbda[3]      1.01      0.90      0.87     -0.37      2.39     52.88      1.08
+ log_lmbda[4]     -0.16      1.02     -0.13     -1.73      1.58     62.53      1.00
+ log_lmbda[5]      0.47      0.77      0.35     -0.66      1.73     53.89      1.06
+ log_lmbda[6]     -0.11      1.07     -0.12     -2.00      1.31     43.00      1.02
+ log_lmbda[7]      0.03      1.06      0.01     -1.61      1.94     64.74      1.03
+ log_lmbda[8]     -0.92      1.17     -0.87     -2.96      0.81     34.93      1.08
+ log_lmbda[9]      0.13      1.23      0.08     -1.91      2.08     63.26      1.05
+log_lmbda[10]     -0.39      1.04     -0.24     -2.24      1.18     40.20      1.03
+log_lmbda[11]      0.22      0.82      0.20     -1.20      1.38     56.60      1.05
+log_lmbda[12]     -0.09      1.12     -0.03     -1.85      1.75     60.54      1.05
+log_lmbda[13]     -0.85      1.21     -0.79     -2.95      0.98     58.09      1.02
+log_lmbda[14]     -0.99      1.07     -0.89     -3.04      0.53     69.20      1.05
+log_lmbda[15]      0.37      1.06      0.45     -1.18      2.39     65.36      1.01
+log_lmbda[16]      0.34      0.86      0.19     -0.95      1.82     71.62      1.01
+log_lmbda[17]      0.33      0.74      0.25     -0.70      1.70     83.19      1.01
+log_lmbda[18]     -0.05      0.95      0.02     -1.37      1.72     83.48      1.02
+log_lmbda[19]      0.15      0.97      0.26     -1.44      1.66     35.19      1.07
+log_lmbda[20]     -0.42      1.03     -0.35     -2.04      1.21     24.23      1.08
+log_lmbda[21]     -0.69      1.01     -0.66     -2.17      0.98     99.62      1.03
+log_lmbda[22]     -0.51      1.11     -0.53     -2.34      1.15     55.27      1.05
+log_lmbda[23]     -0.97      1.09     -0.95     -2.52      0.94     89.31      1.04
+log_lmbda[24]     -1.34      1.32     -1.17     -3.60      0.77     57.58      1.00
+      log_tau     -1.25      0.34     -1.25     -1.84     -0.76     21.03      1.09
 </pre></div>
 </div>
 </div>
@@ -647,7 +708,12 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>Let’s check if there are any divergent transitions</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">is_divergent</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">is_divergent</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([0, 0], dtype=int64)
 </pre></div>
 </div>
 </div>
@@ -655,7 +721,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>We warned earlier that the non-centered parametrization was not a one-size-fits-all solution to the funnel geometries that can be present in the posterior distribution. Although there was no divergence, it is still worth checking the posterior interactions between the coefficients to make sure the posterior geometry did not get in the way of sampling:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pylab</span> <span class="k">as</span> <span class="n">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pylab</span> <span class="k">as</span> <span class="n">plt</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gaussian_kde</span>
@@ -665,7 +731,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">18</span><span class="p">))</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
-    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">i</span><span class="o">%</span><span class="mi">10</span><span class="p">,</span> <span class="n">i</span><span class="o">//</span><span class="mi">10</span><span class="p">])</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">i</span><span class="o">%</span><span class="k">10</span>, i//10])
     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s2">&quot;log_lmbda&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">,:,</span><span class="n">i</span><span class="p">],</span> <span class="n">samples</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">,:,</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mf">.4</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\lambda$[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\beta$[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
@@ -675,12 +741,15 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/sparse_regression_22_0.png" src="../_images/sparse_regression_22_0.png" />
+</div>
 </div>
 <p>While some parameters (for instance the 15th) exhibit no particular correlations, the funnel geometry can still be observed for a few of them (4th, 13th, etc.). Ideally one would adopt a centered parametrization for those parameters to get a better approximation to the true posterior distribution, but here we also assess the ability of the sampler to explore these funnel geometries.</p>
 <p>We can convince ourselves that the Horseshoe prior induces sparsity on the regression coefficients by looking at their posterior distribution:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pylab</span> <span class="k">as</span> <span class="n">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pylab</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
 
 <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
@@ -688,7 +757,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">18</span><span class="p">))</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
-    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">i</span><span class="o">%</span><span class="mi">10</span><span class="p">,</span> <span class="n">i</span><span class="o">//</span><span class="mi">10</span><span class="p">])</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="n">i</span><span class="o">%</span><span class="k">10</span>, i//10])
     <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\beta$[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
 
@@ -700,6 +769,9 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/sparse_regression_25_0.png" src="../_images/sparse_regression_25_0.png" />
 </div>
 </div>
 <p>Indeed, many of the parameters are centered around <span class="math notranslate nohighlight">\(0\)</span>.</p>
