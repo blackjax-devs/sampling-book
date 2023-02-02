@@ -33,7 +33,6 @@ Below is a high level illustration of the multi-task setup. $\Phi$ is the learne
 from functools import partial
 from warnings import filterwarnings
 
-import distrax
 from flax import linen as nn
 from flax.linen.initializers import ones
 import jax
@@ -151,7 +150,7 @@ def inference_loop(rng_key, kernel, initial_state, num_samples):
 def get_predictions(model, samples, X, rng_key):
     vmap = jax.vmap(model.apply, in_axes=(0, None), out_axes=0)
     z = vmap(samples, X)
-    predictions = distrax.Bernoulli(logits=z).sample(seed=rng_key)
+    predictions = tfd.Bernoulli(logits=z).sample(seed=rng_key)
 
     return predictions.squeeze(-1)
 ```
@@ -244,11 +243,11 @@ bnn = NN(n_hidden_layers, hidden_layer_width)
 def logprior_fn(params):
     leaves, _ = jax.tree_util.tree_flatten(params)
     flat_params = jnp.concatenate([jnp.ravel(a) for a in leaves])
-    return jnp.sum(distrax.Normal(0, 1).log_prob(flat_params))
+    return jnp.sum(tfd.Normal(0, 1).log_prob(flat_params))
 
 def loglikelihood_fn(params, X, Y, model):
     logits = jnp.ravel(model.apply(params, X))
-    return jnp.sum(distrax.Bernoulli(logits).log_prob(Y))
+    return jnp.sum(tfd.Bernoulli(logits).log_prob(Y))
 
 def logdensity_fn_of_bnn(params, X, Y, model):
     return logprior_fn(params) + loglikelihood_fn(params, X, Y, model)
@@ -375,12 +374,12 @@ hnn = HNN(n_hidden_layers, hidden_layer_width)
 ```{code-cell} ipython3
 def logprior_fn_of_hnn(params, model):
     lp = 0
-    half_normal = distrax.as_distribution(tfd.HalfNormal(1.0))
+    half_normal = tfd.HalfNormal(1.0)
 
     for i in range(model.n_hidden_layers):
         lparam = params["params"][f"NonCenteredDense_{i}"]
-        lp += distrax.Normal(0.0, 1.0).log_prob(lparam["mu"]).sum()
-        lp += distrax.Normal(0.0, 1.0).log_prob(lparam["eps"]).sum()
+        lp += tfd.Normal(0.0, 1.0).log_prob(lparam["mu"]).sum()
+        lp += tfd.Normal(0.0, 1.0).log_prob(lparam["eps"]).sum()
         lp += half_normal.log_prob(lparam["std"]).sum()
     lp += logprior_fn(params["params"]["Dense_0"])
 
@@ -388,7 +387,7 @@ def logprior_fn_of_hnn(params, model):
 
 def loglikelihood_fn(params, X, Y, model):
     logits = jnp.ravel(model.apply(params, X))
-    return jnp.sum(distrax.Bernoulli(logits).log_prob(jnp.ravel(Y)))
+    return jnp.sum(tfd.Bernoulli(logits).log_prob(jnp.ravel(Y)))
 
 def logdensity_fn_of_hnn(params, X, Y, model):
     return logprior_fn_of_hnn(params, model) + loglikelihood_fn(params, X, Y, model)
