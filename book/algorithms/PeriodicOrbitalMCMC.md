@@ -16,7 +16,7 @@ mystnb:
 
 # Periodic Orbital MCMC
 
-Illustrating the usage of Algorithm 2 of [Neklyudov & Welling, (2021)](https://arxiv.org/abs/2010.08047) {cite:p}`orbitalMCMC2020` on the Banana density
+Illustrating the usage of Algorithm 2 of [Neklyudov & Welling, (2021)](https://arxiv.org/abs/2010.08047) {cite:p}`orbitalMCMC2021` on the Banana density
 
 $$
 p(x) = p(x_1, x_2) = N(x_1|0, 8)N(x_2|1/4x_1^2, 1).
