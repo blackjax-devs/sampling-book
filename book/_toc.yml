@@ -19,3 +19,4 @@ parts:
   - file: models/GP_EllipticalSliceSampler.md
   - file: models/LogisticRegressionWithLatentGaussianSampler.md
   - file: models/RegimeSwitchingModel.md
+  - file: models/probabilistic_ode_solver_parameter_estimation.md

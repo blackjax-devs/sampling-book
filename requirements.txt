@@ -26,3 +26,4 @@ pandas
 seaborn
 scikit-learn
 tensorflow-probability[jax]
+probdiffeq
