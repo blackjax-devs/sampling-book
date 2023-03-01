@@ -24,11 +24,13 @@ with Markov Chain Monte Carlo (MCMC) methods from [BlackJAX](https://blackjax-de
 
 ## TL;DR
 Compute log-posterior of IVP parameters given observations of the IVP solution with ProbDiffEq. Sample from this posterior using BlackJAX.
-Evaluating the log-likelihood of the data is described [in this paper](https://arxiv.org/abs/2202.01287). Based on this log-likelihood, sampling from the log-posterior is as done [in this paper](https://arxiv.org/abs/2002.09301).
+Evaluating the log-likelihood of the data is described [in this paper](https://arxiv.org/abs/2202.01287). 
+Based on this log-likelihood, sampling from the log-posterior is as done [in this paper](https://arxiv.org/abs/2002.09301).
 
 
 ## Technical setup
 Let $f$ be a known vector field. In this example, we use the Lotka-Volterra model.
+(We get our IVP implementations from [DiffEqZoo](https://diffeqzoo.readthedocs.io/en/latest/).)
 Consider an ordinary differential equation 
 
 $$
@@ -36,26 +38,28 @@ $$
 $$
 
 subject to an unknown initial condition $y(0) = \theta$.
-Recall from the previous tutorials that the probabilistic IVP solution is an approximation of the posterior distribution
+The probabilistic IVP solution is an approximation of the posterior distribution (e.g. [Eq. (12) here](https://arxiv.org/abs/2110.11812))
 
 $$
 p\left(y ~|~ [\dot y(t_n) = f(y(t_n))]_{n=0}^N, y(0) = \theta\right)
 $$
 
-for a Gaussian prior over $y$ and a pre-determined or adaptively selected grid $t_0, ..., t_N$.
+for a Gaussian process prior over $y$ and a pre-determined or adaptively selected grid $t_0, ..., t_N$.
 
-We don't know the initial condition of the IVP, but assume that we have noisy observations of the IVP soution $y$ at the terminal time $T$ of the integration problem,
+We don't know the initial condition of the IVP, but assume that we have noisy observations of the IVP solution $y$ at the terminal time $T$ of the integration problem,
 
 $$
 p(\text{data}~|~ y(T)) = N(y(T), \sigma^2 I)
 $$
 
 for some $\sigma > 0$.
-We can use these observations to reconstruct $\theta$, for example by sampling from $p(\text{data}~|~\theta)$ (which is a function of $\theta$).
+We can use these observations to reconstruct $\theta$, for example by sampling from $p(\theta ~|~ \text{data}) \propto p(\text{data}~|~\theta)p(\theta)$ 
+(which is a function of $\theta$).
 
-Now, one way of evaluating $p(\text{data} ~|~ \theta)$ is to use any numerical solver, for example a Runge-Kutta method, to approximate $y(T)$ from $\theta$ and evaluate $N(y(T), \sigma^2 I)$.
+Now, one way of evaluating this posterior is to use any numerical solver, for example a Runge-Kutta method, to approximate $y(T)$ from $\theta$ 
+and evaluate $N(y(T), \sigma^2 I)$ to get $p(\text{data} ~|~ \theta)$ (the $p(\theta)$ component is known).
 But this ignores a few crucial concepts (e.g., the numerical error of the approximation; we refer to the references linked above). 
-Instead, we can use a probabilistic solver instead of "any" numerical solver and build a more comprehensive model:
+We can use a probabilistic solver instead of "any" numerical solver and build a more comprehensive model:
 
 **We can combine probabilistic IVP solvers with MCMC methods to estimate $\theta$ from $\text{data}$ in a way that quantifies numerical approximation errors (and other model mismatches).**
 To do so, we approximate the distribution of the IVP solution given the parameter $p(y(T) \mid \theta)$ and evaluate the marginal distribution of $N(y(T), \sigma^2I)$ given the probabilistic IVP solution.
@@ -102,7 +106,6 @@ from diffeqzoo import backend, ivps
 from jax.config import config
 
 from probdiffeq import solution_routines, solvers
-from probdiffeq.doc_util import notebook
 from probdiffeq.implementations import recipes
 from probdiffeq.strategies import filters
 ```
@@ -117,9 +120,6 @@ config.update("jax_platform_name", "cpu")
 # IVP examples in JAX
 if not backend.has_been_selected:
     backend.select("jax")
-
-# Nice-looking plots
-plt.rcParams.update(notebook.plot_config())
 ```
 
 ## Problem setting
@@ -296,7 +296,7 @@ ax = plot_solution(solution, ax=ax, linestyle="dashed", alpha=0.75, **guess_kwar
 plt.show()
 ```
 
-The samples cover a perhaps surpringly large range of potential initial conditions, but lead to the "correct" data.
+The samples cover a perhaps surprisingly large range of potential initial conditions, but lead to the "correct" data.
 
 In parameter space, this is what it looks like:
 
