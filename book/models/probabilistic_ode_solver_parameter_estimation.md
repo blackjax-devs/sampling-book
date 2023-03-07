@@ -24,8 +24,8 @@ with Markov Chain Monte Carlo (MCMC) methods from [BlackJAX](https://blackjax-de
 
 ## TL;DR
 Compute log-posterior of IVP parameters given observations of the IVP solution with ProbDiffEq. Sample from this posterior using BlackJAX.
-Evaluating the log-likelihood of the data is described [in this paper](https://arxiv.org/abs/2202.01287). 
-Based on this log-likelihood, sampling from the log-posterior is as done [in this paper](https://arxiv.org/abs/2002.09301).
+Evaluating the log-likelihood of the data is described [in this paper](https://arxiv.org/abs/2202.01287) {cite:p}`tronarp2022fenrir`. 
+Based on this log-likelihood, sampling from the log-posterior is as done [in this paper](https://arxiv.org/abs/2002.09301) {cite:p}`kersting2020differentiable`.
 
 
 ## Technical setup
@@ -38,7 +38,7 @@ $$
 $$
 
 subject to an unknown initial condition $y(0) = \theta$.
-The probabilistic IVP solution is an approximation of the posterior distribution (e.g. [Eq. (12) here](https://arxiv.org/abs/2110.11812))
+The probabilistic IVP solution is an approximation of the posterior distribution (e.g. Eq. (12) in {cite:p}`kramer2020probabilistic`)
 
 $$
 p\left(y ~|~ [\dot y(t_n) = f(y(t_n))]_{n=0}^N, y(0) = \theta\right)
@@ -360,5 +360,10 @@ We could also add a more suitable prior distribution $p(\theta)$ to regularise t
 
 
 A final side note:
-We could also replace the sampler with an optimisation algorithm and use this procedure to solve boundary value problems (albeit this may not be very efficient; use [this](https://arxiv.org/abs/2106.07761) algorithm instead).
+We could also replace the sampler with an optimisation algorithm and use this procedure to solve boundary value problems (albeit this may not be very efficient; use [this](https://arxiv.org/abs/2106.07761) algorithm instead  {cite:p}`kramer2021linear`).
+
 <!-- #endregion -->
+
+```{bibliography}
+:filter: docname in docnames
+```
