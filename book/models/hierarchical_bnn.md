@@ -4,14 +4,11 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.15.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-file_format: mystnb
-mystnb:
-  execution_timeout: 200
 ---
 
 # Hierarchical Bayesian Neural Networks
@@ -135,9 +132,9 @@ grid_3d = jnp.repeat(grid[None, ...], n_groups, axis=0)
 ## Utility Functions for Training and Testing
 
 ```{code-cell} ipython3
-def inference_loop(rng_key, kernel, initial_state, num_samples):
+def inference_loop(rng_key, step_fn, initial_state, num_samples):
     def one_step(state, rng_key):
-        state, _ = kernel(rng_key, state)
+        state, _ = step_fn(rng_key, state)
         return state, state
 
     keys = jax.random.split(rng_key, num_samples)
@@ -148,8 +145,8 @@ def inference_loop(rng_key, kernel, initial_state, num_samples):
 
 ```{code-cell} ipython3
 def get_predictions(model, samples, X, rng_key):
-    vmap = jax.vmap(model.apply, in_axes=(0, None), out_axes=0)
-    z = vmap(samples, X)
+    vectorized_apply = jax.vmap(model.apply, in_axes=(0, None), out_axes=0)
+    z = vectorized_apply(samples, X)
     predictions = tfd.Bernoulli(logits=z).sample(seed=rng_key)
 
     return predictions.squeeze(-1)
@@ -181,10 +178,10 @@ def fit_and_eval(
     # warm up
     adapt = blackjax.window_adaptation(blackjax.nuts, logprob)
     (final_state, params), _ = adapt.run(warmup_key, initial_position, num_warmup)
-    kernel = blackjax.nuts(logprob, **params).step
+    step_fn = blackjax.nuts(logprob, **params).step
     
     # inference
-    states = inference_loop(inference_key, kernel, final_state, num_samples)
+    states = inference_loop(inference_key, step_fn, final_state, num_samples)
     samples = states.position
 
     # evaluation
