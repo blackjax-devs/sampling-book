@@ -4,14 +4,11 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.15.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-file_format: mystnb
-mystnb:
-  execution_timeout: 200
 ---
 
 # Use Tempered SMC to Improve Exploration of MCMC Methods.
@@ -205,7 +202,7 @@ hmc_parameters = dict(
 tempered = blackjax.adaptive_tempered_smc(
     prior_log_prob,
     loglikelihood,
-    blackjax.hmc.kernel(),
+    blackjax.hmc.build_kernel(),
     blackjax.hmc.init,
     hmc_parameters,
     resampling.systematic,
@@ -355,11 +352,12 @@ hmc_parameters = dict(
 tempered = blackjax.adaptive_tempered_smc(
     prior_log_prob,
     loglikelihood,
-    blackjax.hmc,
+    blackjax.hmc.build_kernel(),
+    blackjax.hmc.init,
     hmc_parameters,
     resampling.systematic,
     0.75,
-    mcmc_iter=1,
+    num_mcmc_steps=1,
 )
 
 initial_smc_state = jax.random.multivariate_normal(
