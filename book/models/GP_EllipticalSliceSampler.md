@@ -120,8 +120,8 @@ n_iter = 8000
 ```{code-cell} ipython3
 %%time
 loglikelihood_fn = lambda f: -0.5 * jnp.dot(y - f, y - f) / y_sd**2
-init, step = elliptical_slice(loglikelihood_fn, mean=jnp.zeros(n), cov=Sigma)
-states, info = inference_loop(jrnd.PRNGKey(0), init(f), step, n_warm + n_iter)
+es_init_fn, es_step_fn = elliptical_slice(loglikelihood_fn, mean=jnp.zeros(n), cov=Sigma)
+states, info = inference_loop(jrnd.PRNGKey(0), es_init_fn(f), es_step_fn, n_warm + n_iter)
 samples = states.position[n_warm:]
 ```
 
@@ -133,8 +133,8 @@ logdensity_fn = lambda f: loglikelihood_fn(f) - 0.5 * jnp.dot(f @ invSigma, f)
 warmup = window_adaptation(nuts, logdensity_fn, n_warm, target_acceptance_rate=0.8)
 key_warm, key_sample = jrnd.split(jrnd.PRNGKey(0))
 (state, params), _ = warmup.run(key_warm, f)
-step = nuts(logdensity_fn, **params).step
-states, _ = inference_loop(key_sample, state, step, n_iter)
+nuts_step_fn = nuts(logdensity_fn, **params).step
+states, _ = inference_loop(key_sample, state, nuts_step_fn, n_iter)
 ```
 
 We check that the sampler is targeting the correct distribution by comparing the sample's mean and covariance to the conjugate results, and plotting the predictive distribution of our samples over the real observations.
