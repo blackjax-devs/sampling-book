@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.15.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -177,7 +177,7 @@ pb = progress_bar(range(num_warmup))
 for step in pb:
     _, rng_key = jax.random.split(rng_key)
     batch = next(batches)
-    state = jax.jit(sgld)(rng_key, state, batch, step_size)
+    state = jax.jit(sgld.step)(rng_key, state, batch, step_size)
     if step % 100 == 0:
         accuracy = compute_accuracy(state, X_test, y_test)
         accuracies.append(accuracy)
@@ -244,7 +244,7 @@ pb = progress_bar(range(num_samples))
 for step in pb:
     _, rng_key = jax.random.split(rng_key)
     batch = next(batches)
-    state = jax.jit(sgld)(rng_key, state, batch, step_size)
+    state = jax.jit(sgld.step)(rng_key, state, batch, step_size)
     sgld_logpredict, accuracy = update_test_accuracy(step, sgld_logpredict, state)
     sgld_accuracies.append(accuracy)
     pb.comment = f"| avg error: {100*(1-accuracy): .1f}"
@@ -254,8 +254,6 @@ Let us plot the accuracy as a function of the number of samples:
 
 ```{code-cell} ipython3
 :tags: [hide-input]
-
-import matplotlib.pylab as plt
 
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111)
@@ -303,7 +301,7 @@ pb = progress_bar(range(num_warmup))
 for step in pb:
     _, rng_key = jax.random.split(rng_key)
     minibatch = next(batches)
-    state = jax.jit(sghmc)(rng_key, state, minibatch, step_size)
+    state = jax.jit(sghmc.step)(rng_key, state, minibatch, step_size)
     if step % 100 == 0:
         sghmc_accuracy = compute_accuracy(state, X_test, y_test)
         sghmc_accuracies.append(sghmc_accuracy)
@@ -313,8 +311,6 @@ for step in pb:
 
 ```{code-cell} ipython3
 :tags: [hide-input]
-
-import matplotlib.pylab as plt
 
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111)
@@ -338,7 +334,7 @@ pb = progress_bar(range(num_samples))
 for step in pb:
     _, rng_key = jax.random.split(rng_key)
     batch = next(batches)
-    state = jax.jit(sgld)(rng_key, state, batch, step_size)
+    state = jax.jit(sgld.step)(rng_key, state, batch, step_size)
     sghmc_logpredict, accuracy = update_test_accuracy(step, sghmc_logpredict, state)
     sghmc_accuracies.append(accuracy)
     pb.comment = f"| avg error: {100*(1-accuracy): .1f}"
@@ -346,8 +342,6 @@ for step in pb:
 
 ```{code-cell} ipython3
 :tags: [hide-input]
-
-import matplotlib.pylab as plt
 
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111)
@@ -365,8 +359,6 @@ Let us plot the evolution of the accuracy as a function of the number of samples
 
 ```{code-cell} ipython3
 :tags: [hide-input]
-
-import matplotlib.pylab as plt
 
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111)
