@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 file_format: mystnb
 mystnb:
-  execution_timeout: 200
+  execution_timeout: 400
 ---
 
 # MLP classifier
