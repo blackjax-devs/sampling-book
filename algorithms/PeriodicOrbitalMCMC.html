@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,8 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=927b94d3fcb96560df09"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -78,6 +79,15 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -326,10 +336,10 @@ const thebe_selector_output = ".output, .cell_output"
 
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -337,7 +347,7 @@ document.write(`
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -506,7 +516,7 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
 </pre></div>
 </div>
-<img alt="../_images/a3f7c7d141319f52ec7248daaa2870ef0e93890d23ab61096f6ecd4f7c5349a1.png" src="../_images/a3f7c7d141319f52ec7248daaa2870ef0e93890d23ab61096f6ecd4f7c5349a1.png" />
+<img alt="../_images/eb7aabeddd838c6f16637d45b8ffa2cbdef2d2094d6d2478bbbd1b52b3b01fb6.png" src="../_images/eb7aabeddd838c6f16637d45b8ffa2cbdef2d2094d6d2478bbbd1b52b3b01fb6.png" />
 </div>
 </div>
 </section>
@@ -551,8 +561,8 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 252 ms, sys: 362 µs, total: 252 ms
-Wall time: 251 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 204 ms, sys: 8.07 ms, total: 212 ms
+Wall time: 212 ms
 </pre></div>
 </div>
 </div>
@@ -569,8 +579,8 @@ Wall time: 251 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.04 s, sys: 15.3 ms, total: 1.06 s
-Wall time: 1.05 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 942 ms, sys: 8.07 ms, total: 950 ms
+Wall time: 941 ms
 </pre></div>
 </div>
 </div>
@@ -582,7 +592,7 @@ Wall time: 1.05 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/7871c75b3686b0138d37314d0bf072cb54fec2d792d85865f7a0ac2861b2836a.png" src="../_images/7871c75b3686b0138d37314d0bf072cb54fec2d792d85865f7a0ac2861b2836a.png" />
+<img alt="../_images/1b9cccc9695d036c75c5f60bd2aa14519406531d6e33f0cffad780d552b77263.png" src="../_images/1b9cccc9695d036c75c5f60bd2aa14519406531d6e33f0cffad780d552b77263.png" />
 </div>
 </div>
 </section>
@@ -601,8 +611,8 @@ Wall time: 1.05 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 22.5 ms, sys: 0 ns, total: 22.5 ms
-Wall time: 22.4 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 18.8 ms, sys: 0 ns, total: 18.8 ms
+Wall time: 19.8 ms
 </pre></div>
 </div>
 </div>
@@ -619,8 +629,8 @@ Wall time: 22.4 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 788 ms, sys: 3.91 ms, total: 791 ms
-Wall time: 791 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 699 ms, sys: 0 ns, total: 699 ms
+Wall time: 694 ms
 </pre></div>
 </div>
 </div>
@@ -638,7 +648,7 @@ Wall time: 791 ms
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/7998f84bdbe0b6aa2e3cc65b95c88837cb0c72d5fb70ddeb4d6445164bc9792f.png" src="../_images/7998f84bdbe0b6aa2e3cc65b95c88837cb0c72d5fb70ddeb4d6445164bc9792f.png" />
+<img alt="../_images/16d5c37d68e6c03693cd34239afb60e1d17b6f879befa0346c1aab3d7dfb6e1c.png" src="../_images/16d5c37d68e6c03693cd34239afb60e1d17b6f879befa0346c1aab3d7dfb6e1c.png" />
 </div>
 </div>
 </section>
@@ -657,8 +667,8 @@ Wall time: 791 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 22.4 ms, sys: 143 µs, total: 22.5 ms
-Wall time: 22.3 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 17.2 ms, sys: 87 µs, total: 17.3 ms
+Wall time: 17.2 ms
 </pre></div>
 </div>
 </div>
@@ -675,8 +685,8 @@ Wall time: 22.3 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 849 ms, sys: 3.97 ms, total: 853 ms
-Wall time: 853 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 735 ms, sys: 7.63 ms, total: 743 ms
+Wall time: 735 ms
 </pre></div>
 </div>
 </div>
@@ -694,7 +704,7 @@ Wall time: 853 ms
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/a2dbfb52c62e50eb58c371e9569bc43f42245208478389c19f7f04f254927772.png" src="../_images/a2dbfb52c62e50eb58c371e9569bc43f42245208478389c19f7f04f254927772.png" />
+<img alt="../_images/84f1359ba67aae0562229b9113929da36d3e11ba3d2fbe373906a3f58e9306ad.png" src="../_images/84f1359ba67aae0562229b9113929da36d3e11ba3d2fbe373906a3f58e9306ad.png" />
 </div>
 </div>
 </section>
@@ -757,8 +767,8 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 22.4 ms, sys: 0 ns, total: 22.4 ms
-Wall time: 22.2 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 17 ms, sys: 64 µs, total: 17.1 ms
+Wall time: 16.9 ms
 </pre></div>
 </div>
 </div>
@@ -775,8 +785,8 @@ Wall time: 22.2 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 707 ms, sys: 0 ns, total: 707 ms
-Wall time: 702 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 628 ms, sys: 4.01 ms, total: 632 ms
+Wall time: 626 ms
 </pre></div>
 </div>
 </div>
@@ -794,7 +804,7 @@ Wall time: 702 ms
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/92b3c195a72439a94eba2316dc63a12838269aef224df7ba968201d681258630.png" src="../_images/92b3c195a72439a94eba2316dc63a12838269aef224df7ba968201d681258630.png" />
+<img alt="../_images/33f4633e9a53dbc38554603a10089add63e89105c124b2a049215541683014f6.png" src="../_images/33f4633e9a53dbc38554603a10089add63e89105c124b2a049215541683014f6.png" />
 </div>
 </div>
 </section>
@@ -824,6 +834,12 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">optax</span>
 <span class="kn">from</span> <span class="nn">numpyro.nn</span> <span class="kn">import</span> <span class="n">AutoregressiveNN</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.9.18/x64/lib/python3.9/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm
 </pre></div>
 </div>
 </div>
@@ -927,8 +943,8 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.67 s, sys: 4.14 ms, total: 1.67 s
-Wall time: 1.67 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.45 s, sys: 4.07 ms, total: 1.45 s
+Wall time: 1.44 s
 </pre></div>
 </div>
 </div>
@@ -949,7 +965,7 @@ Wall time: 1.67 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/3e41b91f8cef2f1d68832824ae3fb0fe2fef85371cf8a8aef1a44044dfff09b3.png" src="../_images/3e41b91f8cef2f1d68832824ae3fb0fe2fef85371cf8a8aef1a44044dfff09b3.png" />
+<img alt="../_images/03096dbdfe16d9de07c0724d97d5110de7b0c7dfd00d7fb32eb307d98423274e.png" src="../_images/03096dbdfe16d9de07c0724d97d5110de7b0c7dfd00d7fb32eb307d98423274e.png" />
 </div>
 </div>
 <p>We define our log pullback given the learned parameters of the transformation and use the periodic orbital MCMC with an ellipsis to sample from this log pullback density.</p>
@@ -973,8 +989,8 @@ Wall time: 1.67 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 707 ms, sys: 4.1 ms, total: 712 ms
-Wall time: 709 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 628 ms, sys: 4.01 ms, total: 632 ms
+Wall time: 632 ms
 </pre></div>
 </div>
 </div>
@@ -991,8 +1007,8 @@ Wall time: 709 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 937 ms, sys: 7.6 ms, total: 945 ms
-Wall time: 940 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 724 ms, sys: 200 µs, total: 724 ms
+Wall time: 721 ms
 </pre></div>
 </div>
 </div>
@@ -1033,7 +1049,7 @@ Wall time: 940 ms
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/28400b9043ef7349a8f2d4835cfce944bf3c2b8ae25cd122449b9726309032f2.png" src="../_images/28400b9043ef7349a8f2d4835cfce944bf3c2b8ae25cd122449b9726309032f2.png" />
+<img alt="../_images/b16fe25d65ccc3eb1f7a32baf0c533ecc20a5f76e0210ef9e734aca7a7e9d702.png" src="../_images/b16fe25d65ccc3eb1f7a32baf0c533ecc20a5f76e0210ef9e734aca7a7e9d702.png" />
 </div>
 </div>
 <div class="docutils container" id="id6">
@@ -1082,11 +1098,10 @@ Wall time: 940 ms
 
               
               
-                <footer class="bd-footer-article">
-                  
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="pathfinder.html"
@@ -1106,10 +1121,7 @@ Wall time: 940 ms
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
@@ -1181,8 +1193,8 @@ By The Blackjax Team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09"></script>
 
   <footer class="bd-footer">
   </footer>

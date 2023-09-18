@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,8 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=927b94d3fcb96560df09"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -78,6 +79,15 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -326,10 +336,10 @@ const thebe_selector_output = ".output, .cell_output"
 
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -337,7 +347,7 @@ document.write(`
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -416,6 +426,109 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NoSectionError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="nn">File /opt/hostedtoolcache/Python/3.9.18/x64/lib/python3.9/site-packages/aesara/configparser.py:234,</span> in <span class="ni">AesaraConfigParser.fetch_val_for_key</span><span class="nt">(self, key, delete_key)</span>
+<span class="g g-Whitespace">    </span><span class="mi">233</span> <span class="k">try</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">234</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aesara_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">235</span> <span class="k">except</span> <span class="n">InterpolationError</span><span class="p">:</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.9.18/x64/lib/python3.9/configparser.py:781,</span> in <span class="ni">RawConfigParser.get</span><span class="nt">(self, section, option, raw, vars, fallback)</span>
+<span class="g g-Whitespace">    </span><span class="mi">780</span> <span class="k">try</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">781</span>     <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unify_values</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="nb">vars</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">782</span> <span class="k">except</span> <span class="n">NoSectionError</span><span class="p">:</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.9.18/x64/lib/python3.9/configparser.py:1152,</span> in <span class="ni">RawConfigParser._unify_values</span><span class="nt">(self, section, vars)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1151</span>     <span class="k">if</span> <span class="n">section</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_section</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1152</span>         <span class="k">raise</span> <span class="n">NoSectionError</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
+<span class="g g-Whitespace">   </span><span class="mi">1153</span> <span class="c1"># Update with the entry specific variables</span>
+
+<span class="ne">NoSectionError</span>: No section: &#39;blas&#39;
+
+<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
+
+<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
+<span class="nn">File /opt/hostedtoolcache/Python/3.9.18/x64/lib/python3.9/site-packages/aesara/configparser.py:350,</span> in <span class="ni">ConfigParam.__get__</span><span class="nt">(self, cls, type_, delete_key)</span>
+<span class="g g-Whitespace">    </span><span class="mi">349</span> <span class="k">try</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">350</span>     <span class="n">val_str</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">fetch_val_for_key</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">delete_key</span><span class="o">=</span><span class="n">delete_key</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">351</span>     <span class="bp">self</span><span class="o">.</span><span class="n">is_default</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.9.18/x64/lib/python3.9/site-packages/aesara/configparser.py:238,</span> in <span class="ni">AesaraConfigParser.fetch_val_for_key</span><span class="nt">(self, key, delete_key)</span>
+<span class="g g-Whitespace">    </span><span class="mi">237</span> <span class="k">except</span> <span class="p">(</span><span class="n">NoOptionError</span><span class="p">,</span> <span class="n">NoSectionError</span><span class="p">):</span>
+<span class="ne">--&gt; </span><span class="mi">238</span>     <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+<span class="ne">KeyError</span>: &#39;blas__ldflags&#39;
+
+<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
+
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">aesara.tensor</span> <span class="k">as</span> <span class="nn">at</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">X_at</span> <span class="o">=</span> <span class="n">at</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">srng</span> <span class="o">=</span> <span class="n">at</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomStream</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">File</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">hostedtoolcache</span><span class="o">/</span><span class="n">Python</span><span class="o">/</span><span class="mf">3.9.18</span><span class="o">/</span><span class="n">x64</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.9</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">aesara</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">120</span>
+<span class="g g-Whitespace">    </span><span class="mi">116</span>     <span class="k">return</span> <span class="n">as_tensor_variable</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">119</span> <span class="c1"># isort: off</span>
+<span class="ne">--&gt; </span><span class="mi">120</span> <span class="kn">from</span> <span class="nn">aesara</span> <span class="kn">import</span> <span class="n">scalar</span><span class="p">,</span> <span class="n">tensor</span>
+<span class="g g-Whitespace">    </span><span class="mi">121</span> <span class="kn">from</span> <span class="nn">aesara.compile</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">122</span>     <span class="n">In</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">123</span>     <span class="n">Mode</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">129</span>     <span class="n">shared</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">130</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">131</span> <span class="kn">from</span> <span class="nn">aesara.compile.function</span> <span class="kn">import</span> <span class="n">function</span><span class="p">,</span> <span class="n">function_dump</span>
+
+<span class="n">File</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">hostedtoolcache</span><span class="o">/</span><span class="n">Python</span><span class="o">/</span><span class="mf">3.9.18</span><span class="o">/</span><span class="n">x64</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.9</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">aesara</span><span class="o">/</span><span class="n">tensor</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">106</span>
+<span class="g g-Whitespace">    </span><span class="mi">104</span> <span class="c1"># adds shared-variable constructors</span>
+<span class="g g-Whitespace">    </span><span class="mi">105</span> <span class="kn">from</span> <span class="nn">aesara.tensor</span> <span class="kn">import</span> <span class="n">sharedvar</span>  <span class="c1"># noqa</span>
+<span class="ne">--&gt; </span><span class="mi">106</span> <span class="kn">from</span> <span class="nn">aesara.tensor</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa</span>
+<span class="g g-Whitespace">    </span><span class="mi">107</span>     <span class="n">blas</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">108</span>     <span class="n">blas_c</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">109</span>     <span class="n">blas_scipy</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">110</span>     <span class="n">xlogx</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">111</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">112</span> <span class="kn">import</span> <span class="nn">aesara.tensor.rewriting</span>
+<span class="g g-Whitespace">    </span><span class="mi">115</span> <span class="c1"># isort: off</span>
+
+<span class="n">File</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">hostedtoolcache</span><span class="o">/</span><span class="n">Python</span><span class="o">/</span><span class="mf">3.9.18</span><span class="o">/</span><span class="n">x64</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.9</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">aesara</span><span class="o">/</span><span class="n">tensor</span><span class="o">/</span><span class="n">blas</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">162</span>
+<span class="g g-Whitespace">    </span><span class="mi">160</span> <span class="kn">from</span> <span class="nn">aesara.scalar</span> <span class="kn">import</span> <span class="nb">bool</span> <span class="k">as</span> <span class="n">bool_t</span>
+<span class="g g-Whitespace">    </span><span class="mi">161</span> <span class="kn">from</span> <span class="nn">aesara.tensor</span> <span class="kn">import</span> <span class="n">basic</span> <span class="k">as</span> <span class="n">at</span>
+<span class="ne">--&gt; </span><span class="mi">162</span> <span class="kn">from</span> <span class="nn">aesara.tensor.blas_headers</span> <span class="kn">import</span> <span class="n">blas_header_text</span><span class="p">,</span> <span class="n">blas_header_version</span>
+<span class="g g-Whitespace">    </span><span class="mi">163</span> <span class="kn">from</span> <span class="nn">aesara.tensor.elemwise</span> <span class="kn">import</span> <span class="n">DimShuffle</span><span class="p">,</span> <span class="n">Elemwise</span>
+<span class="g g-Whitespace">    </span><span class="mi">164</span> <span class="kn">from</span> <span class="nn">aesara.tensor.exceptions</span> <span class="kn">import</span> <span class="n">NotScalarConstantError</span>
+
+<span class="n">File</span> <span class="o">/</span><span class="n">opt</span><span class="o">/</span><span class="n">hostedtoolcache</span><span class="o">/</span><span class="n">Python</span><span class="o">/</span><span class="mf">3.9.18</span><span class="o">/</span><span class="n">x64</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.9</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">aesara</span><span class="o">/</span><span class="n">tensor</span><span class="o">/</span><span class="n">blas_headers</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">1015</span>
+<span class="g g-Whitespace">    </span><span class="mi">997</span>             <span class="n">header</span> <span class="o">+=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">998</span><span class="w">                 </span><span class="sd">&quot;&quot;&quot;\</span>
+<span class="g g-Whitespace">    </span><span class="mi">999</span><span class="sd">                     static float sdot_(int* Nx, float* x, int* Sx, float* y, int* Sy)</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1009</span><span class="sd">                     &quot;&quot;&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">1010</span>             <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1012</span>     <span class="k">return</span> <span class="n">header</span> <span class="o">+</span> <span class="n">blas_code</span>
+<span class="ne">-&gt; </span><span class="mi">1015</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">blas__ldflags</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1016</span>     <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Using NumPy C-API based implementation for BLAS functions.&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1019</span> <span class="k">def</span> <span class="nf">mkl_threads_text</span><span class="p">():</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.9.18/x64/lib/python3.9/site-packages/aesara/configparser.py:354,</span> in <span class="ni">ConfigParam.__get__</span><span class="nt">(self, cls, type_, delete_key)</span>
+<span class="g g-Whitespace">    </span><span class="mi">352</span> <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">353</span>     <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">):</span>
+<span class="ne">--&gt; </span><span class="mi">354</span>         <span class="n">val_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">355</span>     <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">356</span>         <span class="n">val_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.9.18/x64/lib/python3.9/site-packages/aesara/link/c/cmodule.py:2725,</span> in <span class="ni">default_blas_ldflags</span><span class="nt">()</span>
+<span class="g g-Whitespace">   </span><span class="mi">2723</span> <span class="n">warn_record</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="g g-Whitespace">   </span><span class="mi">2724</span> <span class="k">try</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">2725</span>     <span class="n">blas_info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">__config__</span><span class="o">.</span><span class="n">get_info</span><span class="p">(</span><span class="s2">&quot;blas_opt&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2727</span>     <span class="c1"># If we are in a EPD installation, mkl is available</span>
+<span class="g g-Whitespace">   </span><span class="mi">2728</span>     <span class="k">if</span> <span class="s2">&quot;EPD&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
+
+<span class="ne">AttributeError</span>: module &#39;numpy.__config__&#39; has no attribute &#39;get_info&#39;
+</pre></div>
+</div>
+</div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -451,11 +564,6 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <span class="n">r_good</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">y</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span>  <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r_bad</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">% of the customers in the dataset are classified as having bad credit.&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>30.0% of the customers in the dataset are classified as having bad credit.
 </pre></div>
 </div>
 </div>
@@ -574,72 +682,11 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                   mean       std    median      5.0%     95.0%     n_eff     r_hat
-      beta[0]     -0.26      0.33     -0.19     -0.74      0.22     45.94      1.06
-      beta[1]     -0.81      0.12     -0.80     -1.02     -0.64     74.73      1.01
-      beta[2]      1.21      0.28      1.22      0.74      1.64     74.57      1.01
-      beta[3]     -0.71      0.17     -0.73     -1.00     -0.44     92.76      1.06
-      beta[4]      0.20      0.28      0.15     -0.19      0.62     36.80      1.00
-      beta[5]     -0.41      0.13     -0.41     -0.60     -0.20     63.17      1.01
-      beta[6]     -0.20      0.14     -0.19     -0.40      0.02     61.47      1.01
-      beta[7]     -0.22      0.16     -0.21     -0.50      0.03     54.92      1.02
-      beta[8]      0.01      0.08      0.00     -0.10      0.15     83.01      1.00
-      beta[9]      0.19      0.14      0.19     -0.03      0.41     69.27      1.02
-     beta[10]     -0.13      0.18     -0.09     -0.47      0.11     29.33      1.01
-     beta[11]     -0.28      0.11     -0.28     -0.46     -0.12     86.92      1.01
-     beta[12]      0.22      0.22      0.19     -0.12      0.53     59.19      1.05
-     beta[13]      0.01      0.09      0.00     -0.15      0.14     52.17      1.02
-     beta[14]     -0.07      0.07     -0.06     -0.17      0.05     84.17      1.04
-     beta[15]     -0.40      0.26     -0.42     -0.80      0.03     58.62      1.01
-     beta[16]      0.29      0.10      0.28      0.14      0.45     68.68      1.03
-     beta[17]     -0.35      0.16     -0.35     -0.63     -0.10     96.87      1.01
-     beta[18]      0.23      0.18      0.21     -0.04      0.50     47.77      1.01
-     beta[19]      0.33      0.24      0.32     -0.06      0.68     44.98      1.02
-     beta[20]      0.15      0.13      0.14     -0.05      0.34     29.72      1.02
-     beta[21]     -0.06      0.10     -0.05     -0.24      0.10     42.68      1.02
-     beta[22]     -0.04      0.16     -0.02     -0.36      0.20     56.69      1.02
-     beta[23]     -0.01      0.07     -0.00     -0.11      0.10     44.42      1.03
-     beta[24]      0.00      0.05      0.00     -0.09      0.10    116.34      1.00
- log_lmbda[0]     -0.02      1.23      0.03     -2.19      1.93     42.31      1.04
- log_lmbda[1]      1.10      0.71      1.00      0.02      2.25      8.97      1.12
- log_lmbda[2]      1.33      0.74      1.21      0.21      2.37     61.13      1.04
- log_lmbda[3]      1.01      0.90      0.87     -0.37      2.39     52.88      1.08
- log_lmbda[4]     -0.16      1.02     -0.13     -1.73      1.58     62.53      1.00
- log_lmbda[5]      0.47      0.77      0.35     -0.66      1.73     53.89      1.06
- log_lmbda[6]     -0.11      1.07     -0.12     -2.00      1.31     43.00      1.02
- log_lmbda[7]      0.03      1.06      0.01     -1.61      1.94     64.74      1.03
- log_lmbda[8]     -0.92      1.17     -0.87     -2.96      0.81     34.93      1.08
- log_lmbda[9]      0.13      1.23      0.08     -1.91      2.08     63.26      1.05
-log_lmbda[10]     -0.39      1.04     -0.24     -2.24      1.18     40.20      1.03
-log_lmbda[11]      0.22      0.82      0.20     -1.20      1.38     56.60      1.05
-log_lmbda[12]     -0.09      1.12     -0.03     -1.85      1.75     60.54      1.05
-log_lmbda[13]     -0.85      1.21     -0.79     -2.95      0.98     58.09      1.02
-log_lmbda[14]     -0.99      1.07     -0.89     -3.04      0.53     69.20      1.05
-log_lmbda[15]      0.37      1.06      0.45     -1.18      2.39     65.36      1.01
-log_lmbda[16]      0.34      0.86      0.19     -0.95      1.82     71.62      1.01
-log_lmbda[17]      0.33      0.74      0.25     -0.70      1.70     83.19      1.01
-log_lmbda[18]     -0.05      0.95      0.02     -1.37      1.72     83.48      1.02
-log_lmbda[19]      0.15      0.97      0.26     -1.44      1.66     35.19      1.07
-log_lmbda[20]     -0.42      1.03     -0.35     -2.04      1.21     24.23      1.08
-log_lmbda[21]     -0.69      1.01     -0.66     -2.17      0.98     99.62      1.03
-log_lmbda[22]     -0.51      1.11     -0.53     -2.34      1.15     55.27      1.05
-log_lmbda[23]     -0.97      1.09     -0.95     -2.52      0.94     89.31      1.04
-log_lmbda[24]     -1.34      1.32     -1.17     -3.60      0.77     57.58      1.00
-      log_tau     -1.25      0.34     -1.25     -1.84     -0.76     21.03      1.09
-</pre></div>
-</div>
-</div>
 </div>
 <p>Let’s check if there are any divergent transitions</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">is_divergent</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([0, 0], dtype=int64)
 </pre></div>
 </div>
 </div>
@@ -667,9 +714,6 @@ log_lmbda[24]     -1.34      1.32     -1.17     -3.60      0.77     57.58      1
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<img alt="../_images/3183382c1d528316c11243fd7347bf5eb14340629eb78d45a5f41ce2cd753db1.png" src="../_images/3183382c1d528316c11243fd7347bf5eb14340629eb78d45a5f41ce2cd753db1.png" />
-</div>
 </div>
 <p>While some parameters (for instance the 15th) exhibit no particular correlations, the funnel geometry can still be observed for a few of them (4th, 13th, etc.). Ideally one would adopt a centered parametrization for those parameters to get a better approximation to the true posterior distribution, but here we also assess the ability of the sampler to explore these funnel geometries.</p>
 <p>We can convince ourselves that the Horseshoe prior induces sparsity on the regression coefficients by looking at their posterior distribution:</p>
@@ -695,9 +739,6 @@ log_lmbda[24]     -1.34      1.32     -1.17     -3.60      0.77     57.58      1
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/eb2465feb69dc36a8ab76148afc875e0a44df285b38e3f4ee5289a1eadc07350.png" src="../_images/eb2465feb69dc36a8ab76148afc875e0a44df285b38e3f4ee5289a1eadc07350.png" />
 </div>
 </div>
 <p>Indeed, many of the parameters are centered around <span class="math notranslate nohighlight">\(0\)</span>.</p>
@@ -757,11 +798,10 @@ log_lmbda[24]     -1.34      1.32     -1.17     -3.60      0.77     57.58      1
 
               
               
-                <footer class="bd-footer-article">
-                  
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="logistic_regression.html"
@@ -781,10 +821,7 @@ log_lmbda[24]     -1.34      1.32     -1.17     -3.60      0.77     57.58      1
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
@@ -852,8 +889,8 @@ By The Blackjax Team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,8 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=927b94d3fcb96560df09"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -78,6 +79,15 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -326,10 +336,10 @@ const thebe_selector_output = ".output, .cell_output"
 
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -337,7 +347,7 @@ document.write(`
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -457,7 +467,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Samples from a mixture of 25 normal distributions&#39;)
 </pre></div>
 </div>
-<img alt="../_images/d9fc3beab5cf4e8510e9ccb1350ccf2c7d6c1224adb3028a0e78a4da6520416d.png" src="../_images/d9fc3beab5cf4e8510e9ccb1350ccf2c7d6c1224adb3028a0e78a4da6520416d.png" />
+<img alt="../_images/eb7a26a56da9cdb469cdd21ce3264e69a65777e70f442331905332a4d2efb4a4.png" src="../_images/eb7a26a56da9cdb469cdd21ce3264e69a65777e70f442331905332a4d2efb4a4.png" />
 </div>
 </div>
 <section id="sgld">
@@ -466,7 +476,6 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">blackjax</span>
-<span class="kn">import</span> <span class="nn">jax</span>
 <span class="kn">from</span> <span class="nn">fastprogress</span> <span class="kn">import</span> <span class="n">progress_bar</span>
 
 
@@ -481,11 +490,11 @@ document.write(`
 <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">init_position</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span> <span class="o">+</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,))</span>
 
-<span class="n">position</span> <span class="o">=</span> <span class="n">init_position</span>
+<span class="n">position</span> <span class="o">=</span> <span class="n">sgld</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">init_position</span><span class="p">)</span>
 <span class="n">sgld_samples</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">progress_bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_training_steps</span><span class="p">)):</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
-    <span class="n">position</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">sgld</span><span class="p">)(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">schedule</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">sgld</span><span class="o">.</span><span class="n">step</span><span class="p">)(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">schedule</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
     <span class="n">sgld_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -510,7 +519,7 @@ document.write(`
 </div><div class="output text_html">
     <div>
       <progress value='50000' class='' max='50000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [50000/50000 00:25&lt;00:00]
+      100.00% [50000/50000 00:10&lt;00:00]
     </div>
     </div></div>
 </div>
@@ -540,7 +549,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(-8.0, 8.0, -8.0, 8.0)
 </pre></div>
 </div>
-<img alt="../_images/d228145ea73f491bf2b90a4e9ed07f36735e3e031f82901215ccbfc051df86e4.png" src="../_images/d228145ea73f491bf2b90a4e9ed07f36735e3e031f82901215ccbfc051df86e4.png" />
+<img alt="../_images/3a86e3c42dc1c2b20c84be50fcafa51fe824c2ffca4da4204720131c090a6b78.png" src="../_images/3a86e3c42dc1c2b20c84be50fcafa51fe824c2ffca4da4204720131c090a6b78.png" />
 </div>
 </div>
 </section>
@@ -595,13 +604,7 @@ document.write(`
 <span class="expanded">Hide code cell source</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
-<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
-
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="n">schedule_fn</span> <span class="o">=</span> <span class="n">build_schedule</span><span class="p">(</span><span class="mi">20000</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">schedule_fn</span> <span class="o">=</span> <span class="n">build_schedule</span><span class="p">(</span><span class="mi">20000</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">)</span>
 <span class="n">schedule</span> <span class="o">=</span> <span class="p">[</span><span class="n">schedule_fn</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20000</span><span class="p">)]</span>
 
 <span class="n">step_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">step</span><span class="o">.</span><span class="n">step_size</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">schedule</span><span class="p">])</span>
@@ -628,7 +631,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Training schedule for Cyclical SGLD&#39;)
 </pre></div>
 </div>
-<img alt="../_images/0569cab3ae53cd4c603c41fd5b4f9841e992c6f56becec886cd1890e9d30e62d.png" src="../_images/0569cab3ae53cd4c603c41fd5b4f9841e992c6f56becec886cd1890e9d30e62d.png" />
+<img alt="../_images/113872bd8fc02e0863beb4d62090d1293766b472d70df807035408205b3d7d62.png" src="../_images/113872bd8fc02e0863beb4d62090d1293766b472d70df807035408205b3d7d62.png" />
 </div>
 </div>
 </section>
@@ -637,19 +640,16 @@ document.write(`
 <p>Let us now build a step function for the Cyclical SGLD algorithm that can act as a drop-in replacement to the SGLD kernel.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">NamedTuple</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">optax</span>
 
-<span class="kn">import</span> <span class="nn">blackjax</span>
-<span class="kn">import</span> <span class="nn">optax</span>
-
-<span class="kn">from</span> <span class="nn">blackjax.types</span> <span class="kn">import</span> <span class="n">PyTree</span>
+<span class="kn">from</span> <span class="nn">blackjax.types</span> <span class="kn">import</span> <span class="n">ArrayTree</span>
 <span class="kn">from</span> <span class="nn">optax._src.base</span> <span class="kn">import</span> <span class="n">OptState</span>
 
 
 <span class="k">class</span> <span class="nc">CyclicalSGMCMCState</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;State of the Cyclical SGMCMC sampler.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">position</span><span class="p">:</span> <span class="n">PyTree</span>
+    <span class="n">position</span><span class="p">:</span> <span class="n">ArrayTree</span>
     <span class="n">opt_state</span><span class="p">:</span> <span class="n">OptState</span>
 
 
@@ -668,7 +668,7 @@ document.write(`
 
         <span class="k">def</span> <span class="nf">step_with_sgld</span><span class="p">(</span><span class="n">current_state</span><span class="p">):</span>
             <span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">minibatch</span><span class="p">,</span> <span class="n">step_size</span> <span class="o">=</span> <span class="n">current_state</span>
-            <span class="n">new_position</span> <span class="o">=</span> <span class="n">sgld</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">minibatch</span><span class="p">,</span> <span class="n">step_size</span><span class="p">)</span>
+            <span class="n">new_position</span> <span class="o">=</span> <span class="n">sgld</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">minibatch</span><span class="p">,</span> <span class="n">step_size</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">CyclicalSGMCMCState</span><span class="p">(</span><span class="n">new_position</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">opt_state</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">step_with_sgd</span><span class="p">(</span><span class="n">current_state</span><span class="p">):</span>
@@ -701,11 +701,7 @@ document.write(`
 <p>Let’s sample using Cyclical SGLD, for the same number of iterations as with SGLD. We’ll use 30 cycles, and sample 75% of the time.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
-<span class="kn">from</span> <span class="nn">fastprogress</span> <span class="kn">import</span> <span class="n">progress_bar</span>
-
-
-<span class="c1"># 50k iterations</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 50k iterations</span>
 <span class="c1"># M = 30</span>
 <span class="c1"># initial step size = 0.09</span>
 <span class="c1"># ratio exploration = 1/4</span>
@@ -751,7 +747,7 @@ document.write(`
 </div><div class="output text_html">
     <div>
       <progress value='50000' class='' max='50000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [50000/50000 00:26&lt;00:00]
+      100.00% [50000/50000 00:10&lt;00:00]
     </div>
     </div></div>
 </div>
@@ -782,7 +778,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Trajectory with Cyclical SGLD&#39;)
 </pre></div>
 </div>
-<img alt="../_images/369cc105ef771e9b0e43b681b4595217700a80c0c9842fef019cff3f8c829d24.png" src="../_images/369cc105ef771e9b0e43b681b4595217700a80c0c9842fef019cff3f8c829d24.png" />
+<img alt="../_images/5e29b7241f7f8a880a473c593b047fe01169d1dc4453631147da0094c834401a.png" src="../_images/5e29b7241f7f8a880a473c593b047fe01169d1dc4453631147da0094c834401a.png" />
 </div>
 </div>
 <p>And the distribution indeed looks more better:</p>
@@ -793,12 +789,7 @@ document.write(`
 <span class="expanded">Hide code cell source</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="k">as</span> <span class="nn">plt</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gaussian_kde</span>
-
-<span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span>
 <span class="n">xmax</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span>
 
 <span class="n">nbins</span> <span class="o">=</span> <span class="mi">300</span><span class="n">j</span>
@@ -825,7 +816,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Samples from a mixture of 25 normal distributions&#39;)
 </pre></div>
 </div>
-<img alt="../_images/32f1175b7f642aca58d996a2eb319746b7d57b2d5e1f60458366a63f6b99dadf.png" src="../_images/32f1175b7f642aca58d996a2eb319746b7d57b2d5e1f60458366a63f6b99dadf.png" />
+<img alt="../_images/d71e6141b4a21e7ee5c06f2ce68c8297e58bf0ff60a34664c602a338bed02423.png" src="../_images/d71e6141b4a21e7ee5c06f2ce68c8297e58bf0ff60a34664c602a338bed02423.png" />
 </div>
 </div>
 <div class="admonition warning">
@@ -868,11 +859,10 @@ document.write(`
 
               
               
-                <footer class="bd-footer-article">
-                  
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="../index.html"
@@ -892,10 +882,7 @@ document.write(`
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
@@ -963,8 +950,8 @@ By The Blackjax Team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09"></script>
 
   <footer class="bd-footer">
   </footer>

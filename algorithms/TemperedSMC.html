@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,8 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=927b94d3fcb96560df09"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -78,6 +79,15 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -326,10 +336,10 @@ const thebe_selector_output = ".output, .cell_output"
 
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -337,7 +347,7 @@ document.write(`
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -479,10 +489,10 @@ V(x) = (x^2 - 1)^2
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fd77cb7c460&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f6950e0cd30&gt;
 </pre></div>
 </div>
-<img alt="../_images/a4ac235177999f6bb5f6d5604ebdaa76ff021d95eea360ac0d727c19c981a06c.png" src="../_images/a4ac235177999f6bb5f6d5604ebdaa76ff021d95eea360ac0d727c19c981a06c.png" />
+<img alt="../_images/11d73a835b9b282fcc27243aa0b3a162d0adc44caef631b37d8463658c326ba1.png" src="../_images/11d73a835b9b282fcc27243aa0b3a162d0adc44caef631b37d8463658c326ba1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -530,8 +540,8 @@ V(x) = (x^2 - 1)^2
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.5 s, sys: 24.8 ms, total: 1.52 s
-Wall time: 1.52 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.25 s, sys: 19.2 ms, total: 1.27 s
+Wall time: 1.26 s
 </pre></div>
 </div>
 </div>
@@ -551,7 +561,7 @@ Wall time: 1.52 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/5c31cc9e51859722bd8f5706524cb90fd31c1a482d210dfbb2e1a78713ab053b.png" src="../_images/5c31cc9e51859722bd8f5706524cb90fd31c1a482d210dfbb2e1a78713ab053b.png" />
+<img alt="../_images/289b44d36b1398c57023570a0860fcf4e563ca6b69d3719cf0b89cd7ba0c1e3b.png" src="../_images/289b44d36b1398c57023570a0860fcf4e563ca6b69d3719cf0b89cd7ba0c1e3b.png" />
 </div>
 </div>
 </section>
@@ -571,8 +581,8 @@ Wall time: 1.52 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 8.02 s, sys: 9.31 ms, total: 8.03 s
-Wall time: 8.02 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 6.98 s, sys: 16.5 ms, total: 6.99 s
+Wall time: 6.99 s
 </pre></div>
 </div>
 </div>
@@ -592,7 +602,7 @@ Wall time: 8.02 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/22898f34ebb8b17f0dc6c9dc9962eaa26574c4915dc27024862243f1ae5a6fa2.png" src="../_images/22898f34ebb8b17f0dc6c9dc9962eaa26574c4915dc27024862243f1ae5a6fa2.png" />
+<img alt="../_images/7a9b2037a2fd2930c0e0ed722cb60a55ecc1ffe2256c32c79cedbd9047d7bef0.png" src="../_images/7a9b2037a2fd2930c0e0ed722cb60a55ecc1ffe2256c32c79cedbd9047d7bef0.png" />
 </div>
 </div>
 </section>
@@ -642,7 +652,7 @@ Wall time: 8.02 s
 <span class="n">tempered</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">adaptive_tempered_smc</span><span class="p">(</span>
     <span class="n">prior_log_prob</span><span class="p">,</span>
     <span class="n">loglikelihood</span><span class="p">,</span>
-    <span class="n">blackjax</span><span class="o">.</span><span class="n">hmc</span><span class="o">.</span><span class="n">kernel</span><span class="p">(),</span>
+    <span class="n">blackjax</span><span class="o">.</span><span class="n">hmc</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(),</span>
     <span class="n">blackjax</span><span class="o">.</span><span class="n">hmc</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
     <span class="n">hmc_parameters</span><span class="p">,</span>
     <span class="n">resampling</span><span class="o">.</span><span class="n">systematic</span><span class="p">,</span>
@@ -662,8 +672,8 @@ Wall time: 8.02 s
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of steps in the adaptive algorithm:  12
-CPU times: user 2.94 s, sys: 60 ms, total: 3 s
-Wall time: 2.93 s
+CPU times: user 2.92 s, sys: 36.2 ms, total: 2.95 s
+Wall time: 2.87 s
 </pre></div>
 </div>
 </div>
@@ -683,7 +693,7 @@ Wall time: 2.93 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/e8897639a9bac70e2b0aefee16b6d47f8ecc8e7871586216e6802025fc2c44dd.png" src="../_images/e8897639a9bac70e2b0aefee16b6d47f8ecc8e7871586216e6802025fc2c44dd.png" />
+<img alt="../_images/b7090227705aa776ddacd9d2b445c135b59ab72450ff4b40ee2deda392010ad3.png" src="../_images/b7090227705aa776ddacd9d2b445c135b59ab72450ff4b40ee2deda392010ad3.png" />
 </div>
 </div>
 </section>
@@ -735,10 +745,10 @@ Wall time: 2.93 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fd77ca4a700&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f6950462b20&gt;
 </pre></div>
 </div>
-<img alt="../_images/8c1e4c80a96edee9d7ca9d8221a6b861e716cd0b68c3d9c8dfebea4c61173f3b.png" src="../_images/8c1e4c80a96edee9d7ca9d8221a6b861e716cd0b68c3d9c8dfebea4c61173f3b.png" />
+<img alt="../_images/28e47581c021cbb75b192f67a9b4e92f20a45943120057898224e07a53ebceb5.png" src="../_images/28e47581c021cbb75b192f67a9b4e92f20a45943120057898224e07a53ebceb5.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -783,8 +793,8 @@ Wall time: 2.93 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 815 ms, sys: 8.01 ms, total: 823 ms
-Wall time: 819 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 732 ms, sys: 7.98 ms, total: 740 ms
+Wall time: 735 ms
 </pre></div>
 </div>
 </div>
@@ -805,7 +815,7 @@ Wall time: 819 ms
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/3c94966b7c68d57ebf44fd73cc52930b7c64b3c7fab3da6151181987ebe1fabf.png" src="../_images/3c94966b7c68d57ebf44fd73cc52930b7c64b3c7fab3da6151181987ebe1fabf.png" />
+<img alt="../_images/676f1304743b66ce35564b0d88027d80553b7d00666fd5b865ef4067fc3afb74.png" src="../_images/676f1304743b66ce35564b0d88027d80553b7d00666fd5b865ef4067fc3afb74.png" />
 </div>
 </div>
 </section>
@@ -825,8 +835,8 @@ Wall time: 819 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.55 s, sys: 27.9 ms, total: 1.58 s
-Wall time: 1.57 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.41 s, sys: 12 ms, total: 1.42 s
+Wall time: 1.41 s
 </pre></div>
 </div>
 </div>
@@ -847,7 +857,7 @@ Wall time: 1.57 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/fc9d24d2902772e920aa31260c0bd68be5ab57afd7e80d7a3e6f0142500c9d6a.png" src="../_images/fc9d24d2902772e920aa31260c0bd68be5ab57afd7e80d7a3e6f0142500c9d6a.png" />
+<img alt="../_images/07b74d608d35012731408ebb91e5bf98f2bc318b0bc5b4caf877a4186101884b.png" src="../_images/07b74d608d35012731408ebb91e5bf98f2bc318b0bc5b4caf877a4186101884b.png" />
 </div>
 </div>
 </section>
@@ -868,11 +878,12 @@ We correct the bias introduced by the (arbitrary) prior.</p>
 <span class="n">tempered</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">adaptive_tempered_smc</span><span class="p">(</span>
     <span class="n">prior_log_prob</span><span class="p">,</span>
     <span class="n">loglikelihood</span><span class="p">,</span>
-    <span class="n">blackjax</span><span class="o">.</span><span class="n">hmc</span><span class="p">,</span>
+    <span class="n">blackjax</span><span class="o">.</span><span class="n">hmc</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(),</span>
+    <span class="n">blackjax</span><span class="o">.</span><span class="n">hmc</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
     <span class="n">hmc_parameters</span><span class="p">,</span>
     <span class="n">resampling</span><span class="o">.</span><span class="n">systematic</span><span class="p">,</span>
     <span class="mf">0.75</span><span class="p">,</span>
-    <span class="n">mcmc_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">num_mcmc_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">initial_smc_state</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span>
@@ -886,11 +897,9 @@ We correct the bias introduced by the (arbitrary) prior.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">File</span> <span class="o">&lt;</span><span class="n">timed</span> <span class="n">exec</span><span class="o">&gt;</span><span class="p">:</span><span class="mi">7</span>
-
-<span class="ne">TypeError</span>: __new__() got an unexpected keyword argument &#39;mcmc_iter&#39;
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of steps in the adaptive algorithm:  9
+CPU times: user 2.36 s, sys: 24.4 ms, total: 2.39 s
+Wall time: 2.37 s
 </pre></div>
 </div>
 </div>
@@ -911,7 +920,7 @@ We correct the bias introduced by the (arbitrary) prior.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/5e7c2e13a7706342354c690e5289152d05775cb47cfb58fb74c571d5a81a5676.png" src="../_images/5e7c2e13a7706342354c690e5289152d05775cb47cfb58fb74c571d5a81a5676.png" />
+<img alt="../_images/974eec78863b479e9964a89302cec72d0933ebafddb3c82290d1fd656eceae0f.png" src="../_images/974eec78863b479e9964a89302cec72d0933ebafddb3c82290d1fd656eceae0f.png" />
 </div>
 </div>
 <p>The tempered SMC algorithm with the HMC kernel clearly outperfoms the HMC and NUTS kernels alone.</p>
@@ -944,11 +953,10 @@ We correct the bias introduced by the (arbitrary) prior.</p>
 
               
               
-                <footer class="bd-footer-article">
-                  
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="PeriodicOrbitalMCMC.html"
@@ -968,10 +976,7 @@ We correct the bias introduced by the (arbitrary) prior.</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
@@ -1048,8 +1053,8 @@ By The Blackjax Team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09"></script>
 
   <footer class="bd-footer">
   </footer>

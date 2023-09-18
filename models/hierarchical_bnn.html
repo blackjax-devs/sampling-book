@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,8 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=927b94d3fcb96560df09"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -78,6 +79,15 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -326,10 +336,10 @@ const thebe_selector_output = ".output, .cell_output"
 
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -337,7 +347,7 @@ document.write(`
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -446,7 +456,7 @@ document.write(`
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/76536c6e0c2ddbb4c553d1d50870726aa05578739aef8e545352a27c588e61d2.png" src="../_images/76536c6e0c2ddbb4c553d1d50870726aa05578739aef8e545352a27c588e61d2.png" />
+<img alt="../_images/08af2795040b456e82eaa1d58124c56a99066b5f98153c642c4e333bd50a0836.png" src="../_images/08af2795040b456e82eaa1d58124c56a99066b5f98153c642c4e333bd50a0836.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -536,7 +546,7 @@ document.write(`
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/d85816deef04988bca0b20956d3413f4d4a5ecbee0c3eba745e596d34bcc77bb.png" src="../_images/d85816deef04988bca0b20956d3413f4d4a5ecbee0c3eba745e596d34bcc77bb.png" />
+<img alt="../_images/50ca016aba015a793f9f0fe6a80082d74913de1f0efd580723ec8c0a41577c81.png" src="../_images/50ca016aba015a793f9f0fe6a80082d74913de1f0efd580723ec8c0a41577c81.png" />
 </div>
 </div>
 </section>
@@ -544,9 +554,9 @@ document.write(`
 <h2>Utility Functions for Training and Testing<a class="headerlink" href="#utility-functions-for-training-and-testing" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">step_fn</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">one_step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">):</span>
-        <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+        <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">step_fn</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">state</span>
 
     <span class="n">keys</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">)</span>
@@ -560,8 +570,8 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_predictions</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">):</span>
-    <span class="n">vmap</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">apply</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">out_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="n">vmap</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+    <span class="n">vectorized_apply</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">apply</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="n">out_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">vectorized_apply</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
     <span class="n">predictions</span> <span class="o">=</span> <span class="n">tfd</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">rng_key</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">predictions</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -599,10 +609,10 @@ document.write(`
     <span class="c1"># warm up</span>
     <span class="n">adapt</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">window_adaptation</span><span class="p">(</span><span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">,</span> <span class="n">logprob</span><span class="p">)</span>
     <span class="p">(</span><span class="n">final_state</span><span class="p">,</span> <span class="n">params</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">adapt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">warmup_key</span><span class="p">,</span> <span class="n">initial_position</span><span class="p">,</span> <span class="n">num_warmup</span><span class="p">)</span>
-    <span class="n">kernel</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">(</span><span class="n">logprob</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">step</span>
+    <span class="n">step_fn</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">(</span><span class="n">logprob</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">step</span>
     
     <span class="c1"># inference</span>
-    <span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">inference_key</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">final_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">)</span>
+    <span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">inference_key</span><span class="p">,</span> <span class="n">step_fn</span><span class="p">,</span> <span class="n">final_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">)</span>
     <span class="n">samples</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">position</span>
 
     <span class="c1"># evaluation</span>
@@ -786,7 +796,7 @@ and compute the posterior for all the weights.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/ffff5c7c318fc20ccc7237ddb016795163fa8c2a837a54702f55a65efdbacd78.png" src="../_images/ffff5c7c318fc20ccc7237ddb016795163fa8c2a837a54702f55a65efdbacd78.png" />
+<img alt="../_images/9be63b9df490558dc339e28ce4b2b8135d36a404293043ee91e7e351d7d7aa5f.png" src="../_images/9be63b9df490558dc339e28ce4b2b8135d36a404293043ee91e7e351d7d7aa5f.png" />
 </div>
 </div>
 <div class="cell tag_hide-input docutils container">
@@ -802,7 +812,7 @@ and compute the posterior for all the weights.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/ebb13617e5c3dccd67696f1b5db0eaadeeae62faf6145e9a12041d2a4271940d.png" src="../_images/ebb13617e5c3dccd67696f1b5db0eaadeeae62faf6145e9a12041d2a4271940d.png" />
+<img alt="../_images/42af19892da59750875c4f4fa7db2348fe9813ad26b7637429329606f6792bff.png" src="../_images/42af19892da59750875c4f4fa7db2348fe9813ad26b7637429329606f6792bff.png" />
 </div>
 </div>
 </section>
@@ -900,8 +910,8 @@ w^t_{ijl} = \mu_{ijl} + \epsilon^t_{ijl} \sigma_l
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1min 37s, sys: 2.82 s, total: 1min 40s
-Wall time: 1min 38s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1min 37s, sys: 3.51 s, total: 1min 40s
+Wall time: 1min 37s
 </pre></div>
 </div>
 </div>
@@ -926,7 +936,7 @@ Wall time: 1min 38s
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Train accuracy = 91.44%
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Train accuracy = 90.89%
 </pre></div>
 </div>
 </div>
@@ -948,7 +958,7 @@ Wall time: 1min 38s
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test accuracy = 87.44%
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test accuracy = 87.22%
 </pre></div>
 </div>
 </div>
@@ -990,7 +1000,7 @@ Wall time: 1min 38s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/3b4e8ab65373274a99f37201dfa09f36c2cbebd9dda5e2ee6d71c18ede7b2f25.png" src="../_images/3b4e8ab65373274a99f37201dfa09f36c2cbebd9dda5e2ee6d71c18ede7b2f25.png" />
+<img alt="../_images/00480c56c5882c11abfbf08a90df935574416801a7305aa61af73844686c3db3.png" src="../_images/00480c56c5882c11abfbf08a90df935574416801a7305aa61af73844686c3db3.png" />
 </div>
 </div>
 <div class="cell tag_hide-input docutils container">
@@ -1006,7 +1016,7 @@ Wall time: 1min 38s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/5f90b23fce88f76aa15d2ab9abbd0ae8c5e7a4afb7ca0ff36f61bae145869d3a.png" src="../_images/5f90b23fce88f76aa15d2ab9abbd0ae8c5e7a4afb7ca0ff36f61bae145869d3a.png" />
+<img alt="../_images/39726b4e5c65b5b879b005e8211aa656276b7248a08aa9ce0059975b9fb8c44f.png" src="../_images/39726b4e5c65b5b879b005e8211aa656276b7248a08aa9ce0059975b9fb8c44f.png" />
 </div>
 </div>
 </section>
@@ -1038,11 +1048,10 @@ Wall time: 1min 38s
 
               
               
-                <footer class="bd-footer-article">
-                  
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="mlp.html"
@@ -1062,10 +1071,7 @@ Wall time: 1min 38s
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
@@ -1139,8 +1145,8 @@ By The Blackjax Team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -4,14 +4,11 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.15.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-file_format: mystnb
-mystnb:
-  execution_timeout: 200
 ---
 
 # Gaussian Regression with the Elliptical Slice Sampler
@@ -45,7 +42,7 @@ In this example we will limit our analysis to the posterior distribution of the 
 
 Using this analytic result we can check the correct convergence of our sampler towards the posterior distribution. It is important to note, however, that the Elliptical Slice sampler can be used to sample from any vector of parameters so long as these parameters have a prior Multivariate Gaussian distribution.
 
-```{code-cell} python
+```{code-cell} ipython3
 import jax
 import jax.numpy as jnp
 import jax.random as jrnd
@@ -55,27 +52,27 @@ import numpy as np
 from blackjax import elliptical_slice, nuts, window_adaptation
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 def squared_exponential(x, y, length, scale):
     dot_diff = jnp.dot(x, x) + jnp.dot(y, y) - 2 * jnp.dot(x, y)
     return scale**2 * jnp.exp(-0.5 * dot_diff / length**2)
 ```
 
-```{code-cell} python
-def inference_loop(rng, init_state, kernel, n_iter):
+```{code-cell} ipython3
+def inference_loop(rng, init_state, step_fn, n_iter):
     keys = jrnd.split(rng, n_iter)
 
-    def step(state, key):
-        state, info = kernel(key, state)
+    def one_step(state, key):
+        state, info = step_fn(key, state)
         return state, (state, info)
 
-    _, (states, info) = jax.lax.scan(step, init_state, keys)
+    _, (states, info) = jax.lax.scan(one_step, init_state, keys)
     return states, info
 ```
 
 We fix the lengthscale $l$, signal variance $\sigma_f^2$ and likelihood variance $\sigma^2$ parameters to 1. and generate data from the model described above. Deliberately, we set a large value (2000) for the dimension of the target variable $\mathbf{f}$ to showcase the gradient-free Elliptical Slice sampler on a situation where its efficiency is apparent in comparison to gradient-based black box samplers such as NUTS. The dynamics of the sampler are equivalent to those of the [preconditioned Crank–Nicolson algorithm](https://en.wikipedia.org/wiki/Preconditioned_Crank%E2%80%93Nicolson_algorithm) (with its Metropolis-Hastings step replaced by a slice sampling step), thus making it robust to increasing dimensionality.
 
-```{code-cell} python
+```{code-cell} ipython3
 n, d = 2000, 2
 length, scale = 1.0, 1.0
 y_sd = 1.0
@@ -96,7 +93,7 @@ posterior_cov = jnp.linalg.inv(invSigma + 1 / y_sd**2 * jnp.eye(n))
 posterior_mean = jnp.dot(posterior_cov, y) * 1 / y_sd**2
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 plt.figure(figsize=(8, 5))
@@ -114,21 +111,21 @@ We compare the sampling time to NUTS, notice the difference in computation times
 - The Elliptical slice sampler takes as input the likelihood function and the mean and covariance $\Sigma$ parameters of the Gaussian prior separetley, since **the sampler assumes that the prior is Gaussian**. On the contrary case of NUTS, the algorithm takes as input the unnormalized posterior distribution, i.e. the likelihood times the prior density.
 - The Ellipical slice sampler is tuning-free, the warm up iterations are needed only for the sampler to start from a sensible initial position. While for NUTS the warm up samples are necessary not only to find a sensible initial position but also to tune the parameters of the algorithm, aiming at some average acceptance probability of its Metropolis-Hastings step. This additional tuning also contributes to the longer computation time.
 
-```{code-cell} python
+```{code-cell} ipython3
 # sampling parameters
 n_warm = 2000
 n_iter = 8000
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
 loglikelihood_fn = lambda f: -0.5 * jnp.dot(y - f, y - f) / y_sd**2
-init, kernel = elliptical_slice(loglikelihood_fn, mean=jnp.zeros(n), cov=Sigma)
-states, info = inference_loop(jrnd.PRNGKey(0), init(f), kernel, n_warm + n_iter)
+es_init_fn, es_step_fn = elliptical_slice(loglikelihood_fn, mean=jnp.zeros(n), cov=Sigma)
+states, info = inference_loop(jrnd.PRNGKey(0), es_init_fn(f), es_step_fn, n_warm + n_iter)
 samples = states.position[n_warm:]
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
 n_iter = 2000
 
@@ -136,13 +133,13 @@ logdensity_fn = lambda f: loglikelihood_fn(f) - 0.5 * jnp.dot(f @ invSigma, f)
 warmup = window_adaptation(nuts, logdensity_fn, n_warm, target_acceptance_rate=0.8)
 key_warm, key_sample = jrnd.split(jrnd.PRNGKey(0))
 (state, params), _ = warmup.run(key_warm, f)
-kernel = nuts(logdensity_fn, **parameters).step
-states, _ = inference_loop(key_sample, state, kernel, n_iter)
+nuts_step_fn = nuts(logdensity_fn, **params).step
+states, _ = inference_loop(key_sample, state, nuts_step_fn, n_iter)
 ```
 
 We check that the sampler is targeting the correct distribution by comparing the sample's mean and covariance to the conjugate results, and plotting the predictive distribution of our samples over the real observations.
 
-```{code-cell} python
+```{code-cell} ipython3
 error_mean = jnp.mean((samples.mean(axis=0) - posterior_mean) ** 2)
 error_cov = jnp.mean((jnp.cov(samples, rowvar=False) - posterior_cov) ** 2)
 print(
@@ -150,14 +147,14 @@ print(
 )
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 keys = jrnd.split(rng, 1000)
 predictive = jax.vmap(lambda k, f: f + jrnd.normal(k, (n,)) * y_sd)(
     keys, samples[-1000:]
 )
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 plt.figure(figsize=(8, 5))
@@ -178,7 +175,7 @@ Another parameter of interest for diagnostics is the location on the ellipse the
 
 Since the likelihood's variance is set at 1., it is quite informative. Increasing the likelihood's variance leads to less sub iterations per iteration of the Elliptical Slice sampler and the parameter theta becoming more uniform on its range.
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 plt.figure(figsize=(10, 5))
@@ -188,7 +185,7 @@ plt.title("Counts of number of sub iterations needed per sample.")
 plt.show()
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 plt.figure(figsize=(10, 5))
@@ -199,7 +196,6 @@ plt.title(
 )
 plt.show()
 ```
-
 
 ```{bibliography}
 :filter: docname in docnames

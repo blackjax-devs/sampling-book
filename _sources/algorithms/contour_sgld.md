@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.15.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -82,7 +82,7 @@ ax.spines["left"].set_visible(False)
 plt.title("Data")
 ```
 
-## Sample with Contour SGLD 
+## Sample with Contour SGLD
 
 ```{code-cell} ipython3
 from fastprogress import progress_bar
@@ -107,14 +107,16 @@ sgld = blackjax.sgld(grad_fn)
 
 
 # Initialize and take one step using the vanilla SGLD algorithm
-position = init_position
+position = sgld.init(init_position)
 sgld_sample_list = jnp.array([])
 
 pb = progress_bar(range(total_iter))
 for iter_ in pb:
     rng_key, batch_key, sample_key = jax.random.split(rng_key, 3)
-    data_batch = jax.random.shuffle(batch_key, X_data)[:batch_size, :]
-    position = jax.jit(sgld)(sample_key, position, data_batch, lr, temperature)
+    data_batch = jax.random.permutation(
+        batch_key, X_data, independent=True
+        )[:batch_size, :]
+    position = jax.jit(sgld.step)(sample_key, position, data_batch, lr, temperature)
     if iter_ % thinning_factor == 0:
         sgld_sample_list = jnp.append(sgld_sample_list, position)
         pb.comment = f"| position: {position: .2f}"
@@ -170,10 +172,12 @@ domain_radius = 50  # restart sampling when the particle explores too deep over 
 
 
 logdensity_fn = gradients.logdensity_estimator(logprior_fn, loglikelihood_fn, data_size)
+# Same as gradient_fn = jax.grad(logdensity_fn)
+gradient_fn = gradients.grad_estimator(logprior_fn, loglikelihood_fn, data_size)
 csgld = blackjax.csgld(
     logdensity_fn,
+    gradient_fn,
     zeta=zeta,  # can be specified at each step in lower-level interface
-    temperature=temperature,  # can be specified at each step
     num_partitions=num_partitions,  # cannot be specified at each step
     energy_gap=energy_gap,  # cannot be specified at each step
     min_energy=0,
@@ -189,15 +193,15 @@ for iter_ in pb:
     rng_key, subkey = jax.random.split(rng_key)
     stepsize_SA = min(1e-2, (iter_ + 100) ** (-0.8)) * sz
 
-    data_batch = jax.random.shuffle(rng_key, X_data)[:batch_size, :]
-    state = jax.jit(csgld.step)(subkey, state, data_batch, lr, stepsize_SA)
+    data_batch = jax.random.permutation(rng_key, X_data, independent=True)[
+        :batch_size, :
+    ]
+    state = jax.jit(csgld.step)(subkey, state, data_batch, lr, stepsize_SA, temperature)
 
     if iter_ % thinning_factor == 0:
         csgld_sample_list = jnp.append(csgld_sample_list, state.position)
         csgld_energy_idx_list = jnp.append(csgld_energy_idx_list, state.energy_idx)
-        pb.comment = (
-            f"| position {state.position: .2f}"
-        )
+        pb.comment = f"| position {state.position: .2f}"
 ```
 
 Contour SGLD is a meta-algorithm, based on Stochastic Gradient Langevin Dynamics. It takes inspiration from the Wang-Landau algorithm to learn the density of states of the model at each energy level, and uses this information to "flatten" the target density so the sampler can explore it more easily.
@@ -290,4 +294,3 @@ From the figure above, we see that low-energy regions usually lead to much highe
 +++
 
 Admittedly, this algorithm is a little sophisticated due to the need to partition the energy space; Learning energy pdf also makes this algorithm delicate and leads to a large variance. However, this allows to escape deep local traps in a principled sampling framework without using any tricks (cyclical learning rates or different initializations). The variance-reduced version is studied in [this work](https://arxiv.org/pdf/2202.09867.pdf).
-

@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,8 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=927b94d3fcb96560df09"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -76,6 +77,15 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
   
   <input type="checkbox"
           class="sidebar-toggle"
@@ -324,10 +334,10 @@ const thebe_selector_output = ".output, .cell_output"
 
 <script>
 document.write(`
-  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
-    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
-    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -335,7 +345,7 @@ document.write(`
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
@@ -453,7 +463,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Data&#39;)
 </pre></div>
 </div>
-<img alt="../_images/5ee7bec9c29af052039d2df33135f7c2dbcb332ddf8e064bf68d01e328c10298.png" src="../_images/5ee7bec9c29af052039d2df33135f7c2dbcb332ddf8e064bf68d01e328c10298.png" />
+<img alt="../_images/9d699e6163a65d693fb725250eb7d3238a8176d43470e0c7fb8803cfa2967022.png" src="../_images/9d699e6163a65d693fb725250eb7d3238a8176d43470e0c7fb8803cfa2967022.png" />
 </div>
 </div>
 </section>
@@ -483,14 +493,16 @@ document.write(`
 
 
 <span class="c1"># Initialize and take one step using the vanilla SGLD algorithm</span>
-<span class="n">position</span> <span class="o">=</span> <span class="n">init_position</span>
+<span class="n">position</span> <span class="o">=</span> <span class="n">sgld</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">init_position</span><span class="p">)</span>
 <span class="n">sgld_sample_list</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
 
 <span class="n">pb</span> <span class="o">=</span> <span class="n">progress_bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">total_iter</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">iter_</span> <span class="ow">in</span> <span class="n">pb</span><span class="p">:</span>
     <span class="n">rng_key</span><span class="p">,</span> <span class="n">batch_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="n">data_batch</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">batch_key</span><span class="p">,</span> <span class="n">X_data</span><span class="p">)[:</span><span class="n">batch_size</span><span class="p">,</span> <span class="p">:]</span>
-    <span class="n">position</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">sgld</span><span class="p">)(</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">data_batch</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+    <span class="n">data_batch</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span>
+        <span class="n">batch_key</span><span class="p">,</span> <span class="n">X_data</span><span class="p">,</span> <span class="n">independent</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)[:</span><span class="n">batch_size</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">sgld</span><span class="o">.</span><span class="n">step</span><span class="p">)(</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">data_batch</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">iter_</span> <span class="o">%</span> <span class="n">thinning_factor</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">sgld_sample_list</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sgld_sample_list</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span>
         <span class="n">pb</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;| position: </span><span class="si">{</span><span class="n">position</span><span class="si">:</span><span class="s2"> .2f</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -517,13 +529,9 @@ document.write(`
 </div><div class="output text_html">
     <div>
       <progress value='10000' class='' max='10000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [10000/10000 00:36&lt;00:00 | position:  23.35]
+      100.00% [10000/10000 00:40&lt;00:00 | position:  23.35]
     </div>
-    </div><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.9.16/x64/lib/python3.9/site-packages/jax/_src/random.py:400: FutureWarning: jax.random.shuffle is deprecated and will be removed in a future release. Use jax.random.permutation with independent=True.
-  warnings.warn(msg, FutureWarning)
-</pre></div>
-</div>
-</div>
+    </div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -564,7 +572,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0.98, &#39;Stochastic gradient Langevin dynamics (SGLD)&#39;)
 </pre></div>
 </div>
-<img alt="../_images/2d5907f098d832282c437ecbc20811f794f36dc2f086bb25f1ddc5d91ad51749.png" src="../_images/2d5907f098d832282c437ecbc20811f794f36dc2f086bb25f1ddc5d91ad51749.png" />
+<img alt="../_images/4ff0c9fe0d2a5c0fc26decb458892e099f738f81755a673605d613a0d8c2de8b.png" src="../_images/4ff0c9fe0d2a5c0fc26decb458892e099f738f81755a673605d613a0d8c2de8b.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -585,10 +593,12 @@ document.write(`
 
 
 <span class="n">logdensity_fn</span> <span class="o">=</span> <span class="n">gradients</span><span class="o">.</span><span class="n">logdensity_estimator</span><span class="p">(</span><span class="n">logprior_fn</span><span class="p">,</span> <span class="n">loglikelihood_fn</span><span class="p">,</span> <span class="n">data_size</span><span class="p">)</span>
+<span class="c1"># Same as gradient_fn = jax.grad(logdensity_fn)</span>
+<span class="n">gradient_fn</span> <span class="o">=</span> <span class="n">gradients</span><span class="o">.</span><span class="n">grad_estimator</span><span class="p">(</span><span class="n">logprior_fn</span><span class="p">,</span> <span class="n">loglikelihood_fn</span><span class="p">,</span> <span class="n">data_size</span><span class="p">)</span>
 <span class="n">csgld</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">csgld</span><span class="p">(</span>
     <span class="n">logdensity_fn</span><span class="p">,</span>
+    <span class="n">gradient_fn</span><span class="p">,</span>
     <span class="n">zeta</span><span class="o">=</span><span class="n">zeta</span><span class="p">,</span>  <span class="c1"># can be specified at each step in lower-level interface</span>
-    <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>  <span class="c1"># can be specified at each step</span>
     <span class="n">num_partitions</span><span class="o">=</span><span class="n">num_partitions</span><span class="p">,</span>  <span class="c1"># cannot be specified at each step</span>
     <span class="n">energy_gap</span><span class="o">=</span><span class="n">energy_gap</span><span class="p">,</span>  <span class="c1"># cannot be specified at each step</span>
     <span class="n">min_energy</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -604,15 +614,15 @@ document.write(`
     <span class="n">rng_key</span><span class="p">,</span> <span class="n">subkey</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
     <span class="n">stepsize_SA</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">,</span> <span class="p">(</span><span class="n">iter_</span> <span class="o">+</span> <span class="mi">100</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.8</span><span class="p">))</span> <span class="o">*</span> <span class="n">sz</span>
 
-    <span class="n">data_batch</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">X_data</span><span class="p">)[:</span><span class="n">batch_size</span><span class="p">,</span> <span class="p">:]</span>
-    <span class="n">state</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">csgld</span><span class="o">.</span><span class="n">step</span><span class="p">)(</span><span class="n">subkey</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">data_batch</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">stepsize_SA</span><span class="p">)</span>
+    <span class="n">data_batch</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">X_data</span><span class="p">,</span> <span class="n">independent</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span>
+        <span class="p">:</span><span class="n">batch_size</span><span class="p">,</span> <span class="p">:</span>
+    <span class="p">]</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">csgld</span><span class="o">.</span><span class="n">step</span><span class="p">)(</span><span class="n">subkey</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">data_batch</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">stepsize_SA</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">iter_</span> <span class="o">%</span> <span class="n">thinning_factor</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">csgld_sample_list</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">csgld_sample_list</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
         <span class="n">csgld_energy_idx_list</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">csgld_energy_idx_list</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">energy_idx</span><span class="p">)</span>
-        <span class="n">pb</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;| position </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="si">:</span><span class="s2"> .2f</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
+        <span class="n">pb</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;| position </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="si">:</span><span class="s2"> .2f</span><span class="si">}</span><span class="s2">&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -636,7 +646,7 @@ document.write(`
 </div><div class="output text_html">
     <div>
       <progress value='10000' class='' max='10000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [10000/10000 00:38&lt;00:00 | position  18.12]
+      100.00% [10000/10000 00:41&lt;00:00 | position  18.12]
     </div>
     </div></div>
 </div>
@@ -704,7 +714,7 @@ document.write(`
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0.98, &#39;Contour SGLD&#39;)
 </pre></div>
 </div>
-<img alt="../_images/64db5a51b1220fa95789ac3a01b111d162d2697224faea8f5cfa226b0b82dec6.png" src="../_images/64db5a51b1220fa95789ac3a01b111d162d2697224faea8f5cfa226b0b82dec6.png" />
+<img alt="../_images/014b8a172cc29778ba9c24f5597729ff3143d1469c8bb2c05ec62135b655e58a.png" src="../_images/014b8a172cc29778ba9c24f5597729ff3143d1469c8bb2c05ec62135b655e58a.png" />
 </div>
 </div>
 </section>
@@ -738,7 +748,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/b96b9c66bdec9c28c05a5165b2a6d663c996785db38f8d6bd10bf592a2053429.png" src="../_images/b96b9c66bdec9c28c05a5165b2a6d663c996785db38f8d6bd10bf592a2053429.png" />
+<img alt="../_images/3032f04c6416d10803b60db723a205d729cd82306aa8914e9293d050c8fd595b.png" src="../_images/3032f04c6416d10803b60db723a205d729cd82306aa8914e9293d050c8fd595b.png" />
 </div>
 </div>
 <p>From the figure above, we see that low-energy regions usually lead to much higher probability mass. Moreover, the slope is negative with a higher scale in low energy regions. In view of Eq.(8) in <a class="reference external" href="https://proceedings.neurips.cc/paper/2020/file/b5b8c484824d8a06f4f3d570bc420313-Paper.pdf">the paper</a>, we can expect a <strong>negative learning rate</strong> to help the particle escape the local trap. Eventually, a particle is able to bounce out of the deep local traps freely instead of being absorbed into it.</p>
@@ -771,11 +781,10 @@ document.write(`
 
               
               
-                <footer class="bd-footer-article">
-                  
-<div class="footer-article-items footer-article__inner">
-  
-    <div class="footer-article-item"><!-- Previous / next buttons -->
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="cyclical_sgld.html"
@@ -795,10 +804,7 @@ document.write(`
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
-</div></div>
-  
 </div>
-
                 </footer>
               
             </div>
@@ -863,8 +869,8 @@ By The Blackjax Team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09"></script>
 
   <footer class="bd-footer">
   </footer>
