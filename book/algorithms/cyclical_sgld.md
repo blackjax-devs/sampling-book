@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.15.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -82,7 +82,6 @@ Let us build a SGLD sampler with Blackjax with a decreading learning rate, and g
 
 ```{code-cell} ipython3
 import blackjax
-import jax
 from fastprogress import progress_bar
 
 
@@ -97,11 +96,11 @@ sgld = blackjax.sgld(grad_fn)
 rng_key = jax.random.PRNGKey(3)
 init_position = -10 + 20 * jax.random.uniform(rng_key, shape=(2,))
 
-position = init_position
+position = sgld.init(init_position)
 sgld_samples = []
 for i in progress_bar(range(num_training_steps)):
     _, rng_key = jax.random.split(rng_key)
-    position = jax.jit(sgld)(rng_key, position, 0, schedule[i])
+    position = jax.jit(sgld.step)(rng_key, position, 0, schedule[i])
     sgld_samples.append(position)
 ```
 
@@ -168,12 +167,6 @@ Let us visualize a schedule for 200k training steps divided in 4 cycles. At each
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-import jax
-import jax.numpy as jnp
-
-import matplotlib.pyplot as plt
-import numpy as np
-
 schedule_fn = build_schedule(20000, 4, 1e-1)
 schedule = [schedule_fn(i) for i in range(20000)]
 
@@ -200,19 +193,16 @@ plt.title("Training schedule for Cyclical SGLD")
 Let us now build a step function for the Cyclical SGLD algorithm that can act as a drop-in replacement to the SGLD kernel.
 
 ```{code-cell} ipython3
-from typing import NamedTuple
-
-import blackjax
 import optax
 
-from blackjax.types import PyTree
+from blackjax.types import ArrayTree
 from optax._src.base import OptState
 
 
 class CyclicalSGMCMCState(NamedTuple):
     """State of the Cyclical SGMCMC sampler.
     """
-    position: PyTree
+    position: ArrayTree
     opt_state: OptState
 
 
@@ -231,7 +221,7 @@ def cyclical_sgld(grad_estimator_fn, loglikelihood_fn):
 
         def step_with_sgld(current_state):
             rng_key, state, minibatch, step_size = current_state
-            new_position = sgld(rng_key, state.position, minibatch, step_size)
+            new_position = sgld.step(rng_key, state.position, minibatch, step_size)
             return CyclicalSGMCMCState(new_position, state.opt_state)
 
         def step_with_sgd(current_state):
@@ -264,10 +254,6 @@ If you want to Cyclical SGLD on one of your models you can simply copy and paste
 Let's sample using Cyclical SGLD, for the same number of iterations as with SGLD. We'll use 30 cycles, and sample 75% of the time.
 
 ```{code-cell} ipython3
-import jax
-from fastprogress import progress_bar
-
-
 # 50k iterations
 # M = 30
 # initial step size = 0.09
@@ -315,11 +301,6 @@ And the distribution indeed looks more better:
 
 ```{code-cell} ipython3
 :tags: [hide-input, remove-stdout]
-
-import matplotlib.pylab as plt
-
-import numpy as np
-from scipy.stats import gaussian_kde
 
 xmin, ymin = -5, -5
 xmax, ymax = 5, 5

@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.15.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -18,7 +18,7 @@ mystnb:
 
 In this notebook we demonstrate the use of the random walk Rosenbluth-Metropolis-Hasting algorithm on a simple logistic regression.
 
-```{code-cell} python
+```{code-cell} ipython3
 import jax
 import jax.numpy as jnp
 import jax.random as random
@@ -28,7 +28,7 @@ from sklearn.datasets import make_biclusters
 import blackjax
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-cell]
 
 plt.rcParams["axes.spines.right"] = False
@@ -40,7 +40,7 @@ plt.rcParams["figure.figsize"] = (12, 8)
 
 We create two clusters of points using [scikit-learn's `make_bicluster` function](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_biclusters.html?highlight=bicluster%20data#sklearn.datasets.make_biclusters).
 
-```{code-cell} python
+```{code-cell} ipython3
 num_points = 50
 X, rows, cols = make_biclusters(
     (num_points, 2), 2, noise=0.6, random_state=314, minval=-3, maxval=3
@@ -48,7 +48,7 @@ X, rows, cols = make_biclusters(
 y = rows[0] * 1.0  # y[i] = whether point i belongs to cluster 1
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 colors = ["tab:red" if el else "tab:blue" for el in rows[0]]
@@ -80,7 +80,7 @@ $$
 
 And $\Phi$ is the matrix that contains the data, so each row $\Phi_{i,:}$ is the vector $\left[1, X_0^i, X_1^i\right]$
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-stderr]
 
 Phi = jnp.c_[jnp.ones(num_points)[:, None], X]
@@ -109,18 +109,17 @@ def logdensity_fn(w, alpha=1.0):
 
 We use `blackjax`'s Random Walk RMH kernel to sample from the posterior distribution.
 
-```{code-cell} python
+```{code-cell} ipython3
 rng_key = random.PRNGKey(314)
 
 w0 = random.multivariate_normal(rng_key, 0.1 + jnp.zeros(M), jnp.eye(M))
-
-rmh = blackjax.rmh(logdensity_fn, sigma=jnp.ones(M) * 0.7)
+rmh = blackjax.rmh(logdensity_fn, blackjax.mcmc.random_walk.normal(jnp.ones(M) * 0.05))
 initial_state = rmh.init(w0)
 ```
 
 Since `blackjax` does not provide an inference loop we need to implement one ourselves:
 
-```{code-cell} python
+```{code-cell} ipython3
 def inference_loop(rng_key, kernel, initial_state, num_samples):
     @jax.jit
     def one_step(state, rng_key):
@@ -135,14 +134,14 @@ def inference_loop(rng_key, kernel, initial_state, num_samples):
 
 We can now run the inference:
 
-```{code-cell} python
+```{code-cell} ipython3
 _, rng_key = random.split(rng_key)
 states = inference_loop(rng_key, rmh.step, initial_state, 5_000)
 ```
 
 And display the trace:
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 burnin = 300
@@ -155,7 +154,7 @@ for i, axi in enumerate(ax):
 plt.show()
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 burnin = 300
 chains = states.position[burnin:, :]
 nsamp, _ = chains.shape
@@ -165,7 +164,7 @@ nsamp, _ = chains.shape
 
 Having infered the posterior distribution of the regression's coefficients we can compute the probability to belong to the first cluster at each position $(X_0, X_1)$.
 
-```{code-cell} python
+```{code-cell} ipython3
 # Create a meshgrid
 xmin, ymin = X.min(axis=0) - 0.1
 xmax, ymax = X.max(axis=0) + 0.1
@@ -179,7 +178,7 @@ Z_mcmc = sigmoid(jnp.einsum("mij,sm->sij", Phispace, chains))
 Z_mcmc = Z_mcmc.mean(axis=0)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 plt.contourf(*Xspace, Z_mcmc)
