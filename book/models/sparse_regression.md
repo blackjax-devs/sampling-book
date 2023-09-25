@@ -151,7 +151,7 @@ num_chains = 128
 num_warmup = 2000
 num_samples = 2000
 
-rng_key = jax.random.PRNGKey(10)
+rng_key = jax.random.key(10)
 rng_key, key_b, key_l, key_t = jax.random.split(rng_key, 4)
 init_position = {
     "beta": jax.random.normal(key_b, (num_chains, X.shape[1])),

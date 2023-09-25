@@ -61,7 +61,7 @@ sample_fn, logprior_fn, loglikelihood_fn = gaussian_mixture_model()
 ```{code-cell} ipython3
 data_size = 1000
 
-rng_key = jax.random.PRNGKey(888)
+rng_key = jax.random.key(888)
 rng_key, sample_key = jax.random.split(rng_key)
 X_data = sample_fn(sample_key, data_size)
 ```

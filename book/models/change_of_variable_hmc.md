@@ -266,7 +266,7 @@ def joint_logdensity(params):
 We take initial parameters from uniform distribution
 
 ```{code-cell} ipython3
-rng_key = jax.random.PRNGKey(0)
+rng_key = jax.random.key(0)
 n_params = n_rat_tumors + 2
 
 
@@ -436,7 +436,7 @@ def joint_logdensity_change_of_var(params):
 except for the change of variable in `joint_logdensity()` function, everthing will remain same
 
 ```{code-cell} ipython3
-rng_key = jax.random.PRNGKey(0)
+rng_key = jax.random.key(0)
 
 
 def init_param_fn(seed):
@@ -551,7 +551,7 @@ def joint_logdensity(unbound_param):
 
 ```{code-cell} ipython3
 %%time
-rng_key = jax.random.PRNGKey(0)
+rng_key = jax.random.key(0)
 warmup = blackjax.window_adaptation(blackjax.nuts, joint_logdensity)
 
 # we use 4 chains for sampling

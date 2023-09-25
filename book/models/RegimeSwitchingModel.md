@@ -171,7 +171,7 @@ dist = RegimeSwitchHMM(T, y)
 
 ```{code-cell} python
 [n_chain, n_warm, n_iter] = [128, 5000, 200]
-ksam, kinit = jrnd.split(jrnd.PRNGKey(0), 2)
+ksam, kinit = jrnd.split(jrnd.key(0), 2)
 dist.initialize_model(kinit, n_chain)
 ```
 

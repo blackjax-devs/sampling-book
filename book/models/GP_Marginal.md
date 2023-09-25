@@ -116,7 +116,7 @@ length, scale = 1.0, 1.0
 y_sd = 1.0
 
 # fake data
-rng = jrnd.PRNGKey(10)
+rng = jrnd.key(10)
 kX, kf, ky = jrnd.split(rng, 3)
 
 X = jrnd.uniform(kX, shape=(n, d))
@@ -205,7 +205,7 @@ Note that one can calibrate the `delta` parameter as described in the example [B
 kernel = lambda key, x: step(rng_key=key, state=x, delta=0.5)
 initial_state = init(f)
 
-states, info = inference_loop(jrnd.PRNGKey(0), init(f), kernel, n_warm + n_iter)
+states, info = inference_loop(jrnd.key(0), init(f), kernel, n_warm + n_iter)
 samples = states.position[n_warm:]
 ```
 

@@ -159,7 +159,7 @@ num_warmup = (data_size // batch_size) * 20
 num_samples = 1000
 
 # Batch the data
-rng_key = jax.random.PRNGKey(1)
+rng_key = jax.random.key(1)
 batches = batch_data(rng_key, (X_train, y_train), batch_size, data_size)
 
 # Set the initial state
