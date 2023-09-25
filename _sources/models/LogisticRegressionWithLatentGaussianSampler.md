@@ -111,7 +111,7 @@ def log_likelihood(w):
 We use `blackjax`'s Latent Gaussian sampler to sample from the posterior distribution.
 
 ```{code-cell} python
-rng_key = random.PRNGKey(314)
+rng_key = random.key(314)
 
 w0 = jnp.zeros((M,))
 

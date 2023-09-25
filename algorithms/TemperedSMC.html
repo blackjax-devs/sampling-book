@@ -473,6 +473,12 @@ V(x) = (x^2 - 1)^2
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1695619731.651043    2149 tfrt_cpu_pjrt_client.cc:349] TfrtCpuClient created.
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell tag_hide-input docutils container">
 <details class="hide above-input">
@@ -489,7 +495,7 @@ V(x) = (x^2 - 1)^2
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f6950e0cd30&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fb5b7fb07f0&gt;
 </pre></div>
 </div>
 <img alt="../_images/11d73a835b9b282fcc27243aa0b3a162d0adc44caef631b37d8463658c326ba1.png" src="../_images/11d73a835b9b282fcc27243aa0b3a162d0adc44caef631b37d8463658c326ba1.png" />
@@ -527,7 +533,7 @@ V(x) = (x^2 - 1)^2
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
 
-<span class="n">key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 
 <span class="n">hmc_parameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
     <span class="n">step_size</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">inverse_mass_matrix</span><span class="o">=</span><span class="n">inv_mass_matrix</span><span class="p">,</span> <span class="n">num_integration_steps</span><span class="o">=</span><span class="mi">50</span>
@@ -540,8 +546,8 @@ V(x) = (x^2 - 1)^2
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.25 s, sys: 19.2 ms, total: 1.27 s
-Wall time: 1.26 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.25 s, sys: 14.4 ms, total: 1.26 s
+Wall time: 1.25 s
 </pre></div>
 </div>
 </div>
@@ -581,8 +587,8 @@ Wall time: 1.26 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 6.98 s, sys: 16.5 ms, total: 6.99 s
-Wall time: 6.99 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 6.91 s, sys: 15.6 ms, total: 6.92 s
+Wall time: 6.91 s
 </pre></div>
 </div>
 </div>
@@ -661,7 +667,7 @@ Wall time: 6.99 s
 <span class="p">)</span>
 
 <span class="n">initial_smc_state</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span>
-    <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">n_samples</span><span class="p">,)</span>
+    <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">n_samples</span><span class="p">,)</span>
 <span class="p">)</span>
 <span class="n">initial_smc_state</span> <span class="o">=</span> <span class="n">tempered</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">initial_smc_state</span><span class="p">)</span>
 
@@ -672,8 +678,8 @@ Wall time: 6.99 s
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of steps in the adaptive algorithm:  12
-CPU times: user 2.92 s, sys: 36.2 ms, total: 2.95 s
-Wall time: 2.87 s
+CPU times: user 2.75 s, sys: 72.1 ms, total: 2.82 s
+Wall time: 2.73 s
 </pre></div>
 </div>
 </div>
@@ -745,7 +751,7 @@ Wall time: 2.87 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f6950462b20&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fb5b43444c0&gt;
 </pre></div>
 </div>
 <img alt="../_images/28e47581c021cbb75b192f67a9b4e92f20a45943120057898224e07a53ebceb5.png" src="../_images/28e47581c021cbb75b192f67a9b4e92f20a45943120057898224e07a53ebceb5.png" />
@@ -778,7 +784,7 @@ Wall time: 2.87 s
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
 
-<span class="n">key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 
 <span class="n">loglikelihood</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">V</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
@@ -793,8 +799,8 @@ Wall time: 2.87 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 732 ms, sys: 7.98 ms, total: 740 ms
-Wall time: 735 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 700 ms, sys: 7.79 ms, total: 708 ms
+Wall time: 704 ms
 </pre></div>
 </div>
 </div>
@@ -835,8 +841,8 @@ Wall time: 735 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.41 s, sys: 12 ms, total: 1.42 s
-Wall time: 1.41 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.28 s, sys: 28 ms, total: 1.3 s
+Wall time: 1.3 s
 </pre></div>
 </div>
 </div>
@@ -887,7 +893,7 @@ We correct the bias introduced by the (arbitrary) prior.</p>
 <span class="p">)</span>
 
 <span class="n">initial_smc_state</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span>
-    <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">n_samples</span><span class="p">,)</span>
+    <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">n_samples</span><span class="p">,)</span>
 <span class="p">)</span>
 <span class="n">initial_smc_state</span> <span class="o">=</span> <span class="n">tempered</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">initial_smc_state</span><span class="p">)</span>
 
@@ -898,8 +904,8 @@ We correct the bias introduced by the (arbitrary) prior.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of steps in the adaptive algorithm:  9
-CPU times: user 2.36 s, sys: 24.4 ms, total: 2.39 s
-Wall time: 2.37 s
+CPU times: user 2.43 s, sys: 8.54 ms, total: 2.44 s
+Wall time: 2.4 s
 </pre></div>
 </div>
 </div>

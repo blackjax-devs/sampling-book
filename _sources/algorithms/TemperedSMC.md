@@ -119,7 +119,7 @@ We first try to sample from the posterior density using an HMC kernel.
 ```{code-cell} ipython3
 %%time
 
-key = jax.random.PRNGKey(42)
+key = jax.random.key(42)
 
 hmc_parameters = dict(
     step_size=1e-4, inverse_mass_matrix=inv_mass_matrix, num_integration_steps=50
@@ -211,7 +211,7 @@ tempered = blackjax.adaptive_tempered_smc(
 )
 
 initial_smc_state = jax.random.multivariate_normal(
-    jax.random.PRNGKey(0), jnp.zeros([1]), jnp.eye(1), (n_samples,)
+    jax.random.key(0), jnp.zeros([1]), jnp.eye(1), (n_samples,)
 )
 initial_smc_state = tempered.init(initial_smc_state)
 
@@ -290,7 +290,7 @@ We first try to sample from the posterior density using an HMC kernel.
 ```{code-cell} ipython3
 %%time
 
-key = jax.random.PRNGKey(42)
+key = jax.random.key(42)
 
 loglikelihood = lambda x: -V(x)
 
@@ -361,7 +361,7 @@ tempered = blackjax.adaptive_tempered_smc(
 )
 
 initial_smc_state = jax.random.multivariate_normal(
-    jax.random.PRNGKey(0), jnp.zeros([1]), jnp.eye(1), (n_samples,)
+    jax.random.key(0), jnp.zeros([1]), jnp.eye(1), (n_samples,)
 )
 initial_smc_state = tempered.init(initial_smc_state)
 
