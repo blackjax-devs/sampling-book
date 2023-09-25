@@ -53,7 +53,7 @@ import numpy as np
 from scipy.stats import gaussian_kde
 
 
-rng_key = jax.random.PRNGKey(0)
+rng_key = jax.random.key(0)
 samples = jax.vmap(sample_fn)(jax.random.split(rng_key, 10_000))
 
 xmin, ymin = -5, -5
@@ -93,7 +93,7 @@ schedule = [schedule_fn(i) for i in range(1, num_training_steps+1)]
 grad_fn = lambda x, _: jax.grad(logprob_fn)(x)
 sgld = blackjax.sgld(grad_fn)
 
-rng_key = jax.random.PRNGKey(3)
+rng_key = jax.random.key(3)
 init_position = -10 + 20 * jax.random.uniform(rng_key, shape=(2,))
 
 position = sgld.init(init_position)
@@ -265,7 +265,7 @@ schedule = [schedule_fn(i) for i in range(num_training_steps)]
 grad_fn = lambda x, _: jax.grad(logprob_fn)(x)
 init, step = cyclical_sgld(grad_fn, logprob_fn)
 
-rng_key = jax.random.PRNGKey(3)
+rng_key = jax.random.key(3)
 init_position = -10 + 20 * jax.random.uniform(rng_key, shape=(2,))
 init_state = init(init_position)
 

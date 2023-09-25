@@ -156,7 +156,7 @@ vv_kernel = jax.jit(vv_kernel)
 
 ```{code-cell} python
 %%time
-rng_key = jax.random.PRNGKey(0)
+rng_key = jax.random.key(0)
 states = inference_loop(rng_key, vv_kernel, initial_state, 10_000)
 
 samples = states.positions
@@ -182,7 +182,7 @@ ml_kernel = jax.jit(ml_kernel)
 
 ```{code-cell} python
 %%time
-rng_key = jax.random.PRNGKey(0)
+rng_key = jax.random.key(0)
 states = inference_loop(rng_key, ml_kernel, initial_state, 10_000)
 
 samples = states.positions
@@ -210,7 +210,7 @@ yo_kernel = jax.jit(yo_kernel)
 
 ```{code-cell} python
 %%time
-rng_key = jax.random.PRNGKey(0)
+rng_key = jax.random.key(0)
 states = inference_loop(rng_key, yo_kernel, initial_state, 10_000)
 
 samples = states.positions
@@ -283,7 +283,7 @@ ellip_kernel = jax.jit(ellip_kernel)
 
 ```{code-cell} python
 %%time
-rng_key = jax.random.PRNGKey(0)
+rng_key = jax.random.key(0)
 states = inference_loop(rng_key, ellip_kernel, initial_state, 10_000)
 
 samples = states.positions
@@ -345,7 +345,7 @@ Then we initialize the parameters of our MAF transformation and define our refer
 
 ```{code-cell} python
 _, unraveler = jax.flatten_util.ravel_pytree(initial_position)
-_, initial_parameters = init_fun(jax.random.PRNGKey(1), (2,))
+_, initial_parameters = init_fun(jax.random.key(1), (2,))
 ```
 
 ```{code-cell} python
@@ -404,7 +404,7 @@ We train the parameters of our transformation by minimizing the negative ELBO. A
 ```{code-cell} python
 %%time
 parameters, nelbo = param_optim(
-    jax.random.PRNGKey(0),
+    jax.random.key(0),
     initial_parameters,
     logpullback,
     learning_rate=0.01,
@@ -441,7 +441,7 @@ ellip_kernel = jax.jit(ellip_kernel)
 
 ```{code-cell} python
 %%time
-rng_key = jax.random.PRNGKey(0)
+rng_key = jax.random.key(0)
 states = inference_loop(rng_key, ellip_kernel, initial_state, 10_000)
 
 pullback_samples = states.positions

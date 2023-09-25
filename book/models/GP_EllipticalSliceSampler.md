@@ -78,7 +78,7 @@ length, scale = 1.0, 1.0
 y_sd = 1.0
 
 # fake data
-rng = jrnd.PRNGKey(10)
+rng = jrnd.key(10)
 kX, kf, ky = jrnd.split(rng, 3)
 X = jrnd.uniform(kX, shape=(n, d))
 Sigma = jax.vmap(
@@ -121,7 +121,7 @@ n_iter = 8000
 %%time
 loglikelihood_fn = lambda f: -0.5 * jnp.dot(y - f, y - f) / y_sd**2
 es_init_fn, es_step_fn = elliptical_slice(loglikelihood_fn, mean=jnp.zeros(n), cov=Sigma)
-states, info = inference_loop(jrnd.PRNGKey(0), es_init_fn(f), es_step_fn, n_warm + n_iter)
+states, info = inference_loop(jrnd.key(0), es_init_fn(f), es_step_fn, n_warm + n_iter)
 samples = states.position[n_warm:]
 ```
 
@@ -131,7 +131,7 @@ n_iter = 2000
 
 logdensity_fn = lambda f: loglikelihood_fn(f) - 0.5 * jnp.dot(f @ invSigma, f)
 warmup = window_adaptation(nuts, logdensity_fn, n_warm, target_acceptance_rate=0.8)
-key_warm, key_sample = jrnd.split(jrnd.PRNGKey(0))
+key_warm, key_sample = jrnd.split(jrnd.key(0))
 (state, params), _ = warmup.run(key_warm, f)
 nuts_step_fn = nuts(logdensity_fn, **params).step
 states, _ = inference_loop(key_sample, state, nuts_step_fn, n_iter)

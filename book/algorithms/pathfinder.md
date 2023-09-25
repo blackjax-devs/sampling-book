@@ -112,7 +112,7 @@ The optimizer is the limited memory BFGS algorithm.
 To help understand the approximations that pathfinder evaluates during its run, here we plot for each step of the L-BFGS optimizer the approximation of the posterior distribution of the model derived by pathfinder and its ELBO:
 
 ```{code-cell} ipython3
-rng_key = random.PRNGKey(314)
+rng_key = random.key(314)
 w0 = random.multivariate_normal(rng_key, 2.0 + jnp.zeros(M), jnp.eye(M))
 _, info = blackjax.vi.pathfinder.approximate(rng_key, logdensity_fn, w0, ftol=1e-4)
 path = info.path

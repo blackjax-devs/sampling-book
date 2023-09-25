@@ -110,7 +110,7 @@ def logdensity_fn(w, alpha=1.0):
 We use `blackjax`'s Random Walk RMH kernel to sample from the posterior distribution.
 
 ```{code-cell} ipython3
-rng_key = random.PRNGKey(314)
+rng_key = random.key(314)
 
 w0 = random.multivariate_normal(rng_key, 0.1 + jnp.zeros(M), jnp.eye(M))
 rmh = blackjax.rmh(logdensity_fn, blackjax.mcmc.random_walk.normal(jnp.ones(M) * 0.05))
