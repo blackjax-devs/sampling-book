@@ -415,7 +415,7 @@ Consider an ordinary differential equation</p>
 \dot y(t) = f(y(t)), \quad 0 \leq t \leq T
 \]</div>
 <p>subject to an unknown initial condition <span class="math notranslate nohighlight">\(y(0) = \theta\)</span>.
-The probabilistic IVP solution is an approximation of the posterior distribution (e.g. Eq. (12) in <span id="id3">[]</span>)</p>
+The probabilistic IVP solution is an approximation of the posterior distribution (e.g. Eq. (12) in <span id="id3">[<a class="reference internal" href="#id22" title="Nicholas Krämer, Nathanael Bosch, Jonathan Schmidt, and Philipp Hennig. Probabilistic ode solutions in millions of dimensions. In International Conference on Machine Learning, 11634–11649. PMLR, 2022.">KramerBSH22</a>]</span>)</p>
 <div class="math notranslate nohighlight">
 \[
 p\left(y ~|~ [\dot y(t_n) = f(y(t_n))]_{n=0}^N, y(0) = \theta\right)
@@ -580,11 +580,13 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_M</span><span class="p">(</span><span class="n">theta_true</span><span class="p">)),</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_M</span><span class="p">(</span><span class="n">theta_guess</span><span class="p">)),</span> <span class="s2">&quot;?&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<!-- #region -->
 </section>
 <section id="sampling-with-blackjax">
 <h2>Sampling with BlackJAX<a class="headerlink" href="#sampling-with-blackjax" title="Permalink to this heading">#</a></h2>
 <p>From here on, BlackJAX takes over:</p>
 <p>Set up a sampler.</p>
+<!-- #endregion -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;kernel&quot;</span><span class="p">,</span> <span class="s2">&quot;num_samples&quot;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">one_step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">):</span>
@@ -599,18 +601,20 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 </div>
 <p>Initialise the sampler, warm it up, and run the inference loop.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">initial_position</span> <span class="o">=</span> <span class="n">theta_guess</span>
-<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># WARMUP</span>
 <span class="n">warmup</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">window_adaptation</span><span class="p">(</span>
-    <span class="n">algorithm</span><span class="o">=</span><span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">,</span> <span class="n">logprob_fn</span><span class="o">=</span><span class="n">log_M</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">,</span> <span class="n">log_M</span><span class="p">,</span> <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
-<span class="n">initial_state</span><span class="p">,</span> <span class="n">nuts_kernel</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">warmup</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">initial_position</span><span class="p">)</span>
+<span class="p">(</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">tuned_parameters</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">warmup</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+    <span class="n">rng_key</span><span class="p">,</span> <span class="n">initial_position</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># INFERENCE LOOP</span>
 <span class="n">rng_key</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">nuts_kernel</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">(</span><span class="n">log_M</span><span class="p">,</span> <span class="o">**</span><span class="n">tuned_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">step</span>
 <span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span>
     <span class="n">rng_key</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="n">nuts_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">150</span>
 <span class="p">)</span>
@@ -687,6 +691,7 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 </pre></div>
 </div>
 <!-- #region -->
+<!-- #region -->
 <p>Looks great!</p>
 </section>
 <section id="conclusion">
@@ -706,6 +711,10 @@ We could also replace the sampler with an optimisation algorithm and use this pr
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">KKramerS+20</a><span class="fn-bracket">]</span></span>
 <p>Hans Kersting, Nicholas Krämer, Martin Schiegg, Christian Daniel, Michael Tiemann, and Philipp Hennig. Differentiable likelihoods for fast inversion of 'likelihood-free' dynamical systems. In <em>International Conference on Machine Learning</em>, 5198–5208. PMLR, 2020.</p>
 </div>
+<div class="citation" id="id22" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">KramerBSH22</a><span class="fn-bracket">]</span></span>
+<p>Nicholas Krämer, Nathanael Bosch, Jonathan Schmidt, and Philipp Hennig. Probabilistic ode solutions in millions of dimensions. In <em>International Conference on Machine Learning</em>, 11634–11649. PMLR, 2022.</p>
+</div>
 <div class="citation" id="id23" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">KramerH21</a><span class="fn-bracket">]</span></span>
 <p>Nicholas Krämer and Philipp Hennig. Linear-time probabilistic solutions of boundary value problems. <em>Advances in Neural Information Processing Systems</em>, 34:11160–11171, 2021.</p>
@@ -716,6 +725,7 @@ We could also replace the sampler with an optimisation algorithm and use this pr
 </div>
 </div>
 </div>
+<!-- #endregion -->
 </section>
 </section>
 
