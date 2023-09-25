@@ -1,17 +1,15 @@
 ---
-jupytext:
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.14.1
-kernelspec:
-  display_name: Python 3 (ipykernel)
-  language: python
-  name: python3
-file_format: mystnb
-mystnb:
-  execution_timeout: 200
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.3'
+      jupytext_version: 1.15.2
+  kernelspec:
+    display_name: Python 3 (ipykernel)
+    language: python
+    name: python3
 ---
 
 <!-- #region -->
@@ -38,7 +36,7 @@ $$
 $$
 
 subject to an unknown initial condition $y(0) = \theta$.
-The probabilistic IVP solution is an approximation of the posterior distribution (e.g. Eq. (12) in {cite:p}`kramer2020probabilistic`)
+The probabilistic IVP solution is an approximation of the posterior distribution (e.g. Eq. (12) in {cite:p}`kramer2022probabilistic`)
 
 $$
 p\left(y ~|~ [\dot y(t_n) = f(y(t_n))]_{n=0}^N, y(0) = \theta\right)
@@ -223,12 +221,14 @@ log_M = functools.partial(logposterior_fn, data=data, ts=ts, solver=solver)
 print(jnp.exp(log_M(theta_true)), ">=", jnp.exp(log_M(theta_guess)), "?")
 ```
 
+<!-- #region -->
 ## Sampling with BlackJAX
 
 From here on, BlackJAX takes over:
 
 
 Set up a sampler.
+<!-- #endregion -->
 
 ```python
 @functools.partial(jax.jit, static_argnames=["kernel", "num_samples"])
@@ -247,20 +247,22 @@ Initialise the sampler, warm it up, and run the inference loop.
 
 ```python
 initial_position = theta_guess
-rng_key = jax.random.PRNGKey(0)
+rng_key = jax.random.key(0)
 ```
 
 ```python
 # WARMUP
 warmup = blackjax.window_adaptation(
-    algorithm=blackjax.nuts, logprob_fn=log_M, num_steps=200, progress_bar=True
+    blackjax.nuts, log_M, progress_bar=True
 )
-initial_state, nuts_kernel, _ = warmup.run(rng_key, initial_position)
+(initial_state, tuned_parameters), _ = warmup.run(
+    rng_key, initial_position, num_steps=200)
 ```
 
 ```python
 # INFERENCE LOOP
 rng_key, _ = jax.random.split(rng_key, 2)
+nuts_kernel = blackjax.nuts(log_M, **tuned_parameters).step
 states = inference_loop(
     rng_key, kernel=nuts_kernel, initial_state=initial_state, num_samples=150
 )
@@ -345,6 +347,7 @@ plt.show()
 ```
 
 <!-- #region -->
+<!-- #region -->
 Looks great!
 
 ## Conclusion
@@ -367,3 +370,4 @@ We could also replace the sampler with an optimisation algorithm and use this pr
 ```{bibliography}
 :filter: docname in docnames
 ```
+<!-- #endregion -->
