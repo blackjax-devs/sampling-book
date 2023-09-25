@@ -181,6 +181,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../models/GP_EllipticalSliceSampler.html">Gaussian Regression with the Elliptical Slice Sampler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models/LogisticRegressionWithLatentGaussianSampler.html">Bayesian Logistic Regression With Latent Gaussian Sampler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models/RegimeSwitchingModel.html">Regime switching Hidden Markov model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/probabilistic_ode_solver_parameter_estimation.html">Parameter estimation in ODE models with a probabilistic ODE solver</a></li>
 </ul>
 
     </div>
@@ -475,7 +476,7 @@ V(x) = (x^2 - 1)^2
 </div>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1695619731.651043    2149 tfrt_cpu_pjrt_client.cc:349] TfrtCpuClient created.
+I0000 00:00:1695619759.760844    2108 tfrt_cpu_pjrt_client.cc:349] TfrtCpuClient created.
 </pre></div>
 </div>
 </div>
@@ -495,7 +496,7 @@ I0000 00:00:1695619731.651043    2149 tfrt_cpu_pjrt_client.cc:349] TfrtCpuClient
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fb5b7fb07f0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f6163d76340&gt;
 </pre></div>
 </div>
 <img alt="../_images/11d73a835b9b282fcc27243aa0b3a162d0adc44caef631b37d8463658c326ba1.png" src="../_images/11d73a835b9b282fcc27243aa0b3a162d0adc44caef631b37d8463658c326ba1.png" />
@@ -546,8 +547,8 @@ I0000 00:00:1695619731.651043    2149 tfrt_cpu_pjrt_client.cc:349] TfrtCpuClient
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.25 s, sys: 14.4 ms, total: 1.26 s
-Wall time: 1.25 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.28 s, sys: 16.3 ms, total: 1.29 s
+Wall time: 1.29 s
 </pre></div>
 </div>
 </div>
@@ -587,8 +588,8 @@ Wall time: 1.25 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 6.91 s, sys: 15.6 ms, total: 6.92 s
-Wall time: 6.91 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 6.77 s, sys: 20.4 ms, total: 6.79 s
+Wall time: 6.78 s
 </pre></div>
 </div>
 </div>
@@ -678,8 +679,8 @@ Wall time: 6.91 s
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of steps in the adaptive algorithm:  12
-CPU times: user 2.75 s, sys: 72.1 ms, total: 2.82 s
-Wall time: 2.73 s
+CPU times: user 2.83 s, sys: 35.9 ms, total: 2.86 s
+Wall time: 2.77 s
 </pre></div>
 </div>
 </div>
@@ -751,7 +752,7 @@ Wall time: 2.73 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fb5b43444c0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f616010ba60&gt;
 </pre></div>
 </div>
 <img alt="../_images/28e47581c021cbb75b192f67a9b4e92f20a45943120057898224e07a53ebceb5.png" src="../_images/28e47581c021cbb75b192f67a9b4e92f20a45943120057898224e07a53ebceb5.png" />
@@ -799,8 +800,8 @@ Wall time: 2.73 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 700 ms, sys: 7.79 ms, total: 708 ms
-Wall time: 704 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 719 ms, sys: 4.16 ms, total: 723 ms
+Wall time: 719 ms
 </pre></div>
 </div>
 </div>
@@ -841,8 +842,8 @@ Wall time: 704 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.28 s, sys: 28 ms, total: 1.3 s
-Wall time: 1.3 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.31 s, sys: 8.08 ms, total: 1.32 s
+Wall time: 1.31 s
 </pre></div>
 </div>
 </div>
@@ -904,8 +905,8 @@ We correct the bias introduced by the (arbitrary) prior.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of steps in the adaptive algorithm:  9
-CPU times: user 2.43 s, sys: 8.54 ms, total: 2.44 s
-Wall time: 2.4 s
+CPU times: user 2.45 s, sys: 44.8 ms, total: 2.49 s
+Wall time: 2.45 s
 </pre></div>
 </div>
 </div>
