@@ -26,5 +26,5 @@ pandas
 seaborn
 scikit-learn
 tensorflow-probability[jax]
-probdiffeq
+probdiffeq<0.2.0
 diffeqzoo
