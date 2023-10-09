@@ -4,14 +4,11 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-file_format: mystnb
-mystnb:
-  execution_timeout: 200
 ---
 
 # Periodic Orbital MCMC
@@ -52,17 +49,33 @@ i.e. the solution of Hamilton's equations for $p(x,v) = N(x|0,I)N(v|0,I)$,
 
 As it is later demonstrated, these dynamics alone fail to capture all the volume of our banana density. They are, however, cheap and easy to use, since these dynamics are both gradient-free (don't require the computation of gradients of our target distribution) and tuning-free (have no tuning parameters); in contrast with the integrators mentioned above, which need to compute gradients at each iteration and require tuning of the discretization step size and number of steps (when used for periodic orbital MCMC, these values are represented by the `step_size` and `period`). Paired with a preconditioning step which transforms our target to approximate $N(x|0,I)$, our cheap and easy dynamics can efficienty sample from the whole volume of our banana density while delegating the expensive gradients and cumbersome tuning to an optimization problem performed pre-sampling.
 
-```{code-cell} python
+```{code-cell} ipython3
+:tags: [hide-cell]
+
+import matplotlib.pyplot as plt
+
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["axes.spines.top"] = False
+```
+
+```{code-cell} ipython3
+:tags: [remove-output]
+
 import jax
+
+from datetime import date
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+```
+
+```{code-cell} ipython3
 import jax.numpy as jnp
 import jax.scipy.stats as stats
-import matplotlib.pyplot as plt
 
 import blackjax.mcmc.integrators as integrators
 from blackjax import orbital_hmc as orbital
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-cell]
 
 def plot_contour(logdensity, orbits=None, weights=None):
@@ -70,10 +83,7 @@ def plot_contour(logdensity, orbits=None, weights=None):
     a, b, c, d = -7.5, 7.5, -5, 12.5
     x1 = jnp.linspace(a, b, 1000)
     x2 = jnp.linspace(c, d, 1000)
-    y = jax.vmap(
-        jax.vmap(lambda x1, x2: jnp.exp(logdensity({"x1": x1, "x2": x2})), (0, None)),
-        (None, 0),
-    )(x1, x2)
+    y = jnp.exp(logdensity({"x1": x1[None, ...], "x2": x2[..., None]}))
     fig, ax = plt.subplots(1, 2, figsize=(17, 6))
     CS0 = ax[0].contour(x1, x2, y, levels=10, colors="k")
     plt.clabel(CS0, inline=1, fontsize=10)
@@ -86,7 +96,7 @@ def plot_contour(logdensity, orbits=None, weights=None):
         ax[1].scatter(orbits["x1"], orbits["x2"], marker=".", alpha=weights)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-cell]
 
 def inference_loop(rng_key, kernel, initial_state, num_samples):
@@ -106,8 +116,9 @@ def inference_loop(rng_key, kernel, initial_state, num_samples):
 
 We will be sampling from the banana density:
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
+
 def logdensity_fn(x1, x2):
     """Banana density"""
     return stats.norm.logpdf(x1, 0.0, jnp.sqrt(8.0)) + stats.norm.logpdf(
@@ -125,13 +136,13 @@ Since the algorithm doesn't have an accept/reject step, we can't tune the parame
 
 The algorithm samples orbits of length `period`. Each iteration, starting from an initial point sampled from the previous orbit, shifts its initial point's position in the orbit, hence making the algorithm irreversible, and samples the whole orbit, forwards and backwards in order to cover the whole period, for steps of length `step_size`. The samples are then weighted and returned with its corresponding weights.
 
-```{code-cell} python
+```{code-cell} ipython3
 inv_mass_matrix = jnp.ones(2)
 period = 10
 step_size = 1e-1
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 initial_position = {"x1": 0.0, "x2": 0.0}
 ```
 
@@ -145,7 +156,7 @@ $$
 
 The plots include the unweighted samples to get an idea of how the integrator is exploring the sample space before the weight's "correction".
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
 init_fn, vv_kernel = orbital(
     logdensity, step_size, inv_mass_matrix, period, bijection=integrators.velocity_verlet
@@ -154,16 +165,16 @@ initial_state = init_fn(initial_position)
 vv_kernel = jax.jit(vv_kernel)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
-rng_key = jax.random.key(0)
-states = inference_loop(rng_key, vv_kernel, initial_state, 10_000)
+rng_key, sample_key = jax.random.split(rng_key)
+states = inference_loop(sample_key, vv_kernel, initial_state, 10_000)
 
 samples = states.positions
 weights = states.weights
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 plot_contour(logdensity, orbits=samples, weights=weights)
 ```
 
@@ -171,7 +182,7 @@ plot_contour(logdensity, orbits=samples, weights=weights)
 
 A different method of discretizing the solution to Hamilton's equations, see [Blanes, Casas & Sanz-Serna (2014)](https://arxiv.org/abs/1405.3153) {cite:p}`Blanes_2014`
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
 init_fn, ml_kernel = orbital(
     logdensity, step_size, inv_mass_matrix, period, bijection=integrators.mclachlan
@@ -180,16 +191,16 @@ initial_state = init_fn(initial_position)
 ml_kernel = jax.jit(ml_kernel)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
-rng_key = jax.random.key(0)
-states = inference_loop(rng_key, ml_kernel, initial_state, 10_000)
+rng_key, sample_key = jax.random.split(rng_key)
+states = inference_loop(sample_key, ml_kernel, initial_state, 10_000)
 
 samples = states.positions
 weights = states.weights
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 plot_contour(logdensity, orbits=samples, weights=weights)
@@ -199,7 +210,7 @@ plot_contour(logdensity, orbits=samples, weights=weights)
 
 A different method of discretizing the solution to Hamilton's equations, see [Blanes, Casas & Sanz-Serna (2014)](https://arxiv.org/abs/1405.3153) {cite:p}`Blanes_2014`
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
 init_fn, yo_kernel = orbital(
     logdensity, step_size, inv_mass_matrix, period, bijection=integrators.yoshida
@@ -208,16 +219,16 @@ initial_state = init_fn(initial_position)
 yo_kernel = jax.jit(yo_kernel)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
-rng_key = jax.random.key(0)
-states = inference_loop(rng_key, yo_kernel, initial_state, 10_000)
+rng_key, sample_key = jax.random.split(rng_key)
+states = inference_loop(sample_key, yo_kernel, initial_state, 10_000)
 
 samples = states.positions
 weights = states.weights
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 plot_contour(logdensity, orbits=samples, weights=weights)
@@ -238,7 +249,7 @@ which returns to its initial position every $t=2\pi$ radians. The `step_size` fo
 
 The bijection must output a function which takes as input an `IntegratorState`, composed of a position, momentum, potential energy (negative log density of our target evaluated at position) and the gradient of the potential energy, and a step size; and outputs a proposed `IntegratorState`. Even if the dynamics of our bijection are independent of the real potential energy, we need to return the potential energy at the proposed position for the computation of the sampler's weights. But, as our dynamics are gradient-free, we can return the same gradient as the previous state to avoid unnecessary computations.
 
-```{code-cell} python
+```{code-cell} ipython3
 def elliptical_bijection(potential_fn, kinetic_energy_fn):
     def one_step(
         state: integrators.IntegratorState, step_size: float
@@ -272,7 +283,7 @@ def elliptical_bijection(potential_fn, kinetic_energy_fn):
 step_size = 2 * jnp.pi / period
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
 init_fn, ellip_kernel = orbital(
     logdensity, step_size, inv_mass_matrix, period, bijection=elliptical_bijection
@@ -281,16 +292,16 @@ initial_state = init_fn(initial_position)
 ellip_kernel = jax.jit(ellip_kernel)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
-rng_key = jax.random.key(0)
-states = inference_loop(rng_key, ellip_kernel, initial_state, 10_000)
+rng_key, sample_key = jax.random.split(rng_key)
+states = inference_loop(sample_key, ellip_kernel, initial_state, 10_000)
 
 samples = states.positions
 weights = states.weights
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 plot_contour(logdensity, orbits=samples, weights=weights)
@@ -327,13 +338,12 @@ we have that using the periodic orbital MCMC on the pullback with bijection $f(x
 
 First we define our parametrized MAF bijection using autoregressive neural networks.
 
-
-```{code-cell} python
+```{code-cell} ipython3
 import optax
 from numpyro.nn import AutoregressiveNN
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 iaf_hidden_dims = [2, 2]
 iaf_nonlinearity = jax.example_libraries.stax.Elu
 init_fun, apply_fun = AutoregressiveNN(
@@ -343,12 +353,13 @@ init_fun, apply_fun = AutoregressiveNN(
 
 Then we initialize the parameters of our MAF transformation and define our reference density as a standard normal.
 
-```{code-cell} python
+```{code-cell} ipython3
 _, unraveler = jax.flatten_util.ravel_pytree(initial_position)
-_, initial_parameters = init_fun(jax.random.key(1), (2,))
+rng_key, init_key = jax.random.split(rng_key)
+_, initial_parameters = init_fun(init_key, (2,))
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 log_reference = lambda z: jnp.sum(stats.norm.logpdf(z, loc=0.0, scale=1.0))
 ```
 
@@ -356,19 +367,19 @@ log_reference = lambda z: jnp.sum(stats.norm.logpdf(z, loc=0.0, scale=1.0))
 
 Define the log pullback density, our loss function (negative ELBO) and the optimization loop used to train our transformation.
 
-```{code-cell} python
+```{code-cell} ipython3
 def logpullback(params, z):
     mean, log_sd = apply_fun(params, z)
     x = jnp.exp(log_sd) * z + mean
     return logdensity(unraveler(x)) + jnp.sum(log_sd)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 def nelbo_loss(param, Z, log_pullback, lognorm):
     return -jnp.sum(jax.vmap(log_pullback, (None, 0))(param, Z) - lognorm)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 def param_optim(
     rng, init_param, log_pullback, learning_rate, n_iter, n_atoms, n_epochs
 ):
@@ -401,10 +412,11 @@ def param_optim(
 
 We train the parameters of our transformation by minimizing the negative ELBO. A plot of the loss shows convergence.
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
+rng_key, sample_key = jax.random.split(rng_key)
 parameters, nelbo = param_optim(
-    jax.random.key(0),
+    sample_key,
     initial_parameters,
     logpullback,
     learning_rate=0.01,
@@ -414,7 +426,7 @@ parameters, nelbo = param_optim(
 )
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
 
 plt.figure(figsize=(15, 4))
@@ -425,12 +437,12 @@ plt.show()
 
 We define our log pullback given the learned parameters of the transformation and use the periodic orbital MCMC with an ellipsis to sample from this log pullback density.
 
-```{code-cell} python
+```{code-cell} ipython3
 logpullback_fn = lambda x1, x2: logpullback(parameters, jnp.array([x1, x2]))
 logpull = lambda z: logpullback_fn(**z)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
 init_fn, ellip_kernel = orbital(
     logpull, step_size, inv_mass_matrix, period, bijection=elliptical_bijection
@@ -439,7 +451,7 @@ initial_state = init_fn(initial_position)
 ellip_kernel = jax.jit(ellip_kernel)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
 rng_key = jax.random.key(0)
 states = inference_loop(rng_key, ellip_kernel, initial_state, 10_000)
@@ -450,7 +462,7 @@ weights = states.weights
 
 We need to push the samples through the learned MAF transformation to have samples from the target density (banana) and not the pullback.
 
-```{code-cell} python
+```{code-cell} ipython3
 def push_samples(z1, z2):
     z = jnp.array([z1, z2])
     mean, log_sd = apply_fun(parameters, z)
@@ -458,7 +470,7 @@ def push_samples(z1, z2):
     return x[0], x[1]
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 samplesx1, samplesx2 = jax.vmap(jax.vmap(push_samples))(
     pullback_samples["x1"], pullback_samples["x2"]
 )
@@ -467,12 +479,11 @@ samples = {"x1": samplesx1, "x2": samplesx2}
 
 The pushed samples are much better at targeting the banana density than the algorithm without a preconditioning step. The transformation helps the sampler stay close to the same density level when moving around the ellipsis, thus reducing the variance of the step's weights along it. This preconditioning serves, in a way, as an adaptive step that tunes the parameters of the sampler through a transformation. Notice that if we move around the whole ellipsis there are no tuning parameters, only the number of samples we choose to extract at each iteration, in contrast with choosing step sizes and number of steps in the case of the other numerical integrators. Of course, we still need to choose a gradient descent algorithm, learning rates, number of iterations, and epochs for the optimization!
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 plot_contour(logdensity, orbits=samples, weights=weights)
 ```
-
 
 ```{bibliography}
 :filter: docname in docnames

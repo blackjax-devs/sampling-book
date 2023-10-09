@@ -163,22 +163,22 @@ const thebe_selector_output = ".output, .cell_output"
         </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Algorithms</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../algorithms/cyclical_sgld.html">Cyclical SGLD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/contour_sgld.html">Contour stochastic gradient Langevin dynamics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/cyclical_sgld.html">Cyclical SGLD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/pathfinder.html">Pathfinder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/PeriodicOrbitalMCMC.html">Periodic Orbital MCMC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/TemperedSMC.html">Use Tempered SMC to Improve Exploration of MCMC Methods.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Models</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="change_of_variable_hmc.html">Change of Variable in HMC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GP_EllipticalSliceSampler.html">Gaussian Regression with the Elliptical Slice Sampler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GP_Marginal.html">Bayesian Regression With Latent Gaussian Sampler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_regression.html">Sparse regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logistic_regression.html">Bayesian Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LogisticRegressionWithLatentGaussianSampler.html">Bayesian Logistic Regression With Latent Gaussian Sampler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mlp.html">MLP classifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hierarchical_bnn.html">Hierarchical Bayesian Neural Networks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logistic_regression.html">Bayesian Logistic Regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sparse_regression.html">Sparse regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="change_of_variable_hmc.html">Change of Variable in HMC</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GP_Marginal.html">Bayesian Regression With Latent Gaussian Sampler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GP_EllipticalSliceSampler.html">Gaussian Regression with the Elliptical Slice Sampler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LogisticRegressionWithLatentGaussianSampler.html">Bayesian Logistic Regression With Latent Gaussian Sampler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="RegimeSwitchingModel.html">Regime switching Hidden Markov model</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Parameter estimation in ODE models with a probabilistic ODE solver</a></li>
 </ul>
@@ -393,8 +393,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <!-- #region -->
-<section class="tex2jax_ignore mathjax_ignore" id="parameter-estimation-in-ode-models-with-a-probabilistic-ode-solver">
+  <section class="tex2jax_ignore mathjax_ignore" id="parameter-estimation-in-ode-models-with-a-probabilistic-ode-solver">
 <h1>Parameter estimation in ODE models with a probabilistic ODE solver<a class="headerlink" href="#parameter-estimation-in-ode-models-with-a-probabilistic-ode-solver" title="Permalink to this heading">#</a></h1>
 <p>This tutorial explains how to estimate unknown parameters of initial value problems (IVPs) using
 probabilistic solvers as provided by <a class="reference external" href="https://pnkraemer.github.io/probdiffeq/">ProbDiffEq</a> in combination
@@ -457,38 +456,66 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 <li><p>BlackJAX: Sample from <span class="math notranslate nohighlight">\(\log M(\theta)\)</span> using, for example, the No-U-Turn-Sampler (which requires <span class="math notranslate nohighlight">\(\nabla_\theta M(\theta))\)</span>.</p></li>
 </ol>
 <p>Here is how:</p>
-<!-- #endregion -->
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-<span class="kn">import</span> <span class="nn">blackjax</span>
-<span class="kn">import</span> <span class="nn">jax</span>
-<span class="kn">import</span> <span class="nn">jax.experimental.ode</span>
-<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">diffeqzoo</span> <span class="kn">import</span> <span class="n">backend</span><span class="p">,</span> <span class="n">ivps</span>
-<span class="kn">from</span> <span class="nn">jax.config</span> <span class="kn">import</span> <span class="n">config</span>
-
-<span class="kn">from</span> <span class="nn">probdiffeq</span> <span class="kn">import</span> <span class="n">solution_routines</span><span class="p">,</span> <span class="n">solvers</span>
-<span class="kn">from</span> <span class="nn">probdiffeq.implementations</span> <span class="kn">import</span> <span class="n">recipes</span>
-<span class="kn">from</span> <span class="nn">probdiffeq.strategies</span> <span class="kn">import</span> <span class="n">filters</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># x64 precision</span>
+</div>
+</details>
+</div>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">from</span> <span class="nn">jax.config</span> <span class="kn">import</span> <span class="n">config</span>
+
+<span class="c1"># x64 precision</span>
 <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s2">&quot;jax_enable_x64&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># CPU</span>
 <span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s2">&quot;jax_platform_name&quot;</span><span class="p">,</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="kn">import</span> <span class="nn">blackjax</span>
+<span class="kn">import</span> <span class="nn">jax.experimental.ode</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">from</span> <span class="nn">diffeqzoo</span> <span class="kn">import</span> <span class="n">backend</span><span class="p">,</span> <span class="n">ivps</span>
+
+<span class="kn">from</span> <span class="nn">probdiffeq</span> <span class="kn">import</span> <span class="n">solution_routines</span><span class="p">,</span> <span class="n">solvers</span>
+<span class="kn">from</span> <span class="nn">probdiffeq.implementations</span> <span class="kn">import</span> <span class="n">recipes</span>
+<span class="kn">from</span> <span class="nn">probdiffeq.strategies</span> <span class="kn">import</span> <span class="n">filters</span>
 
 <span class="c1"># IVP examples in JAX</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">backend</span><span class="o">.</span><span class="n">has_been_selected</span><span class="p">:</span>
     <span class="n">backend</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;jax&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+</div>
 </section>
 <section id="problem-setting">
 <h2>Problem setting<a class="headerlink" href="#problem-setting" title="Permalink to this heading">#</a></h2>
 <p>First, we set up an IVP and create some artificial data by simulating the system with “incorrect” initial conditions.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">),</span> <span class="n">f_args</span> <span class="o">=</span> <span class="n">ivps</span><span class="o">.</span><span class="n">lotka_volterra</span><span class="p">()</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">),</span> <span class="n">f_args</span> <span class="o">=</span> <span class="n">ivps</span><span class="o">.</span><span class="n">lotka_volterra</span><span class="p">()</span>
 
 
 <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
@@ -506,7 +533,11 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 <span class="n">solver</span> <span class="o">=</span> <span class="n">solvers</span><span class="o">.</span><span class="n">CalibrationFreeSolver</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="n">output_scale_sqrtm</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_solution</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">plotting_kwargs</span><span class="p">):</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_solution</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">plotting_kwargs</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">u</span><span class="p">[:,</span> <span class="n">d</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">plotting_kwargs</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sol</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span> <span class="o">**</span><span class="n">plotting_kwargs</span><span class="p">)</span>
@@ -525,7 +556,11 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 <span class="n">solve_save_at</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">solve_adaptive</span><span class="p">,</span> <span class="n">save_at</span><span class="o">=</span><span class="n">save_at</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualise the initial guess and the data</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualise the initial guess and the data</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
@@ -541,11 +576,18 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f529bcebb30f35d83461292f52cc87e917a6275bba6cbe0bdbf5e1747e30af6a.png" src="../_images/f529bcebb30f35d83461292f52cc87e917a6275bba6cbe0bdbf5e1747e30af6a.png" />
+</div>
+</div>
 </section>
 <section id="log-posterior-densities-via-probdiffeq">
 <h2>Log-posterior densities via ProbDiffEq<a class="headerlink" href="#log-posterior-densities-via-probdiffeq" title="Permalink to this heading">#</a></h2>
 <p>Set up a log-posterior density function that we can plug into BlackJAX. Choose a Gaussian prior centered at the initial guess with a large variance.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mean</span> <span class="o">=</span> <span class="n">theta_guess</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean</span> <span class="o">=</span> <span class="n">theta_guess</span>
 <span class="n">cov</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">30</span>  <span class="c1"># fairly uninformed prior</span>
 
 
@@ -577,17 +619,28 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 <span class="n">log_M</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">logposterior_fn</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="n">ts</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">solver</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_M</span><span class="p">(</span><span class="n">theta_true</span><span class="p">)),</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_M</span><span class="p">(</span><span class="n">theta_guess</span><span class="p">)),</span> <span class="s2">&quot;?&quot;</span><span class="p">)</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_M</span><span class="p">(</span><span class="n">theta_true</span><span class="p">)),</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_M</span><span class="p">(</span><span class="n">theta_guess</span><span class="p">)),</span> <span class="s2">&quot;?&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<!-- #region -->
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.990060168858427e-05 &gt;= 0.0 ?
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 <section id="sampling-with-blackjax">
 <h2>Sampling with BlackJAX<a class="headerlink" href="#sampling-with-blackjax" title="Permalink to this heading">#</a></h2>
 <p>From here on, BlackJAX takes over:</p>
 <p>Set up a sampler.</p>
-<!-- #endregion -->
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;kernel&quot;</span><span class="p">,</span> <span class="s2">&quot;num_samples&quot;</span><span class="p">])</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;kernel&quot;</span><span class="p">,</span> <span class="s2">&quot;num_samples&quot;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">one_step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">):</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
@@ -599,35 +652,85 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
     <span class="k">return</span> <span class="n">states</span>
 </pre></div>
 </div>
+</div>
+</div>
 <p>Initialise the sampler, warm it up, and run the inference loop.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">initial_position</span> <span class="o">=</span> <span class="n">theta_guess</span>
-<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">initial_position</span> <span class="o">=</span> <span class="n">theta_guess</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># WARMUP</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># WARMUP</span>
 <span class="n">warmup</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">window_adaptation</span><span class="p">(</span>
     <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">,</span> <span class="n">log_M</span><span class="p">,</span> <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
+
+<span class="n">rng_key</span><span class="p">,</span> <span class="n">warmup_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
 <span class="p">(</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">tuned_parameters</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">warmup</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-    <span class="n">rng_key</span><span class="p">,</span> <span class="n">initial_position</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">warmup_key</span><span class="p">,</span> <span class="n">initial_position</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># INFERENCE LOOP</span>
-<span class="n">rng_key</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Running window adaptation
+</pre></div>
+</div>
+<div class="output text_html">
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div><div class="output text_html">
+    <div>
+      <progress value='200' class='' max='200' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      100.00% [200/200 00:00&lt;?]
+    </div>
+    </div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># INFERENCE LOOP</span>
+<span class="n">rng_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
 <span class="n">nuts_kernel</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">(</span><span class="n">log_M</span><span class="p">,</span> <span class="o">**</span><span class="n">tuned_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">step</span>
 <span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span>
-    <span class="n">rng_key</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="n">nuts_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">150</span>
+    <span class="n">sample_key</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="n">nuts_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">150</span>
 <span class="p">)</span>
 </pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="visualisation">
 <h2>Visualisation<a class="headerlink" href="#visualisation" title="Permalink to this heading">#</a></h2>
 <p>Now that we have samples of <span class="math notranslate nohighlight">\(\theta\)</span>, let’s plot the corresponding solutions:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">solution_samples</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">solve_save_at</span><span class="p">)(</span><span class="n">states</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">solution_samples</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">solve_save_at</span><span class="p">)(</span><span class="n">states</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualise the initial guess and the data</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualise the initial guess and the data</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
@@ -648,9 +751,16 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/936b2a3cd52a959b4e7045ec9a10036ae9db218d529f7167ea31275a3ca6d04a.png" src="../_images/936b2a3cd52a959b4e7045ec9a10036ae9db218d529f7167ea31275a3ca6d04a.png" />
+</div>
+</div>
 <p>The samples cover a perhaps surprisingly large range of potential initial conditions, but lead to the “correct” data.</p>
 <p>In parameter space, this is what it looks like:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Posterior samples (parameter space)&quot;</span><span class="p">)</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Posterior samples (parameter space)&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">states</span><span class="o">.</span><span class="n">position</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">states</span><span class="o">.</span><span class="n">position</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theta_true</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">theta_true</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Truth&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theta_guess</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">theta_guess</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Initial guess&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
@@ -658,8 +768,15 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/21b092756c527d6325f948e141f233322fa7b373b9accdf7d53935efdc3faa0c.png" src="../_images/21b092756c527d6325f948e141f233322fa7b373b9accdf7d53935efdc3faa0c.png" />
+</div>
+</div>
 <p>Let’s add the value of <span class="math notranslate nohighlight">\(M\)</span> to the plot to see whether the sampler covers the entire region of interest.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xlim</span> <span class="o">=</span> <span class="mi">18</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">states</span><span class="o">.</span><span class="n">position</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.5</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xlim</span> <span class="o">=</span> <span class="mi">18</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">states</span><span class="o">.</span><span class="n">position</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.5</span>
 <span class="n">ylim</span> <span class="o">=</span> <span class="mi">18</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">states</span><span class="o">.</span><span class="n">position</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.5</span>
 
 <span class="n">xs</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">*</span><span class="n">xlim</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
@@ -672,7 +789,11 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 <span class="n">Zs</span> <span class="o">=</span> <span class="n">log_M_vmapped</span><span class="p">(</span><span class="n">Thetas</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">ax_samples</span><span class="p">,</span> <span class="n">ax_heatmap</span> <span class="o">=</span> <span class="n">ax</span>
 
@@ -690,8 +811,11 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<!-- #region -->
-<!-- #region -->
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/7fb08e5709ce1f6716362cd7c02314238241d4f5079ccb0a1c1a91be74fa917c.png" src="../_images/7fb08e5709ce1f6716362cd7c02314238241d4f5079ccb0a1c1a91be74fa917c.png" />
+</div>
+</div>
 <p>Looks great!</p>
 </section>
 <section id="conclusion">
@@ -705,7 +829,6 @@ We could extend the sampling problem from <span class="math notranslate nohighli
 We could also add a more suitable prior distribution <span class="math notranslate nohighlight">\(p(\theta)\)</span> to regularise the problem.</p>
 <p>A final side note:
 We could also replace the sampler with an optimisation algorithm and use this procedure to solve boundary value problems (albeit this may not be very efficient; use <a class="reference external" href="https://arxiv.org/abs/2106.07761">this</a> algorithm instead  <span id="id4">[<a class="reference internal" href="#id23" title="Nicholas Krämer and Philipp Hennig. Linear-time probabilistic solutions of boundary value problems. Advances in Neural Information Processing Systems, 34:11160–11171, 2021.">KramerH21</a>]</span>).</p>
-<!-- #endregion -->
 <div class="docutils container" id="id5">
 <div class="citation" id="id21" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">KKramerS+20</a><span class="fn-bracket">]</span></span>
@@ -725,7 +848,6 @@ We could also replace the sampler with an optimisation algorithm and use this pr
 </div>
 </div>
 </div>
-<!-- #endregion -->
 </section>
 </section>
 

@@ -164,22 +164,22 @@ const thebe_selector_output = ".output, .cell_output"
         </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Algorithms</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="cyclical_sgld.html">Cyclical SGLD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contour_sgld.html">Contour stochastic gradient Langevin dynamics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cyclical_sgld.html">Cyclical SGLD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pathfinder.html">Pathfinder</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Periodic Orbital MCMC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TemperedSMC.html">Use Tempered SMC to Improve Exploration of MCMC Methods.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Models</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../models/change_of_variable_hmc.html">Change of Variable in HMC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/GP_EllipticalSliceSampler.html">Gaussian Regression with the Elliptical Slice Sampler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/GP_Marginal.html">Bayesian Regression With Latent Gaussian Sampler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/sparse_regression.html">Sparse regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/logistic_regression.html">Bayesian Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/LogisticRegressionWithLatentGaussianSampler.html">Bayesian Logistic Regression With Latent Gaussian Sampler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models/mlp.html">MLP classifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models/hierarchical_bnn.html">Hierarchical Bayesian Neural Networks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/logistic_regression.html">Bayesian Logistic Regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/sparse_regression.html">Sparse regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/change_of_variable_hmc.html">Change of Variable in HMC</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/GP_Marginal.html">Bayesian Regression With Latent Gaussian Sampler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/GP_EllipticalSliceSampler.html">Gaussian Regression with the Elliptical Slice Sampler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/LogisticRegressionWithLatentGaussianSampler.html">Bayesian Logistic Regression With Latent Gaussian Sampler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models/RegimeSwitchingModel.html">Regime switching Hidden Markov model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models/probabilistic_ode_solver_parameter_estimation.html">Parameter estimation in ODE models with a probabilistic ODE solver</a></li>
 </ul>
@@ -423,12 +423,36 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
     \frac{d v}{d t} &amp;= -x.
 \end{align*}\end{split}\]</div>
 <p>As it is later demonstrated, these dynamics alone fail to capture all the volume of our banana density. They are, however, cheap and easy to use, since these dynamics are both gradient-free (don’t require the computation of gradients of our target distribution) and tuning-free (have no tuning parameters); in contrast with the integrators mentioned above, which need to compute gradients at each iteration and require tuning of the discretization step size and number of steps (when used for periodic orbital MCMC, these values are represented by the <code class="docutils literal notranslate"><span class="pre">step_size</span></code> and <code class="docutils literal notranslate"><span class="pre">period</span></code>). Paired with a preconditioning step which transforms our target to approximate <span class="math notranslate nohighlight">\(N(x|0,I)\)</span>, our cheap and easy dynamics can efficienty sample from the whole volume of our banana density while delegating the expensive gradients and cumbersome tuning to an optimization problem performed pre-sampling.</p>
-<div class="cell docutils container">
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
-<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">import</span> <span class="nn">jax.scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 <span class="kn">import</span> <span class="nn">blackjax.mcmc.integrators</span> <span class="k">as</span> <span class="nn">integrators</span>
 <span class="kn">from</span> <span class="nn">blackjax</span> <span class="kn">import</span> <span class="n">orbital_hmc</span> <span class="k">as</span> <span class="n">orbital</span>
@@ -448,10 +472,7 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
     <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.5</span><span class="p">,</span> <span class="mf">7.5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mf">12.5</span>
     <span class="n">x1</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
     <span class="n">x2</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span>
-        <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logdensity</span><span class="p">({</span><span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="n">x1</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">:</span> <span class="n">x2</span><span class="p">})),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span>
-        <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-    <span class="p">)(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logdensity</span><span class="p">({</span><span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="n">x1</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="s2">&quot;x2&quot;</span><span class="p">:</span> <span class="n">x2</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]}))</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
     <span class="n">CS0</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">clabel</span><span class="p">(</span><span class="n">CS0</span><span class="p">,</span> <span class="n">inline</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -514,12 +535,7 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1695619730.700574    2038 tfrt_cpu_pjrt_client.cc:349] TfrtCpuClient created.
-No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
-</pre></div>
-</div>
-<img alt="../_images/eb7aabeddd838c6f16637d45b8ffa2cbdef2d2094d6d2478bbbd1b52b3b01fb6.png" src="../_images/eb7aabeddd838c6f16637d45b8ffa2cbdef2d2094d6d2478bbbd1b52b3b01fb6.png" />
+<img alt="../_images/f70f40cdc8585ae175ed2815ed90fa14097e7252ad4e7c5771b8cc0872660d8e.png" src="../_images/f70f40cdc8585ae175ed2815ed90fa14097e7252ad4e7c5771b8cc0872660d8e.png" />
 </div>
 </div>
 </section>
@@ -564,8 +580,8 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 250 ms, sys: 3.76 ms, total: 254 ms
-Wall time: 253 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 266 ms, sys: 99 µs, total: 266 ms
+Wall time: 266 ms
 </pre></div>
 </div>
 </div>
@@ -573,8 +589,8 @@ Wall time: 253 ms
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
-<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">vv_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="mi">10_000</span><span class="p">)</span>
+<span class="n">rng_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
+<span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">vv_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="mi">10_000</span><span class="p">)</span>
 
 <span class="n">samples</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">positions</span>
 <span class="n">weights</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">weights</span>
@@ -582,8 +598,8 @@ Wall time: 253 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 921 ms, sys: 408 µs, total: 921 ms
-Wall time: 912 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 988 ms, sys: 12.8 ms, total: 1 s
+Wall time: 995 ms
 </pre></div>
 </div>
 </div>
@@ -595,7 +611,7 @@ Wall time: 912 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/1b9cccc9695d036c75c5f60bd2aa14519406531d6e33f0cffad780d552b77263.png" src="../_images/1b9cccc9695d036c75c5f60bd2aa14519406531d6e33f0cffad780d552b77263.png" />
+<img alt="../_images/fc11f0d6b282af80718a298433abe0660e37fd08de424872f99a8b9f221b7370.png" src="../_images/fc11f0d6b282af80718a298433abe0660e37fd08de424872f99a8b9f221b7370.png" />
 </div>
 </div>
 </section>
@@ -614,8 +630,8 @@ Wall time: 912 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 16.1 ms, sys: 0 ns, total: 16.1 ms
-Wall time: 15.9 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 17.3 ms, sys: 0 ns, total: 17.3 ms
+Wall time: 17.1 ms
 </pre></div>
 </div>
 </div>
@@ -623,8 +639,8 @@ Wall time: 15.9 ms
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
-<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">ml_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="mi">10_000</span><span class="p">)</span>
+<span class="n">rng_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
+<span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">ml_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="mi">10_000</span><span class="p">)</span>
 
 <span class="n">samples</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">positions</span>
 <span class="n">weights</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">weights</span>
@@ -632,8 +648,8 @@ Wall time: 15.9 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 668 ms, sys: 0 ns, total: 668 ms
-Wall time: 662 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 677 ms, sys: 160 µs, total: 677 ms
+Wall time: 670 ms
 </pre></div>
 </div>
 </div>
@@ -651,7 +667,7 @@ Wall time: 662 ms
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/16d5c37d68e6c03693cd34239afb60e1d17b6f879befa0346c1aab3d7dfb6e1c.png" src="../_images/16d5c37d68e6c03693cd34239afb60e1d17b6f879befa0346c1aab3d7dfb6e1c.png" />
+<img alt="../_images/9d3e75d72477cacb782a918b3b85d46b35afb907175e51bbfc595641b0a2698f.png" src="../_images/9d3e75d72477cacb782a918b3b85d46b35afb907175e51bbfc595641b0a2698f.png" />
 </div>
 </div>
 </section>
@@ -670,8 +686,8 @@ Wall time: 662 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 15.8 ms, sys: 0 ns, total: 15.8 ms
-Wall time: 15.6 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 17.2 ms, sys: 79 µs, total: 17.3 ms
+Wall time: 17.1 ms
 </pre></div>
 </div>
 </div>
@@ -679,8 +695,8 @@ Wall time: 15.6 ms
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
-<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">yo_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="mi">10_000</span><span class="p">)</span>
+<span class="n">rng_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
+<span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">yo_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="mi">10_000</span><span class="p">)</span>
 
 <span class="n">samples</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">positions</span>
 <span class="n">weights</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">weights</span>
@@ -688,8 +704,8 @@ Wall time: 15.6 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 706 ms, sys: 7.95 ms, total: 714 ms
-Wall time: 709 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 711 ms, sys: 11.5 ms, total: 723 ms
+Wall time: 717 ms
 </pre></div>
 </div>
 </div>
@@ -707,7 +723,7 @@ Wall time: 709 ms
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/84f1359ba67aae0562229b9113929da36d3e11ba3d2fbe373906a3f58e9306ad.png" src="../_images/84f1359ba67aae0562229b9113929da36d3e11ba3d2fbe373906a3f58e9306ad.png" />
+<img alt="../_images/e0d7d2067c0e8617784ebad91734686b06c225ce73f27e8c589cbb97e00f3237.png" src="../_images/e0d7d2067c0e8617784ebad91734686b06c225ce73f27e8c589cbb97e00f3237.png" />
 </div>
 </div>
 </section>
@@ -770,8 +786,8 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 15.5 ms, sys: 0 ns, total: 15.5 ms
-Wall time: 16.5 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 17 ms, sys: 59 µs, total: 17 ms
+Wall time: 17.9 ms
 </pre></div>
 </div>
 </div>
@@ -779,8 +795,8 @@ Wall time: 16.5 ms
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
-<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">ellip_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="mi">10_000</span><span class="p">)</span>
+<span class="n">rng_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
+<span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">ellip_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="mi">10_000</span><span class="p">)</span>
 
 <span class="n">samples</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">positions</span>
 <span class="n">weights</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">weights</span>
@@ -788,8 +804,8 @@ Wall time: 16.5 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 593 ms, sys: 7.85 ms, total: 600 ms
-Wall time: 594 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 606 ms, sys: 0 ns, total: 606 ms
+Wall time: 602 ms
 </pre></div>
 </div>
 </div>
@@ -807,7 +823,7 @@ Wall time: 594 ms
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/33f4633e9a53dbc38554603a10089add63e89105c124b2a049215541683014f6.png" src="../_images/33f4633e9a53dbc38554603a10089add63e89105c124b2a049215541683014f6.png" />
+<img alt="../_images/f9e220190e5ebbd10da01753421cb5794c903d5ef7a045aca9d5e032ed15fe64.png" src="../_images/f9e220190e5ebbd10da01753421cb5794c903d5ef7a045aca9d5e032ed15fe64.png" />
 </div>
 </div>
 </section>
@@ -862,7 +878,8 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span><span class="p">,</span> <span class="n">unraveler</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">flatten_util</span><span class="o">.</span><span class="n">ravel_pytree</span><span class="p">(</span><span class="n">initial_position</span><span class="p">)</span>
-<span class="n">_</span><span class="p">,</span> <span class="n">initial_parameters</span> <span class="o">=</span> <span class="n">init_fun</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,))</span>
+<span class="n">rng_key</span><span class="p">,</span> <span class="n">init_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">initial_parameters</span> <span class="o">=</span> <span class="n">init_fun</span><span class="p">(</span><span class="n">init_key</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,))</span>
 </pre></div>
 </div>
 </div>
@@ -933,8 +950,9 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">rng_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
 <span class="n">parameters</span><span class="p">,</span> <span class="n">nelbo</span> <span class="o">=</span> <span class="n">param_optim</span><span class="p">(</span>
-    <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+    <span class="n">sample_key</span><span class="p">,</span>
     <span class="n">initial_parameters</span><span class="p">,</span>
     <span class="n">logpullback</span><span class="p">,</span>
     <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
@@ -946,8 +964,8 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.68 s, sys: 84.1 ms, total: 1.76 s
-Wall time: 1.63 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.4 s, sys: 4.01 ms, total: 1.4 s
+Wall time: 1.4 s
 </pre></div>
 </div>
 </div>
@@ -968,7 +986,7 @@ Wall time: 1.63 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/03096dbdfe16d9de07c0724d97d5110de7b0c7dfd00d7fb32eb307d98423274e.png" src="../_images/03096dbdfe16d9de07c0724d97d5110de7b0c7dfd00d7fb32eb307d98423274e.png" />
+<img alt="../_images/0d82c09be5c9656d8a8c9b9dfa9b1e44a7b78bb458696e7206d47a8386cf7082.png" src="../_images/0d82c09be5c9656d8a8c9b9dfa9b1e44a7b78bb458696e7206d47a8386cf7082.png" />
 </div>
 </div>
 <p>We define our log pullback given the learned parameters of the transformation and use the periodic orbital MCMC with an ellipsis to sample from this log pullback density.</p>
@@ -992,8 +1010,8 @@ Wall time: 1.63 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 648 ms, sys: 240 µs, total: 649 ms
-Wall time: 647 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 663 ms, sys: 4.26 ms, total: 667 ms
+Wall time: 666 ms
 </pre></div>
 </div>
 </div>
@@ -1010,8 +1028,8 @@ Wall time: 647 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 687 ms, sys: 374 µs, total: 688 ms
-Wall time: 681 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 694 ms, sys: 57 µs, total: 695 ms
+Wall time: 688 ms
 </pre></div>
 </div>
 </div>
@@ -1052,7 +1070,7 @@ Wall time: 681 ms
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/b16fe25d65ccc3eb1f7a32baf0c533ecc20a5f76e0210ef9e734aca7a7e9d702.png" src="../_images/b16fe25d65ccc3eb1f7a32baf0c533ecc20a5f76e0210ef9e734aca7a7e9d702.png" />
+<img alt="../_images/d9f568f4ab24398d7720eb5eeb32b1e7f00eaf8c9a05963104ef2e5a40cae113.png" src="../_images/d9f568f4ab24398d7720eb5eeb32b1e7f00eaf8c9a05963104ef2e5a40cae113.png" />
 </div>
 </div>
 <div class="docutils container" id="id6">

@@ -67,8 +67,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script>DOCUMENTATION_OPTIONS.pagename = 'models/GP_Marginal';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Gaussian Regression with the Elliptical Slice Sampler" href="GP_EllipticalSliceSampler.html" />
-    <link rel="prev" title="Change of Variable in HMC" href="change_of_variable_hmc.html" />
+    <link rel="next" title="Sparse regression" href="sparse_regression.html" />
+    <link rel="prev" title="Gaussian Regression with the Elliptical Slice Sampler" href="GP_EllipticalSliceSampler.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -164,22 +164,22 @@ const thebe_selector_output = ".output, .cell_output"
         </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Algorithms</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../algorithms/cyclical_sgld.html">Cyclical SGLD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/contour_sgld.html">Contour stochastic gradient Langevin dynamics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/cyclical_sgld.html">Cyclical SGLD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/pathfinder.html">Pathfinder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/PeriodicOrbitalMCMC.html">Periodic Orbital MCMC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/TemperedSMC.html">Use Tempered SMC to Improve Exploration of MCMC Methods.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Models</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="change_of_variable_hmc.html">Change of Variable in HMC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GP_EllipticalSliceSampler.html">Gaussian Regression with the Elliptical Slice Sampler</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Bayesian Regression With Latent Gaussian Sampler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_regression.html">Sparse regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logistic_regression.html">Bayesian Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LogisticRegressionWithLatentGaussianSampler.html">Bayesian Logistic Regression With Latent Gaussian Sampler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mlp.html">MLP classifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hierarchical_bnn.html">Hierarchical Bayesian Neural Networks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logistic_regression.html">Bayesian Logistic Regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sparse_regression.html">Sparse regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="change_of_variable_hmc.html">Change of Variable in HMC</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Bayesian Regression With Latent Gaussian Sampler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="GP_EllipticalSliceSampler.html">Gaussian Regression with the Elliptical Slice Sampler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LogisticRegressionWithLatentGaussianSampler.html">Bayesian Logistic Regression With Latent Gaussian Sampler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="RegimeSwitchingModel.html">Regime switching Hidden Markov model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="probabilistic_ode_solver_parameter_estimation.html">Parameter estimation in ODE models with a probabilistic ODE solver</a></li>
 </ul>
@@ -449,12 +449,35 @@ document.write(`
 <p>A crucial point of this algorithm is the fact that <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> can be precomputed and afterward modified cheaply when <span class="math notranslate nohighlight">\(\delta\)</span> varies. This makes it easy to calibrate the step-size <span class="math notranslate nohighlight">\(\delta\)</span> at low cost.</p>
 <hr class="docutils" />
 <p>Now that we have a high-level understanding of the algorithm, let’s see how to use it in <code class="docutils literal notranslate"><span class="pre">blackjax</span></code>.</p>
-<div class="cell docutils container">
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
-<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
-<span class="kn">import</span> <span class="nn">jax.random</span> <span class="k">as</span> <span class="nn">jrnd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">blackjax</span> <span class="kn">import</span> <span class="n">mgrad_gaussian</span>
@@ -479,27 +502,19 @@ document.write(`
 <span class="n">y_sd</span> <span class="o">=</span> <span class="mf">1.0</span>
 
 <span class="c1"># fake data</span>
-<span class="n">rng</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">kX</span><span class="p">,</span> <span class="n">kf</span><span class="p">,</span> <span class="n">ky</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">rng_key</span><span class="p">,</span> <span class="n">kX</span><span class="p">,</span> <span class="n">kf</span><span class="p">,</span> <span class="n">ky</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 
-<span class="n">X</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">kX</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">kX</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
 <span class="n">Sigma</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span>
     <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">squared_exponential</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">scale</span><span class="p">))(</span><span class="n">X</span><span class="p">)</span>
 <span class="p">)(</span><span class="n">X</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-3</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="n">invSigma</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
-<span class="n">f</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">kf</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">Sigma</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">f</span> <span class="o">+</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">ky</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span> <span class="o">*</span> <span class="n">y_sd</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">kf</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">Sigma</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">f</span> <span class="o">+</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">ky</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,))</span> <span class="o">*</span> <span class="n">y_sd</span>
 
 <span class="c1"># conjugate results</span>
 <span class="n">posterior_cov</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">invSigma</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">y_sd</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
 <span class="n">posterior_mean</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">posterior_cov</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">y_sd</span><span class="o">**</span><span class="mi">2</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1695620174.806856    2638 tfrt_cpu_pjrt_client.cc:349] TfrtCpuClient created.
-No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
 </pre></div>
 </div>
 </div>
@@ -522,7 +537,7 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/6545145e854e8f756b0d0293d81536f83fdb3ff72dfa465cfcc58cf814f6acbe.png" src="../_images/6545145e854e8f756b0d0293d81536f83fdb3ff72dfa465cfcc58cf814f6acbe.png" />
+<img alt="../_images/1c38403f10d39f7c3f89b47277cd4a3d75cd49aed81c9001c711cd1577a923cb.png" src="../_images/1c38403f10d39f7c3f89b47277cd4a3d75cd49aed81c9001c711cd1577a923cb.png" />
 </div>
 </div>
 </section>
@@ -571,7 +586,7 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">):</span>
-    <span class="n">keys</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
@@ -594,15 +609,15 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
 
 <span class="n">kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">step</span><span class="p">(</span><span class="n">rng_key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">initial_state</span> <span class="o">=</span> <span class="n">init</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-<span class="n">states</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">jrnd</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">init</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">n_warm</span> <span class="o">+</span> <span class="n">n_iter</span><span class="p">)</span>
+<span class="n">rng_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">states</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">init</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">n_warm</span> <span class="o">+</span> <span class="n">n_iter</span><span class="p">)</span>
 <span class="n">samples</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="n">n_warm</span><span class="p">:]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 15.8 s, sys: 177 ms, total: 15.9 s
-Wall time: 15.9 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 14.8 s, sys: 116 ms, total: 14.9 s
+Wall time: 14.8 s
 </pre></div>
 </div>
 </div>
@@ -622,15 +637,16 @@ Wall time: 15.9 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mean squared error for the mean vector 0.0019973712041974068 and covariance matrix 1.3342275906325085e-06
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mean squared error for the mean vector 0.0029609811026602983 and covariance matrix 1.3266034102343838e-06
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">keys</span> <span class="o">=</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
-<span class="n">predictive</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">f</span> <span class="o">+</span> <span class="n">jrnd</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span><span class="p">,))</span> <span class="o">*</span> <span class="n">y_sd</span><span class="p">)(</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rng_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">keys</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sample_key</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">predictive</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">f</span> <span class="o">+</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span><span class="p">,))</span> <span class="o">*</span> <span class="n">y_sd</span><span class="p">)(</span>
     <span class="n">keys</span><span class="p">,</span> <span class="n">samples</span><span class="p">[</span><span class="o">-</span><span class="mi">1000</span><span class="p">:]</span>
 <span class="p">)</span>
 </pre></div>
@@ -655,7 +671,7 @@ Wall time: 15.9 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/bb7a1a535959d78136c7862fcd7a56f340abb6b43c3b2c9a141de40f0b218b8d.png" src="../_images/bb7a1a535959d78136c7862fcd7a56f340abb6b43c3b2c9a141de40f0b218b8d.png" />
+<img alt="../_images/26adba7d3ff2f7fcf14ec12aaa05e3a0a41130aa209a607645b2674a19e03bc3.png" src="../_images/26adba7d3ff2f7fcf14ec12aaa05e3a0a41130aa209a607645b2674a19e03bc3.png" />
 </div>
 </div>
 <div class="docutils container" id="id2">
@@ -699,20 +715,20 @@ Wall time: 15.9 s
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="change_of_variable_hmc.html"
+       href="GP_EllipticalSliceSampler.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Change of Variable in HMC</p>
+        <p class="prev-next-title">Gaussian Regression with the Elliptical Slice Sampler</p>
       </div>
     </a>
     <a class="right-next"
-       href="GP_EllipticalSliceSampler.html"
+       href="sparse_regression.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Gaussian Regression with the Elliptical Slice Sampler</p>
+        <p class="prev-next-title">Sparse regression</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

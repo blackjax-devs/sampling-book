@@ -65,8 +65,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script>DOCUMENTATION_OPTIONS.pagename = 'algorithms/contour_sgld';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Pathfinder" href="pathfinder.html" />
-    <link rel="prev" title="Cyclical SGLD" href="cyclical_sgld.html" />
+    <link rel="next" title="Cyclical SGLD" href="cyclical_sgld.html" />
+    <link rel="prev" title="The Sampling Book Project" href="../index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -162,22 +162,22 @@ const thebe_selector_output = ".output, .cell_output"
         </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Algorithms</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="cyclical_sgld.html">Cyclical SGLD</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Contour stochastic gradient Langevin dynamics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cyclical_sgld.html">Cyclical SGLD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pathfinder.html">Pathfinder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PeriodicOrbitalMCMC.html">Periodic Orbital MCMC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TemperedSMC.html">Use Tempered SMC to Improve Exploration of MCMC Methods.</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Models</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../models/change_of_variable_hmc.html">Change of Variable in HMC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/GP_EllipticalSliceSampler.html">Gaussian Regression with the Elliptical Slice Sampler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/GP_Marginal.html">Bayesian Regression With Latent Gaussian Sampler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/sparse_regression.html">Sparse regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/logistic_regression.html">Bayesian Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/LogisticRegressionWithLatentGaussianSampler.html">Bayesian Logistic Regression With Latent Gaussian Sampler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models/mlp.html">MLP classifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models/hierarchical_bnn.html">Hierarchical Bayesian Neural Networks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/logistic_regression.html">Bayesian Logistic Regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/sparse_regression.html">Sparse regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/change_of_variable_hmc.html">Change of Variable in HMC</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/GP_Marginal.html">Bayesian Regression With Latent Gaussian Sampler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/GP_EllipticalSliceSampler.html">Gaussian Regression with the Elliptical Slice Sampler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/LogisticRegressionWithLatentGaussianSampler.html">Bayesian Logistic Regression With Latent Gaussian Sampler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models/RegimeSwitchingModel.html">Regime switching Hidden Markov model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models/probabilistic_ode_solver_parameter_estimation.html">Parameter estimation in ODE models with a probabilistic ODE solver</a></li>
 </ul>
@@ -395,28 +395,55 @@ document.write(`
 <section id="gaussian-mixture-model">
 <h2>Gaussian Mixture model<a class="headerlink" href="#gaussian-mixture-model" title="Permalink to this heading">#</a></h2>
 <p>Let us first generate data points that follow a gaussian mixture distributions. The example appears simple, and yet it is hard enough for most algorithms to fail to recover the two modes.</p>
-<div class="cell docutils container">
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
-<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">import</span> <span class="nn">jax.scipy</span> <span class="k">as</span> <span class="nn">jsp</span>
 
 
-<span class="k">def</span> <span class="nf">gaussian_mixture_model</span><span class="p">(</span><span class="n">mu</span><span class="o">=-</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">20.0</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">gaussian_mixture_model</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">mu</span><span class="o">=-</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">5.0</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">sample_fn</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
-        <span class="n">key1</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="n">key3</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="n">prob_mixture</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">key1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="n">mixture_1</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key2</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">+</span> <span class="n">mu</span>
-        <span class="n">mixture_2</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key3</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">-</span> <span class="n">mu</span>
-        <span class="k">return</span> <span class="n">prob_mixture</span> <span class="o">*</span> <span class="n">mixture_1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">prob_mixture</span><span class="p">)</span> <span class="o">*</span> <span class="n">mixture_2</span>
+        <span class="n">key1</span><span class="p">,</span> <span class="n">key2</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
+        <span class="n">select</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">key1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">mus</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">mu</span><span class="p">,</span> <span class="o">-</span><span class="n">mu</span> <span class="o">+</span> <span class="n">gamma</span><span class="p">])</span>
+        <span class="n">mixture_sample</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key2</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">+</span> <span class="n">mus</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">take_along_axis</span><span class="p">(</span><span class="n">mixture_sample</span><span class="p">,</span> <span class="n">select</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">logprior_fn</span><span class="p">(</span><span class="n">position</span><span class="p">):</span>
         <span class="k">return</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="nf">loglikelihood_fn</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="n">mixture_1</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">position</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
-        <span class="n">mixture_2</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="o">=-</span><span class="n">position</span> <span class="o">+</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">jsp</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">logsumexp</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mixture_1</span><span class="p">,</span> <span class="n">mixture_2</span><span class="p">]))</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">mus</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">position</span><span class="p">,</span> <span class="o">-</span><span class="n">position</span> <span class="o">+</span> <span class="n">gamma</span><span class="p">])</span>
+        <span class="n">mixtures</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">mus</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jsp</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">logsumexp</span><span class="p">(</span><span class="n">mixtures</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">sample_fn</span><span class="p">,</span> <span class="n">logprior_fn</span><span class="p">,</span> <span class="n">loglikelihood_fn</span>
 
@@ -430,43 +457,34 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_size</span> <span class="o">=</span> <span class="mi">1000</span>
 
-<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">888</span><span class="p">)</span>
 <span class="n">rng_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
 <span class="n">X_data</span> <span class="o">=</span> <span class="n">sample_fn</span><span class="p">(</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">data_size</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1695619781.723119    2164 tfrt_cpu_pjrt_client.cc:349] TfrtCpuClient created.
-No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
-</pre></div>
 </div>
-</div>
-</div>
-<div class="cell docutils container">
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="k">as</span> <span class="nn">plt</span>
-
-<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">X_data</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="mi">100</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=-</span><span class="mi">15</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">35</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span>
+    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">35</span><span class="p">),</span>
+    <span class="n">yticks</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Data&quot;</span><span class="p">,</span>
+<span class="p">);</span>
 </pre></div>
 </div>
 </div>
+</details>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Data&#39;)
-</pre></div>
-</div>
-<img alt="../_images/9d699e6163a65d693fb725250eb7d3238a8176d43470e0c7fb8803cfa2967022.png" src="../_images/9d699e6163a65d693fb725250eb7d3238a8176d43470e0c7fb8803cfa2967022.png" />
+<img alt="../_images/e76c4544834178f48c7bb6d1f60af90ef38f531ea81191dffc3d76aa62e67348.png" src="../_images/e76c4544834178f48c7bb6d1f60af90ef38f531ea81191dffc3d76aa62e67348.png" />
 </div>
 </div>
 </section>
@@ -478,8 +496,13 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
 
 <span class="kn">import</span> <span class="nn">blackjax</span>
 <span class="kn">import</span> <span class="nn">blackjax.sgmcmc.gradients</span> <span class="k">as</span> <span class="nn">gradients</span>
-
-<span class="c1"># Specify hyperparameters for SGLD</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Specify hyperparameters for SGLD</span>
 <span class="n">total_iter</span> <span class="o">=</span> <span class="mi">10_000</span>
 <span class="n">thinning_factor</span> <span class="o">=</span> <span class="mi">10</span>
 
@@ -493,7 +516,7 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
 <span class="c1"># Build the SGDL sampler</span>
 <span class="n">grad_fn</span> <span class="o">=</span> <span class="n">gradients</span><span class="o">.</span><span class="n">grad_estimator</span><span class="p">(</span><span class="n">logprior_fn</span><span class="p">,</span> <span class="n">loglikelihood_fn</span><span class="p">,</span> <span class="n">data_size</span><span class="p">)</span>
 <span class="n">sgld</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">sgld</span><span class="p">(</span><span class="n">grad_fn</span><span class="p">)</span>
-
+<span class="n">sgld_step</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">sgld</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
 
 <span class="c1"># Initialize and take one step using the vanilla SGLD algorithm</span>
 <span class="n">position</span> <span class="o">=</span> <span class="n">sgld</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">init_position</span><span class="p">)</span>
@@ -505,7 +528,7 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
     <span class="n">data_batch</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span>
         <span class="n">batch_key</span><span class="p">,</span> <span class="n">X_data</span><span class="p">,</span> <span class="n">independent</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)[:</span><span class="n">batch_size</span><span class="p">,</span> <span class="p">:]</span>
-    <span class="n">position</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">sgld</span><span class="o">.</span><span class="n">step</span><span class="p">)(</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">data_batch</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">sgld_step</span><span class="p">(</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">data_batch</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">iter_</span> <span class="o">%</span> <span class="n">thinning_factor</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">sgld_sample_list</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sgld_sample_list</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span>
         <span class="n">pb</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;| position: </span><span class="si">{</span><span class="n">position</span><span class="si">:</span><span class="s2"> .2f</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -532,50 +555,43 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
 </div><div class="output text_html">
     <div>
       <progress value='10000' class='' max='10000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [10000/10000 00:26&lt;00:00 | position:  23.35]
+      100.00% [10000/10000 00:26&lt;00:00 | position: -4.50]
     </div>
     </div></div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="k">as</span> <span class="nn">plt</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-
-<span class="n">G</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot_mosaic</span><span class="p">(</span><span class="s2">&quot;AAB&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 
 <span class="c1"># Trajectory</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sgld_sample_list</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;SGLD&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iterations (x</span><span class="si">{</span><span class="n">thinning_factor</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sgld_sample_list</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;SGLD&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Iterations (x</span><span class="si">{</span><span class="n">thinning_factor</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-
-
+<span class="n">hist_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="c1"># Histogram</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">sgld_sample_list</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=-</span><span class="mi">15</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">35</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">sgld_sample_list</span><span class="p">,</span> <span class="o">**</span><span class="n">hist_args</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span>
+    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">35</span><span class="p">),</span>
+    <span class="n">yticks</span><span class="o">=</span><span class="p">[],</span>
+<span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-
-
-<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Stochastic gradient Langevin dynamics (SGLD)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Stochastic gradient Langevin dynamics (SGLD)&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
+</details>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0.98, &#39;Stochastic gradient Langevin dynamics (SGLD)&#39;)
-</pre></div>
-</div>
-<img alt="../_images/4ff0c9fe0d2a5c0fc26decb458892e099f738f81755a673605d613a0d8c2de8b.png" src="../_images/4ff0c9fe0d2a5c0fc26decb458892e099f738f81755a673605d613a0d8c2de8b.png" />
+<img alt="../_images/45e6a8d3c0cb52fb772e5d589a8e802f44ad993a59ae9785101b9a65f3b32646.png" src="../_images/45e6a8d3c0cb52fb772e5d589a8e802f44ad993a59ae9785101b9a65f3b32646.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -592,7 +608,8 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
 <span class="c1"># The following parameters partition the energy space and no tuning is needed.</span>
 <span class="n">num_partitions</span> <span class="o">=</span> <span class="mi">100000</span>
 <span class="n">energy_gap</span> <span class="o">=</span> <span class="mf">0.25</span>
-<span class="n">domain_radius</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># restart sampling when the particle explores too deep over the tails and leads to nan.</span>
+<span class="n">domain_radius</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c1"># restart sampling when the particle explores too deep</span>
+                    <span class="c1">#  over the tails and leads to nan.</span>
 
 
 <span class="n">logdensity_fn</span> <span class="o">=</span> <span class="n">gradients</span><span class="o">.</span><span class="n">logdensity_estimator</span><span class="p">(</span><span class="n">logprior_fn</span><span class="p">,</span> <span class="n">loglikelihood_fn</span><span class="p">,</span> <span class="n">data_size</span><span class="p">)</span>
@@ -606,21 +623,22 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
     <span class="n">energy_gap</span><span class="o">=</span><span class="n">energy_gap</span><span class="p">,</span>  <span class="c1"># cannot be specified at each step</span>
     <span class="n">min_energy</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="n">csgld_step</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">csgld</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
 
-<span class="c1"># 3.1 Simulate via the CSGLD algorithm</span>
+<span class="c1"># Simulate via the CSGLD algorithm</span>
 <span class="n">state</span> <span class="o">=</span> <span class="n">csgld</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">init_position</span><span class="p">)</span>
 
 <span class="n">csgld_sample_list</span><span class="p">,</span> <span class="n">csgld_energy_idx_list</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
 
 <span class="n">pb</span> <span class="o">=</span> <span class="n">progress_bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">total_iter</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">iter_</span> <span class="ow">in</span> <span class="n">pb</span><span class="p">:</span>
-    <span class="n">rng_key</span><span class="p">,</span> <span class="n">subkey</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
+    <span class="n">rng_key</span><span class="p">,</span> <span class="n">batch_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
     <span class="n">stepsize_SA</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">,</span> <span class="p">(</span><span class="n">iter_</span> <span class="o">+</span> <span class="mi">100</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.8</span><span class="p">))</span> <span class="o">*</span> <span class="n">sz</span>
 
-    <span class="n">data_batch</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">X_data</span><span class="p">,</span> <span class="n">independent</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span>
-        <span class="p">:</span><span class="n">batch_size</span><span class="p">,</span> <span class="p">:</span>
-    <span class="p">]</span>
-    <span class="n">state</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">csgld</span><span class="o">.</span><span class="n">step</span><span class="p">)(</span><span class="n">subkey</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">data_batch</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">stepsize_SA</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+    <span class="n">data_batch</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span>
+        <span class="n">batch_key</span><span class="p">,</span> <span class="n">X_data</span><span class="p">,</span> <span class="n">independent</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)[:</span><span class="n">batch_size</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">csgld_step</span><span class="p">(</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">data_batch</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">stepsize_SA</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">iter_</span> <span class="o">%</span> <span class="n">thinning_factor</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">csgld_sample_list</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">csgld_sample_list</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
@@ -649,7 +667,7 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
 </div><div class="output text_html">
     <div>
       <progress value='10000' class='' max='10000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [10000/10000 00:29&lt;00:00 | position  18.12]
+      100.00% [10000/10000 00:28&lt;00:00 | position -8.98]
     </div>
     </div></div>
 </div>
@@ -665,9 +683,9 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
 
 <span class="n">csgld_re_sample_list</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
 <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-    <span class="n">rng_key</span><span class="p">,</span> <span class="n">subkey</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">my_idx</span> <span class="ow">in</span> <span class="n">important_idx</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">scaled_energy_pdf</span><span class="p">[</span><span class="n">my_idx</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">rng_key</span><span class="p">,</span> <span class="n">subkey</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">subkey</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">scaled_energy_pdf</span><span class="p">[</span><span class="n">my_idx</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
             <span class="n">samples_in_my_idx</span> <span class="o">=</span> <span class="n">csgld_sample_list</span><span class="p">[</span><span class="n">csgld_energy_idx_list</span> <span class="o">==</span> <span class="n">my_idx</span><span class="p">]</span>
             <span class="n">csgld_re_sample_list</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">csgld_re_sample_list</span><span class="p">,</span> <span class="n">samples_in_my_idx</span><span class="p">)</span>
@@ -676,48 +694,41 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
 </div>
 </div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="k">as</span> <span class="nn">plt</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-
-<span class="n">G</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot_mosaic</span><span class="p">(</span><span class="s2">&quot;AAB&quot;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 
 <span class="c1"># Trajectory</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="mi">2</span><span class="p">])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">csgld_sample_list</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;SGLD&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iterations (x</span><span class="si">{</span><span class="n">thinning_factor</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">csgld_sample_list</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Contour SGLD&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Iterations (x</span><span class="si">{</span><span class="n">thinning_factor</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 
 
-<span class="c1"># Histogram before resampling</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">csgld_sample_list</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;before resampling&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">csgld_re_sample_list</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;after resampling&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=-</span><span class="mi">15</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">35</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Histogram</span>
+<span class="n">axes</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">csgld_sample_list</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;before resampling&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">hist_args</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">csgld_re_sample_list</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;after resampling&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">hist_args</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span>
+    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">35</span><span class="p">),</span>
+    <span class="n">yticks</span><span class="o">=</span><span class="p">[],</span>
+<span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Contour SGLD&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Contour SGLD&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
+</details>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0.98, &#39;Contour SGLD&#39;)
-</pre></div>
-</div>
-<img alt="../_images/014b8a172cc29778ba9c24f5597729ff3143d1469c8bb2c05ec62135b655e58a.png" src="../_images/014b8a172cc29778ba9c24f5597729ff3143d1469c8bb2c05ec62135b655e58a.png" />
+<img alt="../_images/14d2938ff8ee2939bfb6bd448beffb62cbd789e43453119cd25e3e285f88d093.png" src="../_images/14d2938ff8ee2939bfb6bd448beffb62cbd789e43453119cd25e3e285f88d093.png" />
 </div>
 </div>
 </section>
@@ -733,25 +744,21 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
     <span class="s2">&quot;int32&quot;</span>
 <span class="p">)</span>  <span class="c1"># min 3681</span>
 
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
     <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_partitions</span><span class="p">)[</span><span class="n">interested_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">energy_gap</span><span class="p">,</span>
     <span class="n">smooth_energy_pdf</span><span class="p">[</span><span class="n">interested_idx</span><span class="p">],</span>
 <span class="p">)</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Energy&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Energy Density&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Energy Density&quot;</span><span class="p">,</span>
+<span class="p">);</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/3032f04c6416d10803b60db723a205d729cd82306aa8914e9293d050c8fd595b.png" src="../_images/3032f04c6416d10803b60db723a205d729cd82306aa8914e9293d050c8fd595b.png" />
+<img alt="../_images/33d20c5b1811ee51ec389547c65231fb5f73ddefcbfc621e99dc8c020da954de.png" src="../_images/33d20c5b1811ee51ec389547c65231fb5f73ddefcbfc621e99dc8c020da954de.png" />
 </div>
 </div>
 <p>From the figure above, we see that low-energy regions usually lead to much higher probability mass. Moreover, the slope is negative with a higher scale in low energy regions. In view of Eq.(8) in <a class="reference external" href="https://proceedings.neurips.cc/paper/2020/file/b5b8c484824d8a06f4f3d570bc420313-Paper.pdf">the paper</a>, we can expect a <strong>negative learning rate</strong> to help the particle escape the local trap. Eventually, a particle is able to bounce out of the deep local traps freely instead of being absorbed into it.</p>
@@ -790,20 +797,20 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="cyclical_sgld.html"
+       href="../index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Cyclical SGLD</p>
+        <p class="prev-next-title">The Sampling Book Project</p>
       </div>
     </a>
     <a class="right-next"
-       href="pathfinder.html"
+       href="cyclical_sgld.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Pathfinder</p>
+        <p class="prev-next-title">Cyclical SGLD</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -4,14 +4,11 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-file_format: mystnb
-mystnb:
-  execution_timeout: 200
 ---
 
 # Bayesian Regression With Latent Gaussian Sampler
@@ -91,41 +88,54 @@ A crucial point of this algorithm is the fact that $\mathbf{A}$ can be precomput
 
 Now that we have a high-level understanding of the algorithm, let's see how to use it in `blackjax`.
 
-```{code-cell} python
-import jax
-import jax.numpy as jnp
-import jax.random as jrnd
+```{code-cell} ipython3
+:tags: [hide-cell]
+
 import matplotlib.pyplot as plt
+
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["axes.spines.top"] = False
+```
+
+```{code-cell} ipython3
+:tags: [remove-output]
+
+import jax
+
+from datetime import date
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+```
+
+```{code-cell} ipython3
+import jax.numpy as jnp
 import numpy as np
 
 from blackjax import mgrad_gaussian
 ```
 
-
 We generate data through a squared exponential kernel as in the example [Gaussian Regression with the Elliptical Slice Sampler](https://blackjax-devs.github.io/blackjax/examples/GP_EllipticalSliceSampler.html).
 
-```{code-cell} python
+```{code-cell} ipython3
 def squared_exponential(x, y, length, scale):
     dot_diff = jnp.dot(x, x) + jnp.dot(y, y) - 2 * jnp.dot(x, y)
     return scale**2 * jnp.exp(-0.5 * dot_diff / length**2)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 n, d = 2000, 2
 length, scale = 1.0, 1.0
 y_sd = 1.0
 
 # fake data
-rng = jrnd.key(10)
-kX, kf, ky = jrnd.split(rng, 3)
+rng_key, kX, kf, ky = jax.random.split(rng_key, 4)
 
-X = jrnd.uniform(kX, shape=(n, d))
+X = jax.random.uniform(kX, shape=(n, d))
 Sigma = jax.vmap(
     lambda x: jax.vmap(lambda y: squared_exponential(x, y, length, scale))(X)
 )(X) + 1e-3 * jnp.eye(n)
 invSigma = jnp.linalg.inv(Sigma)
-f = jrnd.multivariate_normal(kf, jnp.zeros(n), Sigma)
-y = f + jrnd.normal(ky, shape=(n,)) * y_sd
+f = jax.random.multivariate_normal(kf, jnp.zeros(n), Sigma)
+y = f + jax.random.normal(ky, shape=(n,)) * y_sd
 
 # conjugate results
 posterior_cov = jnp.linalg.inv(invSigma + 1 / y_sd**2 * jnp.eye(n))
@@ -134,7 +144,7 @@ posterior_mean = jnp.dot(posterior_cov, y) * 1 / y_sd**2
 
 Let's visualize the distribution of the vector `y`.
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 plt.figure(figsize=(8, 5))
@@ -148,7 +158,7 @@ plt.show()
 
 Now we proceed to run the sampler. First, we set the sampler parameters:
 
-```{code-cell} python
+```{code-cell} ipython3
 # sampling parameters
 n_warm = 2000
 n_iter = 500
@@ -156,7 +166,7 @@ n_iter = 500
 
 Next, we define the the log-probability function. For this we need to set the log-likelihood function.
 
-```{code-cell} python
+```{code-cell} ipython3
 loglikelihood_fn = lambda f: -0.5 * jnp.dot(y - f, y - f) / y_sd**2
 logdensity_fn = lambda f: loglikelihood_fn(f) - 0.5 * jnp.dot(f @ invSigma, f)
 ```
@@ -175,15 +185,15 @@ step:
     transition.
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 init, step = mgrad_gaussian(logdensity_fn=logdensity_fn, mean=jnp.zeros(n), covariance=Sigma)
 ```
 
 We continue by setting the inference loop.
 
-```{code-cell} python
+```{code-cell} ipython3
 def inference_loop(rng, init_state, kernel, n_iter):
-    keys = jrnd.split(rng, n_iter)
+    keys = jax.random.split(rng, n_iter)
 
     def step(state, key):
         state, info = kernel(key, state)
@@ -199,13 +209,13 @@ We are now ready to run the sampler! The only extra parameters in the `step` fun
 Note that one can calibrate the `delta` parameter as described in the example [Bayesian Logistic Regression With Latent Gaussian Sampler](https://blackjax-devs.github.io/blackjax/examples/LogisticRegressionWithLatentGaussianSampler.html).
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 %%time
 
 kernel = lambda key, x: step(rng_key=key, state=x, delta=0.5)
 initial_state = init(f)
-
-states, info = inference_loop(jrnd.key(0), init(f), kernel, n_warm + n_iter)
+rng_key, sample_key = jax.random.split(rng_key, 2)
+states, info = inference_loop(sample_key, init(f), kernel, n_warm + n_iter)
 samples = states.position[n_warm:]
 ```
 
@@ -213,7 +223,7 @@ samples = states.position[n_warm:]
 
 Finally we evaluate the results.
 
-```{code-cell} python
+```{code-cell} ipython3
 error_mean = jnp.mean((samples.mean(axis=0) - posterior_mean) ** 2)
 error_cov = jnp.mean((jnp.cov(samples, rowvar=False) - posterior_cov) ** 2)
 print(
@@ -221,14 +231,15 @@ print(
 )
 ```
 
-```{code-cell} python
-keys = jrnd.split(rng, 500)
-predictive = jax.vmap(lambda k, f: f + jrnd.normal(k, (n,)) * y_sd)(
+```{code-cell} ipython3
+rng_key, sample_key = jax.random.split(rng_key, 2)
+keys = jax.random.split(sample_key, 500)
+predictive = jax.vmap(lambda k, f: f + jax.random.normal(k, (n,)) * y_sd)(
     keys, samples[-1000:]
 )
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 :tags: [hide-input]
 
 plt.figure(figsize=(8, 5))
@@ -238,7 +249,6 @@ plt.xlabel("y")
 plt.title("Predictive distribution")
 plt.show()
 ```
-
 
 ```{bibliography}
 :filter: docname in docnames
