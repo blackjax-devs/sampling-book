@@ -1,11 +1,10 @@
 ---
 jupytext:
-  formats: md:myst
   text_representation:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.13.1
+    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -30,6 +29,24 @@ y &\sim \operatorname{Bernoulli}(p)\\
 \end{align*}
 
 The model is run on its *non-centered parametrization* {cite:p}`papaspiliopoulos2007general` with data from the numerical version of the German credit dataset. The target posterior is defined by its likelihood. We implement the model using [Aesara](https://github.com/aesara-devs/aesara):
+
+```{code-cell} ipython3
+:tags: [hide-cell]
+
+import matplotlib.pyplot as plt
+
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["axes.spines.top"] = False
+```
+
+```{code-cell} ipython3
+:tags: [remove-output]
+
+import jax
+
+from datetime import date
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+```
 
 ```{code-cell} ipython3
 import aesara.tensor as at
@@ -98,8 +115,6 @@ X = np.concatenate([np.ones((1000, 1)), X], axis=1)
 We generate a function that computes the model's logdensity using [AePPL](https://github.com/aesara-devs/aeppl). We transform the values of $\tau$ and $\lambda$ so the sampler can operate on variables defined on the real line:
 
 ```{code-cell} ipython3
-:tags: [remove-output]
-
 import aesara
 import aeppl
 from aeppl.transforms import TransformValuesRewrite, LogTransform
@@ -129,8 +144,6 @@ def logdensity_fn(x):
 Let us now define a utility function that builds a sampling loop:
 
 ```{code-cell} ipython3
-import jax
-
 def inference_loop(rng_key, init_state, kernel, n_iter):
     keys = jax.random.split(rng_key, n_iter)
 
@@ -151,7 +164,6 @@ num_chains = 128
 num_warmup = 2000
 num_samples = 2000
 
-rng_key = jax.random.key(10)
 rng_key, key_b, key_l, key_t = jax.random.split(rng_key, 4)
 init_position = {
     "beta": jax.random.normal(key_b, (num_chains, X.shape[1])),
@@ -165,15 +177,18 @@ Here we will not use the adaptive version of the MEADS algorithm, but instead us
 ```{code-cell} ipython3
 import blackjax
 
-key_warmup, key_sample = jax.random.split(rng_key)
+rng_key, key_warmup, key_sample = jax.random.split(rng_key, 3)
 meads = blackjax.meads_adaptation(logdensity_fn, num_chains)
 (state, parameters), _ = meads.run(key_warmup, init_position, num_warmup)
 kernel = blackjax.ghmc(logdensity_fn, **parameters).step
 
-# Choose the last state of the first two chains as a starting point for the sampler
-init_states = jax.tree_util.tree_map(lambda x: x[:2], state)
-keys = jax.random.split(rng_key, 2)
-samples, info = jax.vmap(inference_loop, in_axes=(0, 0, None, None))(keys, init_states, kernel, num_samples)
+# Choose the last state of the first k chains as a starting point for the sampler
+n_parallel_chains = 4
+init_states = jax.tree_util.tree_map(lambda x: x[:n_parallel_chains], state)
+keys = jax.random.split(key_sample, n_parallel_chains)
+samples, info = jax.vmap(inference_loop, in_axes=(0, 0, None, None))(
+    keys, init_states, kernel, num_samples
+    )
 ```
 
 Let us look a high-level summary statistics for the inference, including the split-Rhat value and the number of effective samples:
@@ -193,23 +208,24 @@ np.sum(info.is_divergent, axis=1)
 We warned earlier that the non-centered parametrization was not a one-size-fits-all solution to the funnel geometries that can be present in the posterior distribution. Although there was no divergence, it is still worth checking the posterior interactions between the coefficients to make sure the posterior geometry did not get in the way of sampling:
 
 ```{code-cell} ipython3
-from matplotlib import pylab as plt
+n_pred = X.shape[-1]
+n_col = 4
+n_row = (n_pred + n_col - 1) // n_col
 
-import matplotlib.gridspec as gridspec
-from scipy.stats import gaussian_kde
-
-gs = gridspec.GridSpec(10, 3)
-
-fig = plt.figure(figsize=(8, 18))
-x = np.linspace(-2., 2., 100)
-for i in range(20):
-    ax = fig.add_subplot(gs[i%10, i//10])
-    ax.plot(samples.position["log_lmbda"][0,:,i], samples.position["beta"][0,:,i], 'o', ms=.4)
-    ax.set_xlabel(rf"$\lambda$[{i}]")
-    ax.set_ylabel(rf"$\beta$[{i}]")
-    ax.spines["right"].set_visible(False)
-    ax.spines["top"].set_visible(False)
-fig.tight_layout()
+_, axes = plt.subplots(n_row, n_col, figsize=(n_col * 3, n_row * 2))
+axes = axes.flatten()
+for i in range(n_pred):
+    ax = axes[i]
+    ax.plot(samples.position["log_lmbda"][...,i], 
+            samples.position["beta"][...,i], 
+            'o', ms=.4, alpha=.75)
+    ax.set(
+        xlabel=rf"$\lambda$[{i}]",
+        ylabel=rf"$\beta$[{i}]",
+    )
+for j in range(i+1, n_col*n_row):
+    axes[j].remove()
+plt.tight_layout();
 ```
 
 While some parameters (for instance the 15th) exhibit no particular correlations, the funnel geometry can still be observed for a few of them (4th, 13th, etc.). Ideally one would adopt a centered parametrization for those parameters to get a better approximation to the true posterior distribution, but here we also assess the ability of the sampler to explore these funnel geometries.
@@ -219,24 +235,19 @@ While some parameters (for instance the 15th) exhibit no particular correlations
 We can convince ourselves that the Horseshoe prior induces sparsity on the regression coefficients by looking at their posterior distribution:
 
 ```{code-cell} ipython3
-from matplotlib import pylab as plt
-import matplotlib.gridspec as gridspec
-
-gs = gridspec.GridSpec(10, 3)
-
-fig = plt.figure(figsize=(8, 18))
-x = np.linspace(-2., 2., 100)
-for i in range(20):
-    ax = fig.add_subplot(gs[i%10, i//10])
-    ax.hist(np.array(samples.position["beta"][0, :, i]), bins=20)
+_, axes = plt.subplots(n_row, n_col, sharex=True, figsize=(n_col * 3, n_row * 2))
+axes = axes.flatten()
+for i in range(n_pred):
+    ax = axes[i]
+    ax.hist(samples.position["beta"][..., i],
+            bins=50, density=True, histtype="step")
     ax.set_xlabel(rf"$\beta$[{i}]")
-
-    ax.set_xlim([-2, 2])
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
     ax.get_yaxis().set_visible(False)
     ax.spines["left"].set_visible(False)
-fig.tight_layout()
+ax.set_xlim([-2, 2])
+for j in range(i+1, n_col*n_row):
+    axes[j].remove()
+plt.tight_layout();
 ```
 
 Indeed, many of the parameters are centered around $0$.

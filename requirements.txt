@@ -1,9 +1,6 @@
 # Local package with utilities
 -e .
-# Dependencies for the notebooks
-aeppl==0.0.50  # Waiting for #222 to be fixed on AePPL
-aesara
-blackjax-nightly
+
 
 # Build the book
 ipython
@@ -12,6 +9,8 @@ git+https://github.com/executablebooks/jupyter-book.git@master
 jupytext
 
 # Dependencies for the notebooks
+aeppl
+aesara
 arviz
 blackjax-nightly
 datasets
@@ -23,8 +22,7 @@ numpy
 numpyro
 optax
 pandas
-seaborn
 scikit-learn
-tensorflow-probability[jax]
+tfp-nightly[jax]
 probdiffeq
 diffeqzoo

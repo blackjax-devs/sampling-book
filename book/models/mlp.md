@@ -4,25 +4,43 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.1
+    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-file_format: mystnb
-mystnb:
-  execution_timeout: 400
 ---
 
 # MLP classifier
 
 In this example we use a Multi-layer Perceptron (MLP) classifier on the MNIST digit dataset.
 
+```{code-cell} ipython3
+:tags: [hide-cell]
+
+import matplotlib.pyplot as plt
+
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["axes.spines.top"] = False
+```
+
+```{code-cell} ipython3
+:tags: [remove-output]
+
+import jax
+
+from datetime import date
+
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+```
+
 ## Data Preparation
 
 We download the MNIST data using HuggingFace's `datasets` library:
 
 ```{code-cell} ipython3
+:tags: [remove-output]
+
 from datasets import load_dataset
 import numpy as np
 
@@ -30,11 +48,11 @@ import numpy as np
 mnist_data = load_dataset("mnist")
 data_train, data_test = mnist_data["train"], mnist_data["test"]
 
-X_train = np.stack([np.array(example['image']) for example in data_train])
-y_train = np.array([example['label'] for example in data_train])
+X_train = np.stack([np.array(example["image"]) for example in data_train])
+y_train = np.array([example["label"] for example in data_train])
 
-X_test = np.stack([np.array(example['image']) for example in data_test])
-y_test = np.array([example['label'] for example in data_test])
+X_test = np.stack([np.array(example["image"]) for example in data_test])
+y_test = np.array([example["label"] for example in data_test])
 ```
 
 Now we need to apply several transformations to the dataset before splitting it into a test and a test set:
@@ -43,7 +61,6 @@ Now we need to apply several transformations to the dataset before splitting it 
 - We hot-encode category numbers.
 
 ```{code-cell} ipython3
-import jax
 import jax.numpy as jnp
 
 
@@ -105,6 +122,7 @@ class NN(nn.Module):
         x = nn.Dense(features=10)(x)
         return nn.log_softmax(x)
 
+
 model = NN()
 
 
@@ -127,7 +145,7 @@ def compute_accuracy(params, X, y):
 
     To make predictions we take the number that corresponds to the highest
     probability value, which corresponds to a 1-0 loss.
-    
+
     """
     target_class = jnp.argmax(y, axis=1)
     predicted_class = jnp.argmax(model.apply(params, X), axis=1)
@@ -158,12 +176,12 @@ step_size = 4.5e-5
 num_warmup = (data_size // batch_size) * 20
 num_samples = 1000
 
+rng_key, batch_key, init_key = jax.random.split(rng_key, 3)
 # Batch the data
-rng_key = jax.random.key(1)
-batches = batch_data(rng_key, (X_train, y_train), batch_size, data_size)
+batches = batch_data(batch_key, (X_train, y_train), batch_size, data_size)
 
 # Set the initial state
-state = jax.jit(model.init)(rng_key, jnp.ones(X_train.shape[-1]))
+state = jax.jit(model.init)(init_key, jnp.ones(X_train.shape[-1]))
 
 # Build the SGLD kernel with a constant learning rate
 grad_fn = grad_estimator(logprior_fn, loglikelihood_fn, data_size)
@@ -175,9 +193,9 @@ steps = []
 
 pb = progress_bar(range(num_warmup))
 for step in pb:
-    _, rng_key = jax.random.split(rng_key)
+    rng_key, sample_key = jax.random.split(rng_key)
     batch = next(batches)
-    state = jax.jit(sgld.step)(rng_key, state, batch, step_size)
+    state = jax.jit(sgld.step)(sample_key, state, batch, step_size)
     if step % 100 == 0:
         accuracy = compute_accuracy(state, X_test, y_test)
         accuracies.append(accuracy)
@@ -190,19 +208,14 @@ Let us plot the point-wise accuracy at different points in the sampling process:
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-import matplotlib.pylab as plt
-
-
-fig = plt.figure(figsize=(12, 8))
-ax = fig.add_subplot(111)
+_, ax = plt.subplots(figsize=(10, 4))
 ax.plot(steps, accuracies)
 ax.set_xlabel("Number of sampling steps")
 ax.set_ylabel("Pointwise predictive accuracy")
 ax.set_xlim([0, num_warmup])
 ax.set_ylim([0, 1])
-ax.set_yticks([0.1, 0.3, 0.5, 0.7, 0.9, 0.95, 1.])
-plt.title("Sample from 3-layer MLP posterior (MNIST dataset) with SGLD")
-plt.plot();
+ax.set_yticks([0.1, 0.3, 0.5, 0.7, 0.9, 0.95, 1.0])
+plt.title("Sample from 3-layer MLP posterior (MNIST dataset) with SGLD");
 ```
 
 It looks like the point-wise accuracy, while still increasing, has reached a plateau. We will now sample from the posterior distribution. Instead of accumulating the network weights, which would require a subtantial amounf of memory, we will update the average of the quantity that we are interested in, the predictive probabilities over the test set.
@@ -223,15 +236,14 @@ def update_test_accuracy(i, logpredictprob, sample):
 
     """
     new_logpredictprob = jnp.logaddexp(
-        logpredictprob,
-        jax.vmap(model.apply, in_axes=(None, 0))(sample, X_test)
+        logpredictprob, jax.vmap(model.apply, in_axes=(None, 0))(sample, X_test)
     )
-    predict_probs = jnp.exp(new_logpredictprob) / (i+1)
-    
+    predict_probs = jnp.exp(new_logpredictprob) / (i + 1)
+
     predicted = jnp.argmax(predict_probs, axis=1)
     target = jnp.argmax(y_test, axis=1)
-    accuracy= jnp.mean(predicted==target)
-    
+    accuracy = jnp.mean(predicted == target)
+
     return new_logpredictprob, accuracy
 ```
 
@@ -242,9 +254,9 @@ num_samples = 1000
 
 pb = progress_bar(range(num_samples))
 for step in pb:
-    _, rng_key = jax.random.split(rng_key)
+    rng_key, sample_key = jax.random.split(rng_key)
     batch = next(batches)
-    state = jax.jit(sgld.step)(rng_key, state, batch, step_size)
+    state = jax.jit(sgld.step)(sample_key, state, batch, step_size)
     sgld_logpredict, accuracy = update_test_accuracy(step, sgld_logpredict, state)
     sgld_accuracies.append(accuracy)
     pb.comment = f"| avg error: {100*(1-accuracy): .1f}"
@@ -255,14 +267,12 @@ Let us plot the accuracy as a function of the number of samples:
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-fig = plt.figure(figsize=(12, 8))
-ax = fig.add_subplot(111)
+_, ax = plt.subplots(figsize=(10, 4))
 ax.plot(range(num_samples), sgld_accuracies)
 ax.set_xlabel("Number of sampling steps")
 ax.set_ylabel("Running average predictive accuracy")
 ax.set_xlim([0, num_samples])
-plt.title("Sample from 3-layer MLP posterior (MNIST dataset) with SGLD")
-plt.plot();
+plt.title("Sample from 3-layer MLP posterior (MNIST dataset) with SGLD");
 ```
 
 It is not clear from the figure above whether the increase of the accuracy is due to an increase in the pointwise accuracy, or an effect of averaging over the posterior distribution. To see this, let us compare the last value to the pointwise accuracy computed on the chain's last state:
@@ -288,9 +298,9 @@ num_warmup = (data_size // batch_size) * 20
 grad_fn = grad_estimator(logprior_fn, loglikelihood_fn, data_size)
 sghmc = blackjax.sghmc(grad_fn, num_integration_steps=10)
 
-
+rng_key, batch_key = jax.random.split(rng_key)
 # Batch the data
-state = jax.jit(model.init)(rng_key, jnp.ones(X_train.shape[-1]))
+state = jax.jit(model.init)(batch_key, jnp.ones(X_train.shape[-1]))
 
 # Sample from the posterior
 sghmc_accuracies = []
@@ -299,9 +309,9 @@ steps = []
 
 pb = progress_bar(range(num_warmup))
 for step in pb:
-    _, rng_key = jax.random.split(rng_key)
+    rng_key, sample_key = jax.random.split(rng_key)
     minibatch = next(batches)
-    state = jax.jit(sghmc.step)(rng_key, state, minibatch, step_size)
+    state = jax.jit(sghmc.step)(sample_key, state, minibatch, step_size)
     if step % 100 == 0:
         sghmc_accuracy = compute_accuracy(state, X_test, y_test)
         sghmc_accuracies.append(sghmc_accuracy)
@@ -312,16 +322,14 @@ for step in pb:
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-fig = plt.figure(figsize=(12, 8))
-ax = fig.add_subplot(111)
+_, ax = plt.subplots(figsize=(10, 4))
 ax.plot(steps, sghmc_accuracies)
 ax.set_xlabel("Number of sampling steps")
 ax.set_ylabel("Pointwise predictive accuracy")
 ax.set_xlim([0, num_warmup])
 ax.set_ylim([0, 1])
-ax.set_yticks([0.1, 0.3, 0.5, 0.7, 0.9, 0.95, 1.])
-plt.title("Sample from 3-layer MLP posterior (MNIST dataset) with SGHMC")
-plt.plot();
+ax.set_yticks([0.1, 0.3, 0.5, 0.7, 0.9, 0.95, 1.0])
+plt.title("Sample from 3-layer MLP posterior (MNIST dataset) with SGHMC");
 ```
 
 We now sample and compute the accuracy by averaging over the posterior samples:
@@ -332,9 +340,9 @@ sghmc_logpredict = jax.vmap(model.apply, in_axes=(None, 0))(state, X_test)
 
 pb = progress_bar(range(num_samples))
 for step in pb:
-    _, rng_key = jax.random.split(rng_key)
+    rng_key, sample_key = jax.random.split(rng_key)
     batch = next(batches)
-    state = jax.jit(sgld.step)(rng_key, state, batch, step_size)
+    state = jax.jit(sgld.step)(sample_key, state, batch, step_size)
     sghmc_logpredict, accuracy = update_test_accuracy(step, sghmc_logpredict, state)
     sghmc_accuracies.append(accuracy)
     pb.comment = f"| avg error: {100*(1-accuracy): .1f}"
@@ -343,14 +351,12 @@ for step in pb:
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-fig = plt.figure(figsize=(12, 8))
-ax = fig.add_subplot(111)
+_, ax = plt.subplots(figsize=(10, 4))
 ax.plot(range(num_samples), sghmc_accuracies)
 ax.set_xlabel("Number of sampling steps")
 ax.set_ylabel("Running average predictive accuracy")
 ax.set_xlim([0, num_samples])
-plt.title("Sample from 3-layer MLP posterior (MNIST dataset) with SGLD")
-plt.plot();
+plt.title("Sample from 3-layer MLP posterior (MNIST dataset) with SGLD");
 ```
 
 ## Comparison
@@ -360,16 +366,14 @@ Let us plot the evolution of the accuracy as a function of the number of samples
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-fig = plt.figure(figsize=(12, 8))
-ax = fig.add_subplot(111)
+_, ax = plt.subplots(figsize=(10, 4))
 ax.plot(range(num_samples), sgld_accuracies, label="SGLD")
 ax.plot(range(num_samples), sghmc_accuracies, label="SGHMC")
 ax.set_xlabel("Number of sampling steps")
 ax.set_ylabel("Running average predictive accuracy")
 ax.set_xlim([0, num_samples])
 plt.title("Sample from 3-layer MLP posterior (MNIST dataset)")
-plt.legend()
-plt.plot();
+plt.legend();
 ```
 
 SGHMC gives a slightly better accuracy than SGLD. However, plotting this in terms of the number of steps is slightly misleading: SGHMC evaluates the gradient 10 times for each step while SGLD only once.
@@ -390,20 +394,25 @@ max_predict_prob = jnp.max(predict_probs, axis=1)
 predicted = jnp.argmax(predict_probs, axis=1)
 
 certain_mask = max_predict_prob > 0.95
-print(f"Our model is certain of its classification for {np.sum(certain_mask) / y_test.shape[0] * 100:.1f}% of the test set examples." )
+print(
+    f"""    Our model is certain of its classification for 
+    {np.sum(certain_mask) / y_test.shape[0] * 100:.1f}% 
+    of the test set examples.""")
 ```
 
 Let's plot a few examples where the model was very uncertain:
 
 ```{code-cell} ipython3
 most_uncertain_idx = np.argsort(max_predict_prob)
+nrow = 5
+ncol = 3
+_, axes = plt.subplots(nrow, ncol, figsize=(3*ncol, 3*nrow))
 
-for i in range(10):
-    fig = plt.figure()
-    ax = fig.add_subplot()
+axes = axes.flatten()
+for i, ax in enumerate(axes):
     ax.imshow(X_test[most_uncertain_idx[i]].reshape(28, 28), cmap="gray")
     ax.axis("off")
-plt.show()
+plt.tight_layout()
 ```
 
 Are there digits that our model is more uncertain about? We plot the histogram of the number of times the model was unsure about each digit:
@@ -411,15 +420,14 @@ Are there digits that our model is more uncertain about? We plot the histogram o
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-fig = plt.figure()
-ax = fig.add_subplot(111)
+_, ax = plt.subplots(figsize=(8, 5))
 
 uncertain_mask = max_predict_prob < 0.95
 
 ax.bar(np.arange(10), np.bincount(np.argmax(y_test[uncertain_mask], axis=1)))
-ax.set_xticks(range(0,10))
+ax.set_xticks(range(0, 10))
 ax.set_xlabel("Digit")
-ax.set_ylabel("# uncertain predictions")
+ax.set_ylabel("# uncertain predictions");
 ```
 
 Perhaps unsurprisingly, the digit 8 is overrepresented in the set of examples $i$ for which $\max_d P(y_i=d|x_i) < 0.95$. As a purely academic exercise and sanity test of sort, let us now re-compute the point-wise accuracy ignoring the digits for which the model is uncertain, varying the threshold above which we consider the model to be certain:
@@ -430,40 +438,36 @@ Perhaps unsurprisingly, the digit 8 is overrepresented in the set of examples $i
 def compute_accuracy(probs, y):
     predicted = jnp.argmax(probs, axis=1)
     target = jnp.argmax(y, axis=1)
-    accuracy= jnp.mean(predicted==target)
+    accuracy = jnp.mean(predicted == target)
     return accuracy
 ```
 
 ```{code-cell} ipython3
 :args: [hide-cell]
 
-thresholds = np.linspace(0.1, 1., 90)
+thresholds = np.linspace(0.1, 1.0, 90)
 
 accuracies = []
 dropped_ratio = []
 for t in thresholds:
     certain_mask = max_predict_prob >= t
-    dropped_ratio.append(100*(1 - np.sum(certain_mask) / np.shape(certain_mask)[0]))
-    accuracies.append(compute_accuracy(predict_probs[certain_mask], y_test[certain_mask]))
+    dropped_ratio.append(100 * (1 - np.sum(certain_mask) / np.shape(certain_mask)[0]))
+    accuracies.append(
+        compute_accuracy(predict_probs[certain_mask], y_test[certain_mask])
+    )
 ```
 
 ```{code-cell} ipython3
 :args: [hide-input]
 
-fig = plt.figure(figsize=(12, 6))
-ax = fig.add_subplot(121)
-ax.plot(thresholds, accuracies)
-ax.set(xlabel="Threshold", ylabel="Accuracy")
-ax.spines['top'].set_visible(False)
-ax.spines['right'].set_visible(False)
+_, axes = plt.subplots(1, 2, figsize=(10, 4))
+axes[0].plot(thresholds, accuracies)
+axes[0].set(xlabel="Threshold", ylabel="Accuracy")
 
-ax = fig.add_subplot(122)
-ax.plot(thresholds, dropped_ratio)
-ax.set(xlabel="Threshold", ylabel="% of examples dropped")
-ax.spines['top'].set_visible(False)
-ax.spines['right'].set_visible(False)
+axes[1].plot(thresholds, dropped_ratio)
+axes[1].set(xlabel="Threshold", ylabel="% of examples dropped")
 
-fig.tight_layout()
+plt.tight_layout();
 ```
 
 Not bad at all, by dropping less than 2% of the samples we reach .99 accuracy, not too bad for such a simple model!

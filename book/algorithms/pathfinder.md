@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.1
+    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -13,25 +13,32 @@ kernelspec:
 
 # Pathfinder
 
-In this notebook we introduce the pathfinder algorithm and we show how to use it as a variational inference method or as an initialization tool for MCMC kernels.
-
-```{code-cell} ipython3
-import jax
-import jax.numpy as jnp
-import jax.random as random
-import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse
-from sklearn.datasets import make_biclusters
-
-import blackjax
-```
+In this notebook we introduce the [pathfinder](https://arxiv.org/abs/2108.03782) {cite:p}`zhang2022pathfinder` algorithm and we show how to use it as a variational inference method or as an initialization tool for MCMC kernels.
 
 ```{code-cell} ipython3
 :tags: [hide-cell]
 
+import matplotlib.pyplot as plt
+
 plt.rcParams["axes.spines.right"] = False
 plt.rcParams["axes.spines.top"] = False
-plt.rcParams["figure.figsize"] = (10, 6)
+```
+
+```{code-cell} ipython3
+:tags: [remove-output]
+
+import jax
+
+from datetime import date
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+```
+
+```{code-cell} ipython3
+from matplotlib.patches import Ellipse
+from sklearn.datasets import make_biclusters
+
+import jax.numpy as jnp
+import blackjax
 ```
 
 ## The Data
@@ -50,10 +57,9 @@ y = rows[0] * 1.0  # y[i] = whether point i belongs to cluster 1
 :tags: [hide-input]
 
 colors = ["tab:red" if el else "tab:blue" for el in rows[0]]
-plt.scatter(*X.T, edgecolors=colors, c="none")
-plt.xlabel(r"$X_0$")
-plt.ylabel(r"$X_1$")
-plt.show()
+_, ax = plt.subplots(figsize=(6, 6))
+ax.scatter(*X.T, edgecolors=colors, c="none")
+ax.set(xlabel=r"$X_0$", ylabel=r"$X_1$");
 ```
 
 ## The Model
@@ -112,9 +118,9 @@ The optimizer is the limited memory BFGS algorithm.
 To help understand the approximations that pathfinder evaluates during its run, here we plot for each step of the L-BFGS optimizer the approximation of the posterior distribution of the model derived by pathfinder and its ELBO:
 
 ```{code-cell} ipython3
-rng_key = random.key(314)
-w0 = random.multivariate_normal(rng_key, 2.0 + jnp.zeros(M), jnp.eye(M))
-_, info = blackjax.vi.pathfinder.approximate(rng_key, logdensity_fn, w0, ftol=1e-4)
+rng_key, init_key, infer_key = jax.random.split(rng_key, 3)
+w0 = jax.random.multivariate_normal(init_key, 2.0 + jnp.zeros(M), jnp.eye(M))
+_, info = blackjax.vi.pathfinder.approximate(infer_key, logdensity_fn, w0, ftol=1e-4)
 path = info.path
 ```
 
@@ -152,7 +158,7 @@ steps = (jnp.isfinite(path.elbo)).sum()
 rows = int(jnp.ceil(steps / 3))
 fig, axs = plt.subplots(rows, 3, figsize=(15, 5 * rows), sharex=True, sharey=True)
 
-for i, ax in zip(range(1, steps + 1), axs.flatten()):
+for i, ax in zip(range(steps), axs.flatten()):
 
     ax.contour(x_, y_, logp_, levels=levels_)
     state = jax.tree_map(lambda x: x[i], path)
@@ -168,7 +174,7 @@ for i, ax in zip(range(1, steps + 1), axs.flatten()):
     mu_i, cov_i = sample_state.mean(0), jnp.cov(sample_state, rowvar=False)
     ellipse_confidence(mu_i, cov_i, ax, "r")
     ax.set_title(f"Iteration: {i+1}\nEstimated ELBO: {state.elbo:.2f}")
-fig.show()
+plt.show()
 ```
 
 ## Pathfinder as a Variational Inference Method
@@ -177,14 +183,15 @@ Pathfinder can be used as a variational inference method. We first create a path
 
 ```{code-cell} ipython3
 pf = blackjax.pathfinder(logdensity_fn)
-state, _ = pf.approximate(rng_key, w0, ftol=1e-4)
+rng_key, approx_key = jax.random.split(rng_key)
+state, _ = pf.approximate(approx_key, w0, ftol=1e-4)
 ```
 
 We can now get samples from the approximation:
 
 ```{code-cell} ipython3
-_, rng_key = random.split(rng_key)
-samples, _ = pf.sample(rng_key, state, 5_000)
+rng_key, sample_key = jax.random.split(rng_key)
+samples, _ = pf.sample(sample_key, state, 5_000)
 ```
 
 And display the trace:
@@ -209,8 +216,8 @@ Hence it makes sense to `jit` the `init` function and then use the `sample` help
 ```{code-cell} ipython3
 %%time
 
-state, _ = jax.jit(pf.approximate)(rng_key, w0)
-samples, _ = pf.sample(rng_key, state, 5_000)
+state, _ = jax.jit(pf.approximate)(approx_key, w0)
+samples, _ = pf.sample(sample_key, state, 5_000)
 ```
 
 Quick comparison against the Rosenbluth-Metropolis-Hastings kernel `rmh`:
@@ -225,10 +232,13 @@ def inference_loop(rng_key, kernel, initial_state, num_samples):
     keys = jax.random.split(rng_key, num_samples)
     return jax.lax.scan(one_step, initial_state, keys)
 
-rmh = blackjax.rmh(logdensity_fn, blackjax.mcmc.random_walk.normal(sigma=jnp.ones(M) * 0.7)
+
+rmh = blackjax.rmh(
+    logdensity_fn, blackjax.mcmc.random_walk.normal(sigma=jnp.ones(M) * 0.7)
 )
 state_rmh = rmh.init(w0)
-_, (samples_rmh, _) = inference_loop(rng_key, rmh.step, state_rmh, 5_000)
+rng_key, sample_key = jax.random.split(rng_key)
+_, (samples_rmh, _) = inference_loop(sample_key, rmh.step, state_rmh, 5_000)
 ```
 
 ```{code-cell} ipython3
@@ -267,7 +277,26 @@ This scheme is implemented in `blackjax.pathfinder_adaptation` function:
 
 ```{code-cell} ipython3
 adapt = blackjax.pathfinder_adaptation(blackjax.nuts, logdensity_fn)
-(state, parameters), info = adapt.run(rng_key, w0, 400)
+rng_key, sample_key = jax.random.split(rng_key)
+(state, parameters), info = adapt.run(sample_key, w0, 400)
+```
+
+```{code-cell} ipython3
+nuts = blackjax.nuts(logdensity_fn, **parameters)
+init0 = nuts.init(state.position)
+rng_key, sample_key = jax.random.split(rng_key)
+_, (samples_nuts, _) = inference_loop(sample_key, nuts.step, init0, 5000)
+```
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+_, axes = plt.subplots(1, 2, figsize=(10, 4), sharex=True)
+hist_args = dict(bins=50, density=True, alpha=0.75, histtype="step", lw=2)
+for i, ax in enumerate(axes):
+    for samples_sel in [samples_rmh.position, samples_nuts.position, samples]:
+        ax.hist(samples_sel[:, i], **hist_args)
+ax.legend(["RMH", "NUTS", "Pathfinder"]);
 ```
 
 ## Some Caveats
@@ -277,3 +306,7 @@ adapt = blackjax.pathfinder_adaptation(blackjax.nuts, logdensity_fn)
 * Otherwise you can stick with float32 mode and try to tweak `ftol`, `gtol`, or the initialization point
 
 * It may make sense to start pathfinder with a "bad" initialization point, in order to make the L-BFGS algorithm run longer and have more datapoints to estimate the inverse hessian matrix.
+
+```{bibliography}
+:filter: docname in docnames
+```

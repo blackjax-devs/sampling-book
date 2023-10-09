@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.1
+    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -29,22 +29,38 @@ In particular we use following binomial hierarchical model where $y_{j}$ and $N_
 ```{code-cell} ipython3
 :tags: [hide-cell]
 
-import arviz as az
-import jax
-import jax.numpy as jnp
 import matplotlib.pyplot as plt
+
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["axes.spines.top"] = False
+plt.rcParams["xtick.labelsize"] = 12
+plt.rcParams["ytick.labelsize"] = 12
+
 import pandas as pd
 
 pd.set_option("display.max_rows", 80)
+```
+
+```{code-cell} ipython3
+:tags: [remove-output]
+
+import jax
+
+from datetime import date
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+```
+
+```{code-cell} ipython3
+:tags: [hide-cell]
+
+import arviz as az
+import jax.numpy as jnp
 
 import blackjax
 import tensorflow_probability.substrates.jax as tfp
 
 tfd = tfp.distributions
 tfb = tfp.bijectors
-
-plt.rc("xtick", labelsize=12)  # fontsize of the xtick labels
-plt.rc("ytick", labelsize=12)  # fontsize of the tyick labels
 ```
 
 ```{code-cell} ipython3
@@ -213,29 +229,13 @@ n_rat_tumors = len(group_size)
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-fig = plt.figure(figsize=(12, 3))
-ax = fig.add_subplot(111)
-ax.bar(range(n_rat_tumors), n_of_positives)
-
-ax.set_xlabel("tumor type", fontsize=12)
-ax.spines["top"].set_visible(False)
-ax.spines["right"].set_visible(False)
-
-plt.title("No. of positives for each tumor type", fontsize=14)
-```
-
-```{code-cell} ipython3
-:tags: [hide-input]
-
-fig = plt.figure(figsize=(14, 4))
-ax = fig.add_subplot(111)
-
-ax.bar(range(n_rat_tumors), group_size)
-plt.title("Group size for each tumor type", fontsize=14)
-
-ax.set_xlabel("tumor type", fontsize=12)
-ax.spines["top"].set_visible(False)
-ax.spines["right"].set_visible(False)
+_, axes = plt.subplots(2, 1, figsize=(12, 6))
+axes[0].bar(range(n_rat_tumors), n_of_positives)
+axes[0].set_title("No. of positives for each tumor type", fontsize=14);
+axes[1].bar(range(n_rat_tumors), group_size)
+axes[1].set_xlabel("tumor type", fontsize=12)
+axes[1].set_title("Group size for each tumor type", fontsize=14)
+plt.tight_layout();
 ```
 
 ## Posterior Sampling
@@ -266,7 +266,7 @@ def joint_logdensity(params):
 We take initial parameters from uniform distribution
 
 ```{code-cell} ipython3
-rng_key = jax.random.key(0)
+rng_key, init_key = jax.random.split(rng_key)
 n_params = n_rat_tumors + 2
 
 
@@ -278,11 +278,11 @@ def init_param_fn(seed):
     return params(
         a=tfd.Uniform(0, 3).sample(seed=key1),
         b=tfd.Uniform(0, 3).sample(seed=key2),
-        thetas=tfd.Uniform(0, 1).sample(n_rat_tumors, key3),
+        thetas=tfd.Uniform(0, 1).sample(n_rat_tumors, seed=key3),
     )
 
 
-init_param = init_param_fn(rng_key)
+init_param = init_param_fn(init_key)
 joint_logdensity(init_param)  # sanity check
 ```
 
@@ -294,15 +294,17 @@ warmup = blackjax.window_adaptation(blackjax.nuts, joint_logdensity)
 
 # we use 4 chains for sampling
 n_chains = 4
-keys = jax.random.split(rng_key, n_chains)
-init_params = jax.vmap(init_param_fn)(keys)
+rng_key, init_key, warmup_key = jax.random.split(rng_key, 3)
+init_keys = jax.random.split(init_key, n_chains)
+init_params = jax.vmap(init_param_fn)(init_keys)
 
 @jax.vmap
 def call_warmup(seed, param):
     (initial_states, tuned_params), _ = warmup.run(seed, param, 1000)
     return initial_states, tuned_params
 
-initial_states, tuned_params = jax.jit(call_warmup)(keys, init_params)
+warmup_keys = jax.random.split(warmup_key, n_chains)
+initial_states, tuned_params = jax.jit(call_warmup)(warmup_keys, init_params)
 ```
 
 Now we write inference loop for multiple chains
@@ -330,8 +332,9 @@ def inference_loop_multiple_chains(
 ```{code-cell} ipython3
 %%time
 n_samples = 1000
+rng_key, sample_key = jax.random.split(rng_key)
 states, infos = inference_loop_multiple_chains(
-    rng_key, initial_states, tuned_params, joint_logdensity, n_samples, n_chains
+    sample_key, initial_states, tuned_params, joint_logdensity, n_samples, n_chains
 )
 ```
 
@@ -388,7 +391,7 @@ summ_df
 :tags: [hide-input]
 
 az.plot_trace(trace)
-plt.tight_layout()
+plt.tight_layout();
 ```
 
 Trace plots also looks terrible and does not seems to be converged! Also, black band shows that every sample is diverged from original distribution. So **what's wrong happeing here?**
@@ -436,7 +439,7 @@ def joint_logdensity_change_of_var(params):
 except for the change of variable in `joint_logdensity()` function, everthing will remain same
 
 ```{code-cell} ipython3
-rng_key = jax.random.key(0)
+rng_key, init_key = jax.random.split(rng_key)
 
 
 def init_param_fn(seed):
@@ -451,7 +454,7 @@ def init_param_fn(seed):
     )
 
 
-init_param = init_param_fn(rng_key)
+init_param = init_param_fn(init_key)
 joint_logdensity_change_of_var(init_param)  # sanity check
 ```
 
@@ -461,22 +464,25 @@ warmup = blackjax.window_adaptation(blackjax.nuts, joint_logdensity_change_of_va
 
 # we use 4 chains for sampling
 n_chains = 4
-keys = jax.random.split(rng_key, n_chains)
-init_params = jax.vmap(init_param_fn)(keys)
+rng_key, init_key, warmup_key = jax.random.split(rng_key, 3)
+init_keys = jax.random.split(init_key, n_chains)
+init_params = jax.vmap(init_param_fn)(init_keys)
 
 @jax.vmap
 def call_warmup(seed, param):
     (initial_states, tuned_params), _ = warmup.run(seed, param, 1000)
     return initial_states, tuned_params
 
-initial_states, tuned_params = call_warmup(keys, init_params)
+warmup_keys = jax.random.split(warmup_key, n_chains)
+initial_states, tuned_params = call_warmup(warmup_keys, init_params)
 ```
 
 ```{code-cell} ipython3
 %%time
 n_samples = 1000
+rng_key, sample_key = jax.random.split(rng_key)
 states, infos = inference_loop_multiple_chains(
-    rng_key, initial_states, tuned_params, joint_logdensity_change_of_var, n_samples, n_chains
+    sample_key, initial_states, tuned_params, joint_logdensity_change_of_var, n_samples, n_chains
 )
 ```
 
@@ -499,7 +505,7 @@ summ_df
 :tags: [hide-input]
 
 az.plot_trace(trace)
-plt.tight_layout()
+plt.tight_layout();
 ```
 
 ```{code-cell} ipython3
@@ -537,7 +543,8 @@ pinned = model.experimental_pin(logdensity_ab=(), y=n_of_positives)
 # Get the default change of variable bijectors from the model
 bijectors = pinned.experimental_default_event_space_bijector()
 
-prior_sample = pinned.sample_unpinned(seed=rng_key)
+rng_key, init_key = jax.random.split(rng_key)
+prior_sample = pinned.sample_unpinned(seed=init_key)
 # You can check the unbounded sample
 # bijectors.inverse(prior_sample)
 ```
@@ -551,29 +558,28 @@ def joint_logdensity(unbound_param):
 
 ```{code-cell} ipython3
 %%time
-rng_key = jax.random.key(0)
 warmup = blackjax.window_adaptation(blackjax.nuts, joint_logdensity)
 
 # we use 4 chains for sampling
 n_chains = 4
-init_key, warmup_key = jax.random.split(rng_key, 2)
+rng_key, init_key, warmup_key = jax.random.split(rng_key, 3)
 init_params = bijectors.inverse(pinned.sample_unpinned(n_chains, seed=init_key))
-
-keys = jax.random.split(warmup_key, n_chains)
 
 @jax.vmap
 def call_warmup(seed, param):
     (initial_states, tuned_params), _ = warmup.run(seed, param, 1000)
     return initial_states, tuned_params
 
-initial_states, tuned_params = call_warmup(keys, init_params)
+warmup_keys = jax.random.split(warmup_key, n_chains)
+initial_states, tuned_params = call_warmup(warmup_keys, init_params)
 ```
 
 ```{code-cell} ipython3
 %%time
 n_samples = 1000
+rng_key, sample_key = jax.random.split(rng_key)
 states, infos = inference_loop_multiple_chains(
-    rng_key, initial_states, tuned_params, joint_logdensity, n_samples, n_chains
+    sample_key, initial_states, tuned_params, joint_logdensity, n_samples, n_chains
 )
 ```
 
@@ -596,5 +602,5 @@ summ_df
 :tags: [hide-input]
 
 az.plot_trace(trace)
-plt.tight_layout()
+plt.tight_layout();
 ```

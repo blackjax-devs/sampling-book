@@ -4,14 +4,11 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-file_format: mystnb
-mystnb:
-  execution_timeout: 200
 ---
 
 # Regime switching Hidden Markov model
@@ -44,16 +41,34 @@ where $\eta_{jt} = p_{j,1}$, $\mathcal{N}(r_t;\alpha_1, \sigma_1^2) + p_{j,2}$, 
 
 where $\mathcal{N}^0$ indicates the truncated at 0 Gaussian distribution and $\mathcal{C}^+$ the half-Cauchy distribution.
 
-```{code-cell} python
-import jax
-import jax.numpy as jnp
-import jax.random as jrnd
+```{code-cell} ipython3
+:tags: [hide-cell]
+
 import matplotlib.pyplot as plt
+import arviz as az
+
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["axes.spines.top"] = False
+az.rcParams["plot.max_subplots"] = 50
+```
+
+```{code-cell} ipython3
+:tags: [remove-output]
+
+import jax
+
+from datetime import date
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+```
+
+```{code-cell} ipython3
+:tags: [remove-output]
+
+import jax.numpy as jnp
 import numpy as np
 import numpyro
 import numpyro.distributions as distrib
 import pandas as pd
-import seaborn as sns
 from jax.scipy.stats import norm
 from numpyro.diagnostics import print_summary
 from numpyro.infer.util import initialize_model
@@ -148,7 +163,7 @@ class RegimeSwitchHMM:
 
 
 def inference_loop(rng, init_state, kernel, n_iter):
-    keys = jrnd.split(rng, n_iter)
+    keys = jax.random.split(rng, n_iter)
 
     def step(state, key):
         state, info = kernel(key, state)
@@ -158,26 +173,27 @@ def inference_loop(rng, init_state, kernel, n_iter):
     return states, info
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 url = "https://raw.githubusercontent.com/blackjax-devs/blackjax/main/docs/examples/data/google.csv"
 data = pd.read_csv(url)
-y = data.dl_ac.values * 100
+y = data["dl_ac"].values * 100
 T, _ = data.shape
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 dist = RegimeSwitchHMM(T, y)
 ```
 
-```{code-cell} python
-[n_chain, n_warm, n_iter] = [128, 5000, 200]
-ksam, kinit = jrnd.split(jrnd.key(0), 2)
+```{code-cell} ipython3
+n_chain, n_warm, n_iter = 128, 5000, 200
+# rng_key, kinit, ksam = jax.random.split(rng_key, 3)
+ksam, kinit = jax.random.split(jax.random.key(0), 2)
 dist.initialize_model(kinit, n_chain)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 tic1 = pd.Timestamp.now()
-k_warm, k_sample = jrnd.split(ksam)
+k_warm, k_sample = jax.random.split(ksam)
 warmup = blackjax.meads_adaptation(dist.logdensity_fn, n_chain)
 (init_state, parameters), _ = warmup.run(k_warm, dist.init_params, n_warm)
 kernel = blackjax.ghmc(dist.logdensity_fn, **parameters).step
@@ -186,38 +202,20 @@ def one_chain(k_sam, init_state):
     state, info = inference_loop(k_sam, init_state, kernel, n_iter)
     return state.position, info
 
-k_sample = jrnd.split(k_sample, n_chain)
+k_sample = jax.random.split(k_sample, n_chain)
 samples, infos = jax.vmap(one_chain)(k_sample, init_state)
 tic2 = pd.Timestamp.now()
 print("Runtime for MEADS", tic2 - tic1)
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 print_summary(samples)
 ```
 
-```{code-cell} python
-samples = jax.tree_map(lambda s: s.reshape((-1,) + s.shape[2:]), samples)
-```
-
-```{code-cell} python
-:tags: [hide-input]
-
-sam = []
-for name, value in samples.items():
-    sam.append(np.asarray(value).T)
-columns = [
-    r"$\alpha_1$",
-    r"$\alpha_2$",
-    r"$p_{1,1}$",
-    r"$p_{2,2}$",
-    r"$\rho$",
-    r"$\sigma_1$",
-    r"$\sigma_2$",
-    r"$\xi_{10}$",
-    r"$r_0$",
-]
-df = pd.DataFrame(np.vstack(sam).T, columns=columns)
-sns.pairplot(df.sample(2000), kind="kde", diag_kind="kde")
-plt.show()
+```{code-cell} ipython3
+import arviz as az
+idata = az.from_dict(posterior=samples)
+az.plot_pair(idata, kind='kde', marginals=True, textsize=20,
+            marginal_kwargs=dict(plot_kwargs={"lw":5}))
+plt.tight_layout();
 ```

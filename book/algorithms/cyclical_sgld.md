@@ -4,14 +4,11 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.1
+    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-file_format: mystnb
-mystnb:
-  execution_timeout: 200
 ---
 
 # Cyclical SGLD
@@ -21,22 +18,42 @@ In this example we will demonstrate how Blackjax can be used to create non-trivi
 However, SGMCMC algorithms are inefficient at exploring multimodal distributions which are typical of neural networks. To see this let's consider a simple yet challenging example, an array of 25 gaussian distributions:
 
 ```{code-cell} ipython3
-:tags: [remove-stdout]
+:tags: [hide-cell]
+import matplotlib.pyplot as plt
 
-import itertools
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["axes.spines.top"] = False
+```
+
+```{code-cell} ipython3
+:tags: [remove-output]
 
 import jax
+
+from datetime import date
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+```
+
+```{code-cell} ipython3
+import numpy as np
 import jax.scipy as jsp
 import jax.numpy as jnp
 
 
-lmbda = 1/25
-positions = [-4, -2, 0, 2, 4]
-mu = jnp.array([list(prod) for prod in itertools.product(positions, positions)])
+positions = np.asarray([-4, -2, 0, 2, 4], dtype=np.float32)
+mu = np.asarray(np.meshgrid(positions, positions)).reshape(2, -1).T
+lmbda = 1 / mu.shape[0]
 sigma = 0.03 * jnp.eye(2)
 
+
 def logprob_fn(x, *_):
-    return lmbda * jsp.special.logsumexp(jax.scipy.stats.multivariate_normal.logpdf(x, mu, sigma))
+    return jnp.sum(
+        jnp.log(lmbda)
+        + jsp.special.logsumexp(
+            jax.scipy.stats.multivariate_normal.logpdf(x, mu, sigma), axis=-1
+        )
+    )
+
 
 def sample_fn(rng_key):
     choose_key, sample_key = jax.random.split(rng_key)
@@ -47,14 +64,10 @@ def sample_fn(rng_key):
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-import matplotlib.pylab as plt
-
-import numpy as np
 from scipy.stats import gaussian_kde
 
-
-rng_key = jax.random.key(0)
-samples = jax.vmap(sample_fn)(jax.random.split(rng_key, 10_000))
+rng_key, sample_key = jax.random.split(rng_key)
+samples = jax.vmap(sample_fn)(jax.random.split(sample_key, 10_000))
 
 xmin, ymin = -5, -5
 xmax, ymax = 5, 5
@@ -67,13 +80,13 @@ values = np.vstack([x, y])
 kernel = gaussian_kde(values)
 f = np.reshape(kernel(positions).T, xx.shape)
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(8, 8))
 cfset = ax.contourf(xx, yy, f, cmap='Blues')
 ax.imshow(np.rot90(f), cmap='Blues', extent=[xmin, xmax, ymin, ymax])
 cset = ax.contour(xx, yy, f, colors='k')
 
 plt.rcParams['axes.titlepad'] = 15.
-plt.title("Samples from a mixture of 25 normal distributions")
+plt.title("Samples from a mixture of 25 normal distributions");
 ```
 
 ## SGLD
@@ -88,20 +101,21 @@ from fastprogress import progress_bar
 # 50k iterations
 num_training_steps = 50000
 schedule_fn = lambda k: 0.05 * k ** (-0.55)
-schedule = [schedule_fn(i) for i in range(1, num_training_steps+1)]
+schedule = schedule_fn(np.arange(1, num_training_steps+1))
 
 grad_fn = lambda x, _: jax.grad(logprob_fn)(x)
 sgld = blackjax.sgld(grad_fn)
 
-rng_key = jax.random.key(3)
-init_position = -10 + 20 * jax.random.uniform(rng_key, shape=(2,))
+rng_key, init_key = jax.random.split(rng_key)
+init_position = -10 + 20 * jax.random.uniform(init_key, shape=(2,))
 
 position = sgld.init(init_position)
 sgld_samples = []
 for i in progress_bar(range(num_training_steps)):
-    _, rng_key = jax.random.split(rng_key)
-    position = jax.jit(sgld.step)(rng_key, position, 0, schedule[i])
+    rng_key, sample_key = jax.random.split(rng_key)
+    position = jax.jit(sgld.step)(sample_key, position, 0, schedule[i])
     sgld_samples.append(position)
+sgld_samples = np.asarray(sgld_samples)
 ```
 
 As one can see on the following figure, SGLD has a hard time escaping the mode in which it started, leading to a poor approximation of the distribution:
@@ -109,16 +123,13 @@ As one can see on the following figure, SGLD has a hard time escaping the mode i
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-fig = plt.figure()
-ax = fig.add_subplot(111)
-x = [sample[0] for sample in sgld_samples]
-y = [sample[1] for sample in sgld_samples]
+fig, ax = plt.subplots(figsize=(8, 8))
 
-ax.plot(x, y, 'k-', lw=0.1, alpha=0.5)
-ax.set_xlim([-8, 8])
-ax.set_ylim([-8, 8])
+ax.plot(sgld_samples[:, 0], sgld_samples[:, 1], 'k-', lw=0.1, alpha=0.5)
+ax.set_xlim([-5, 5])
+ax.set_ylim([-5, 5])
 
-plt.axis('off')
+plt.axis('off');
 ```
 
 ## Cyclical SGLD
@@ -175,17 +186,14 @@ do_sample = np.array([step.do_sample for step in schedule])
 
 sampling_points = np.ma.masked_where(~do_sample, step_sizes)
 
-fig, ax = plt.subplots(figsize=(12,8))
+fig, ax = plt.subplots(figsize=(12, 4))
 ax.plot(step_sizes, lw=2, ls="--", color="r", label="Exploration stage")
 ax.plot(sampling_points, lw=2, ls="-", color="k", label="Sampling stage")
-
-ax.spines.right.set_visible(False)
-ax.spines.top.set_visible(False)
 
 ax.set_xlabel("Training steps", fontsize=20)
 ax.set_ylabel("Step size", fontsize=20)
 plt.legend()
-plt.title("Training schedule for Cyclical SGLD")
+plt.title("Training schedule for Cyclical SGLD");
 ```
 
 ### Step function
@@ -228,7 +236,9 @@ def cyclical_sgld(grad_estimator_fn, loglikelihood_fn):
             _, state, minibatch, step_size = current_state
             grads = grad_estimator_fn(state.position, 0)
             rescaled_grads = - 1. * step_size * grads
-            updates, new_opt_state = sgd.update(rescaled_grads, state.opt_state, state.position)
+            updates, new_opt_state = sgd.update(
+                rescaled_grads, state.opt_state, state.position
+                )
             new_position = optax.apply_updates(state.position, updates)
             return CyclicalSGMCMCState(new_position, new_opt_state)
 
@@ -265,18 +275,20 @@ schedule = [schedule_fn(i) for i in range(num_training_steps)]
 grad_fn = lambda x, _: jax.grad(logprob_fn)(x)
 init, step = cyclical_sgld(grad_fn, logprob_fn)
 
-rng_key = jax.random.key(3)
-init_position = -10 + 20 * jax.random.uniform(rng_key, shape=(2,))
+rng_key, init_key = jax.random.split(rng_key)
+init_position = -10 + 20 * jax.random.uniform(init_key, shape=(2,))
 init_state = init(init_position)
 
 
 state = init_state
 cyclical_samples = []
 for i in progress_bar(range(num_training_steps)):
-    _, rng_key = jax.random.split(rng_key)
-    state = jax.jit(step)(rng_key, state, 0, schedule[i])
+    rng_key, sample_key = jax.random.split(rng_key)
+    state = jax.jit(step)(sample_key, state, 0, schedule[i])
     if schedule[i].do_sample:
         cyclical_samples.append(state.position)
+
+cyclical_samples = np.asarray(cyclical_samples)
 ```
 
 By looking at the trajectory of the sampler it seems that the distribution is much better explored:
@@ -284,17 +296,13 @@ By looking at the trajectory of the sampler it seems that the distribution is mu
 ```{code-cell} ipython3
 :tags: [hide-input]
 
-fig = plt.figure()
-ax = fig.add_subplot(111)
-x = [sample[0] for sample in cyclical_samples]
-y = [sample[1] for sample in cyclical_samples]
-
-ax.plot(x, y, 'k-', lw=0.1, alpha=0.5)
-ax.set_xlim([-8, 8])
-ax.set_ylim([-8, 8])
+fig, ax = plt.subplots(figsize=(8, 8))
+ax.plot(cyclical_samples[:, 0], cyclical_samples[:, 1], 'k-', lw=0.1, alpha=0.5)
+ax.set_xlim([-5, 5])
+ax.set_ylim([-5, 5])
 
 plt.axis('off')
-plt.title("Trajectory with Cyclical SGLD")
+plt.title("Trajectory with Cyclical SGLD");
 ```
 
 And the distribution indeed looks more better:
@@ -306,21 +314,20 @@ xmin, ymin = -5, -5
 xmax, ymax = 5, 5
 
 nbins = 300j
-x = [sample[0] for sample in cyclical_samples]
-y = [sample[1] for sample in cyclical_samples]
+x, y = cyclical_samples[:, 0], cyclical_samples[:, 1]
 xx, yy = np.mgrid[xmin:xmax:nbins, ymin:ymax:nbins]
 positions = np.vstack([xx.ravel(), yy.ravel()])
 values = np.vstack([x, y])
 kernel = gaussian_kde(values)
 f = np.reshape(kernel(positions).T, xx.shape)
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(8, 8))
 cfset = ax.contourf(xx, yy, f, cmap='Blues')
 ax.imshow(np.rot90(f), cmap='Blues', extent=[xmin, xmax, ymin, ymax])
 cset = ax.contour(xx, yy, f, colors='k')
 
 plt.rcParams['axes.titlepad'] = 15.
-plt.title("Samples from a mixture of 25 normal distributions")
+plt.title("Samples from a mixture of 25 normal distributions");
 ```
 
 ```{warning}
