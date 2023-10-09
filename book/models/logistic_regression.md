@@ -4,43 +4,48 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.1
+    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-file_format: mystnb
-mystnb:
-  execution_timeout: 200
 ---
 
 # Bayesian Logistic Regression
 
 In this notebook we demonstrate the use of the random walk Rosenbluth-Metropolis-Hasting algorithm on a simple logistic regression.
 
-```{code-cell} ipython3
-import jax
-import jax.numpy as jnp
-import jax.random as random
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_biclusters
-
-import blackjax
-```
-
-```{code-cell} ipython3
+```{code-cell}
 :tags: [hide-cell]
+
+import matplotlib.pyplot as plt
 
 plt.rcParams["axes.spines.right"] = False
 plt.rcParams["axes.spines.top"] = False
 plt.rcParams["figure.figsize"] = (12, 8)
 ```
 
+```{code-cell}
+:tags: [remove-output]
+
+import jax
+
+from datetime import date
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+```
+
+```{code-cell}
+import jax.numpy as jnp
+from sklearn.datasets import make_biclusters
+
+import blackjax
+```
+
 ## The Data
 
 We create two clusters of points using [scikit-learn's `make_bicluster` function](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_biclusters.html?highlight=bicluster%20data#sklearn.datasets.make_biclusters).
 
-```{code-cell} ipython3
+```{code-cell}
 num_points = 50
 X, rows, cols = make_biclusters(
     (num_points, 2), 2, noise=0.6, random_state=314, minval=-3, maxval=3
@@ -48,14 +53,13 @@ X, rows, cols = make_biclusters(
 y = rows[0] * 1.0  # y[i] = whether point i belongs to cluster 1
 ```
 
-```{code-cell} ipython3
+```{code-cell}
 :tags: [hide-input]
 
 colors = ["tab:red" if el else "tab:blue" for el in rows[0]]
 plt.scatter(*X.T, edgecolors=colors, c="none")
 plt.xlabel(r"$X_0$")
-plt.ylabel(r"$X_1$")
-plt.show()
+plt.ylabel(r"$X_1$");
 ```
 
 ## The Model
@@ -80,7 +84,7 @@ $$
 
 And $\Phi$ is the matrix that contains the data, so each row $\Phi_{i,:}$ is the vector $\left[1, X_0^i, X_1^i\right]$
 
-```{code-cell} ipython3
+```{code-cell}
 :tags: [hide-stderr]
 
 Phi = jnp.c_[jnp.ones(num_points)[:, None], X]
@@ -109,17 +113,17 @@ def logdensity_fn(w, alpha=1.0):
 
 We use `blackjax`'s Random Walk RMH kernel to sample from the posterior distribution.
 
-```{code-cell} ipython3
-rng_key = random.key(314)
+```{code-cell}
+rng_key, init_key = jax.random.split(rng_key)
 
-w0 = random.multivariate_normal(rng_key, 0.1 + jnp.zeros(M), jnp.eye(M))
+w0 = jax.random.multivariate_normal(init_key, 0.1 + jnp.zeros(M), jnp.eye(M))
 rmh = blackjax.rmh(logdensity_fn, blackjax.mcmc.random_walk.normal(jnp.ones(M) * 0.05))
 initial_state = rmh.init(w0)
 ```
 
 Since `blackjax` does not provide an inference loop we need to implement one ourselves:
 
-```{code-cell} ipython3
+```{code-cell}
 def inference_loop(rng_key, kernel, initial_state, num_samples):
     @jax.jit
     def one_step(state, rng_key):
@@ -134,14 +138,14 @@ def inference_loop(rng_key, kernel, initial_state, num_samples):
 
 We can now run the inference:
 
-```{code-cell} ipython3
-_, rng_key = random.split(rng_key)
-states = inference_loop(rng_key, rmh.step, initial_state, 5_000)
+```{code-cell}
+rng_key, sample_key = jax.random.split(rng_key)
+states = inference_loop(sample_key, rmh.step, initial_state, 5_000)
 ```
 
 And display the trace:
 
-```{code-cell} ipython3
+```{code-cell}
 :tags: [hide-input]
 
 burnin = 300
@@ -154,7 +158,7 @@ for i, axi in enumerate(ax):
 plt.show()
 ```
 
-```{code-cell} ipython3
+```{code-cell}
 burnin = 300
 chains = states.position[burnin:, :]
 nsamp, _ = chains.shape
@@ -164,7 +168,7 @@ nsamp, _ = chains.shape
 
 Having infered the posterior distribution of the regression's coefficients we can compute the probability to belong to the first cluster at each position $(X_0, X_1)$.
 
-```{code-cell} ipython3
+```{code-cell}
 # Create a meshgrid
 xmin, ymin = X.min(axis=0) - 0.1
 xmax, ymax = X.max(axis=0) + 0.1
@@ -178,12 +182,11 @@ Z_mcmc = sigmoid(jnp.einsum("mij,sm->sij", Phispace, chains))
 Z_mcmc = Z_mcmc.mean(axis=0)
 ```
 
-```{code-cell} ipython3
+```{code-cell}
 :tags: [hide-input]
 
 plt.contourf(*Xspace, Z_mcmc)
 plt.scatter(*X.T, c=colors)
 plt.xlabel(r"$X_0$")
-plt.ylabel(r"$X_1$")
-plt.show()
+plt.ylabel(r"$X_1$");
 ```

@@ -1,18 +1,16 @@
 ---
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.15.2
-  kernelspec:
-    display_name: Python 3 (ipykernel)
-    language: python
-    name: python3
+jupytext:
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.15.2
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 
-<!-- #region -->
 # Parameter estimation in ODE models with a probabilistic ODE solver
 
 
@@ -90,30 +88,43 @@ To sample $\theta$ according to $M$ (respectively $\log M$), we evaluate $M(\the
 4. BlackJAX: Sample from $\log M(\theta)$ using, for example, the No-U-Turn-Sampler (which requires $\nabla_\theta M(\theta))$.
 
 Here is how:
-<!-- #endregion -->
 
-```python
-import functools
+```{code-cell} ipython3
+:tags: [hide-cell]
 
-import blackjax
-import jax
-import jax.experimental.ode
-import jax.numpy as jnp
 import matplotlib.pyplot as plt
-from diffeqzoo import backend, ivps
-from jax.config import config
 
-from probdiffeq import solution_routines, solvers
-from probdiffeq.implementations import recipes
-from probdiffeq.strategies import filters
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["axes.spines.top"] = False
 ```
 
-```python
+```{code-cell} ipython3
+:tags: [remove-output]
+
+import jax
+from jax.config import config
+
 # x64 precision
 config.update("jax_enable_x64", True)
 
 # CPU
 config.update("jax_platform_name", "cpu")
+
+from datetime import date
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+```
+
+```{code-cell} ipython3
+import functools
+
+import blackjax
+import jax.experimental.ode
+import jax.numpy as jnp
+from diffeqzoo import backend, ivps
+
+from probdiffeq import solution_routines, solvers
+from probdiffeq.implementations import recipes
+from probdiffeq.strategies import filters
 
 # IVP examples in JAX
 if not backend.has_been_selected:
@@ -124,7 +135,7 @@ if not backend.has_been_selected:
 
 First, we set up an IVP and create some artificial data by simulating the system with "incorrect" initial conditions.
 
-```python
+```{code-cell} ipython3
 f, u0, (t0, t1), f_args = ivps.lotka_volterra()
 
 
@@ -143,7 +154,7 @@ strategy = filters.Filter(
 solver = solvers.CalibrationFreeSolver(strategy, output_scale_sqrtm=10.0)
 ```
 
-```python
+```{code-cell} ipython3
 def plot_solution(sol, *, ax, marker=".", **plotting_kwargs):
     for d in [0, 1]:
         ax.plot(sol.t, sol.u[:, d], marker="None", **plotting_kwargs)
@@ -163,7 +174,7 @@ save_at = jnp.linspace(t0, t1, num=250, endpoint=True)
 solve_save_at = functools.partial(solve_adaptive, save_at=save_at)
 ```
 
-```python
+```{code-cell} ipython3
 # Visualise the initial guess and the data
 
 fig, ax = plt.subplots()
@@ -184,7 +195,7 @@ plt.show()
 
 Set up a log-posterior density function that we can plug into BlackJAX. Choose a Gaussian prior centered at the initial guess with a large variance.
 
-```python
+```{code-cell} ipython3
 mean = theta_guess
 cov = jnp.eye(2) * 30  # fairly uninformed prior
 
@@ -217,20 +228,18 @@ data = solve_fixed(theta_true, ts=ts, solver=solver).u
 log_M = functools.partial(logposterior_fn, data=data, ts=ts, solver=solver)
 ```
 
-```python
+```{code-cell} ipython3
 print(jnp.exp(log_M(theta_true)), ">=", jnp.exp(log_M(theta_guess)), "?")
 ```
 
-<!-- #region -->
 ## Sampling with BlackJAX
 
 From here on, BlackJAX takes over:
 
 
 Set up a sampler.
-<!-- #endregion -->
 
-```python
+```{code-cell} ipython3
 @functools.partial(jax.jit, static_argnames=["kernel", "num_samples"])
 def inference_loop(rng_key, kernel, initial_state, num_samples):
     def one_step(state, rng_key):
@@ -245,26 +254,27 @@ def inference_loop(rng_key, kernel, initial_state, num_samples):
 
 Initialise the sampler, warm it up, and run the inference loop.
 
-```python
+```{code-cell} ipython3
 initial_position = theta_guess
-rng_key = jax.random.key(0)
 ```
 
-```python
+```{code-cell} ipython3
 # WARMUP
 warmup = blackjax.window_adaptation(
     blackjax.nuts, log_M, progress_bar=True
 )
+
+rng_key, warmup_key = jax.random.split(rng_key)
 (initial_state, tuned_parameters), _ = warmup.run(
-    rng_key, initial_position, num_steps=200)
+    warmup_key, initial_position, num_steps=200)
 ```
 
-```python
+```{code-cell} ipython3
 # INFERENCE LOOP
-rng_key, _ = jax.random.split(rng_key, 2)
+rng_key, sample_key = jax.random.split(rng_key)
 nuts_kernel = blackjax.nuts(log_M, **tuned_parameters).step
 states = inference_loop(
-    rng_key, kernel=nuts_kernel, initial_state=initial_state, num_samples=150
+    sample_key, kernel=nuts_kernel, initial_state=initial_state, num_samples=150
 )
 ```
 
@@ -272,11 +282,11 @@ states = inference_loop(
 
 Now that we have samples of $\theta$, let's plot the corresponding solutions:
 
-```python
+```{code-cell} ipython3
 solution_samples = jax.vmap(solve_save_at)(states.position)
 ```
 
-```python
+```{code-cell} ipython3
 # Visualise the initial guess and the data
 
 fig, ax = plt.subplots()
@@ -302,7 +312,7 @@ The samples cover a perhaps surprisingly large range of potential initial condit
 
 In parameter space, this is what it looks like:
 
-```python
+```{code-cell} ipython3
 plt.title("Posterior samples (parameter space)")
 plt.plot(states.position[:, 0], states.position[:, 1], "o", alpha=0.5, markersize=4)
 plt.plot(theta_true[0], theta_true[1], "P", label="Truth", markersize=8)
@@ -313,7 +323,7 @@ plt.show()
 
 Let's add the value of $M$ to the plot to see whether the sampler covers the entire region of interest.
 
-```python
+```{code-cell} ipython3
 xlim = 18, jnp.amax(states.position[:, 0]) + 0.5
 ylim = 18, jnp.amax(states.position[:, 1]) + 0.5
 
@@ -327,7 +337,7 @@ log_M_vmapped = jax.vmap(log_M_vmapped_x, in_axes=-1, out_axes=-1)
 Zs = log_M_vmapped(Thetas)
 ```
 
-```python
+```{code-cell} ipython3
 fig, ax = plt.subplots(ncols=2, sharex=True, sharey=True)
 
 ax_samples, ax_heatmap = ax
@@ -346,8 +356,6 @@ plt.colorbar(im)
 plt.show()
 ```
 
-<!-- #region -->
-<!-- #region -->
 Looks great!
 
 ## Conclusion
@@ -365,9 +373,8 @@ We could also add a more suitable prior distribution $p(\theta)$ to regularise t
 A final side note:
 We could also replace the sampler with an optimisation algorithm and use this procedure to solve boundary value problems (albeit this may not be very efficient; use [this](https://arxiv.org/abs/2106.07761) algorithm instead  {cite:p}`kramer2021linear`).
 
-<!-- #endregion -->
+
 
 ```{bibliography}
 :filter: docname in docnames
 ```
-<!-- #endregion -->

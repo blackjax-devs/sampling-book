@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.1
+    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -28,13 +28,27 @@ is not well calibrated (too small step size, etc) like in the example below.
 ## Imports
 
 ```{code-cell} ipython3
-import jax
-import jax.numpy as jnp
-import matplotlib.pyplot as plt
-import numpy as np
-from jax.scipy.stats import multivariate_normal
+:tags: [hide-cell]
 
-jax.config.update("jax_platform_name", "cpu")
+import matplotlib.pyplot as plt
+
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["axes.spines.top"] = False
+```
+
+```{code-cell} ipython3
+:tags: [remove-output]
+
+import jax
+
+from datetime import date
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+```
+
+```{code-cell} ipython3
+import numpy as np
+import jax.numpy as jnp
+from jax.scipy.stats import multivariate_normal
 
 import blackjax
 import blackjax.smc.resampling as resampling
@@ -60,21 +74,19 @@ This corresponds to the following distribution. We plot the resulting tempered d
 
 ```{code-cell} ipython3
 def V(x):
-    return 5 * jnp.square(jnp.sum(x**2) - 1)
+    return 5 * jnp.square(jnp.sum(x**2, axis=-1) - 1)
 
 
 def prior_log_prob(x):
-    d = x.shape[0]
+    d = x.shape[-1]
     return multivariate_normal.logpdf(x, jnp.zeros((d,)), jnp.eye(d))
 
 
-linspace = jnp.linspace(-2, 2, 5000).reshape(-1, 1)
+linspace = jnp.linspace(-2, 2, 5000)[..., None]
 lambdas = jnp.linspace(0.0, 1.0, 5)
-prior_logvals = jnp.vectorize(prior_log_prob, signature="(d)->()")(linspace)
-potential_vals = jnp.vectorize(V, signature="(d)->()")(linspace)
-log_res = prior_logvals.reshape(1, -1) - jnp.expand_dims(
-    lambdas, 1
-) * potential_vals.reshape(1, -1)
+prior_logvals = prior_log_prob(linspace)
+potential_vals = V(linspace)
+log_res = prior_logvals - lambdas[..., None] * potential_vals
 
 density = jnp.exp(log_res)
 normalizing_factor = jnp.sum(density, axis=1, keepdims=True) * (
@@ -88,7 +100,7 @@ density /= normalizing_factor
 
 fig, ax = plt.subplots(figsize=(12, 8))
 ax.plot(linspace.squeeze(), density.T)
-ax.legend(list(lambdas))
+ax.legend(list(lambdas));
 ```
 
 ```{code-cell} ipython3
@@ -119,15 +131,15 @@ We first try to sample from the posterior density using an HMC kernel.
 ```{code-cell} ipython3
 %%time
 
-key = jax.random.key(42)
-
 hmc_parameters = dict(
     step_size=1e-4, inverse_mass_matrix=inv_mass_matrix, num_integration_steps=50
 )
 
 hmc = blackjax.hmc(full_logdensity, **hmc_parameters)
 hmc_state = hmc.init(jnp.ones((1,)))
-hmc_samples = inference_loop(key, hmc.step, hmc_state, n_samples)
+
+rng_key, sample_key = jax.random.split(rng_key)
+hmc_samples = inference_loop(sample_key, hmc.step, hmc_state, n_samples)
 ```
 
 ```{code-cell} ipython3
@@ -149,7 +161,9 @@ nuts_parameters = dict(step_size=1e-4, inverse_mass_matrix=inv_mass_matrix)
 
 nuts = blackjax.nuts(full_logdensity, **nuts_parameters)
 nuts_state = nuts.init(jnp.ones((1,)))
-nuts_samples = inference_loop(key, nuts.step, nuts_state, n_samples)
+
+rng_key, sample_key = jax.random.split(rng_key)
+nuts_samples = inference_loop(sample_key, nuts.step, nuts_state, n_samples)
 ```
 
 ```{code-cell} ipython3
@@ -210,12 +224,13 @@ tempered = blackjax.adaptive_tempered_smc(
     num_mcmc_steps=1,
 )
 
+rng_key, init_key, sample_key = jax.random.split(rng_key, 3)
 initial_smc_state = jax.random.multivariate_normal(
-    jax.random.key(0), jnp.zeros([1]), jnp.eye(1), (n_samples,)
+    init_key, jnp.zeros([1]), jnp.eye(1), (n_samples,)
 )
 initial_smc_state = tempered.init(initial_smc_state)
 
-n_iter, smc_samples = smc_inference_loop(key, tempered.step, initial_smc_state)
+n_iter, smc_samples = smc_inference_loop(sample_key, tempered.step, initial_smc_state)
 print("Number of steps in the adaptive algorithm: ", n_iter.item())
 ```
 
@@ -236,21 +251,16 @@ We consider a prior distribution $p_0(x) = \mathcal{N}(x \mid 0_2, 2 I_2)$ and w
 We plot the resulting tempered density for 5 different values of $\lambda_k$: from $\lambda_k =1$ which correponds to the original density to $\lambda_k=0$. The lower the value of $\lambda_k$ the easier it is to sampler from the posterior log-density.
 
 ```{code-cell} ipython3
-def prior_log_prob(x):
-    d = x.shape[0]
-    return multivariate_normal.logpdf(x, jnp.zeros((d,)), 2 * jnp.eye(d))
-
-
 def V(x):
     d = x.shape[-1]
     res = -10 * d + jnp.sum(x**2 - 10 * jnp.cos(2 * jnp.pi * x), -1)
     return res
 
 
-linspace = jnp.linspace(-5, 5, 5000).reshape(-1, 1)
+linspace = jnp.linspace(-5, 5, 5000)[..., None]
 lambdas = jnp.linspace(0.0, 1.0, 5)
-potential_vals = jnp.vectorize(V, signature="(d)->()")(linspace)
-log_res = jnp.expand_dims(lambdas, 1) * potential_vals.reshape(1, -1)
+potential_vals = V(linspace)
+log_res = lambdas[..., None] * potential_vals
 
 density = jnp.exp(-log_res)
 normalizing_factor = jnp.sum(density, axis=1, keepdims=True) * (
@@ -290,8 +300,6 @@ We first try to sample from the posterior density using an HMC kernel.
 ```{code-cell} ipython3
 %%time
 
-key = jax.random.key(42)
-
 loglikelihood = lambda x: -V(x)
 
 hmc_parameters = dict(
@@ -300,7 +308,9 @@ hmc_parameters = dict(
 
 hmc = blackjax.hmc(full_logdensity, **hmc_parameters)
 hmc_state = hmc.init(jnp.ones((1,)))
-hmc_samples = inference_loop(key, hmc.step, hmc_state, n_samples)
+
+rng_key, sample_key = jax.random.split(rng_key)
+hmc_samples = inference_loop(sample_key, hmc.step, hmc_state, n_samples)
 ```
 
 ```{code-cell} ipython3
@@ -323,7 +333,9 @@ nuts_parameters = dict(step_size=1e-2, inverse_mass_matrix=inv_mass_matrix)
 
 nuts = blackjax.nuts(full_logdensity, **nuts_parameters)
 nuts_state = nuts.init(jnp.ones((1,)))
-nuts_samples = inference_loop(key, nuts.step, nuts_state, n_samples)
+
+rng_key, sample_key = jax.random.split(rng_key)
+nuts_samples = inference_loop(sample_key, nuts.step, nuts_state, n_samples)
 ```
 
 ```{code-cell} ipython3
@@ -360,12 +372,13 @@ tempered = blackjax.adaptive_tempered_smc(
     num_mcmc_steps=1,
 )
 
+rng_key, init_key, sample_key = jax.random.split(rng_key, 3)
 initial_smc_state = jax.random.multivariate_normal(
-    jax.random.key(0), jnp.zeros([1]), jnp.eye(1), (n_samples,)
+    init_key, jnp.zeros([1]), jnp.eye(1), (n_samples,)
 )
 initial_smc_state = tempered.init(initial_smc_state)
 
-n_iter, smc_samples = smc_inference_loop(key, tempered.step, initial_smc_state)
+n_iter, smc_samples = smc_inference_loop(sample_key, tempered.step, initial_smc_state)
 print("Number of steps in the adaptive algorithm: ", n_iter.item())
 ```
 

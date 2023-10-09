@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.1
+    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -43,10 +43,25 @@ In this example we will limit our analysis to the posterior distribution of the 
 Using this analytic result we can check the correct convergence of our sampler towards the posterior distribution. It is important to note, however, that the Elliptical Slice sampler can be used to sample from any vector of parameters so long as these parameters have a prior Multivariate Gaussian distribution.
 
 ```{code-cell} ipython3
-import jax
-import jax.numpy as jnp
-import jax.random as jrnd
+:tags: [hide-cell]
+
 import matplotlib.pyplot as plt
+
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["axes.spines.top"] = False
+```
+
+```{code-cell} ipython3
+:tags: [remove-output]
+
+import jax
+
+from datetime import date
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+```
+
+```{code-cell} ipython3
+import jax.numpy as jnp
 import numpy as np
 
 from blackjax import elliptical_slice, nuts, window_adaptation
@@ -60,7 +75,7 @@ def squared_exponential(x, y, length, scale):
 
 ```{code-cell} ipython3
 def inference_loop(rng, init_state, step_fn, n_iter):
-    keys = jrnd.split(rng, n_iter)
+    keys = jax.random.split(rng, n_iter)
 
     def one_step(state, key):
         state, info = step_fn(key, state)
@@ -78,15 +93,14 @@ length, scale = 1.0, 1.0
 y_sd = 1.0
 
 # fake data
-rng = jrnd.key(10)
-kX, kf, ky = jrnd.split(rng, 3)
-X = jrnd.uniform(kX, shape=(n, d))
+rng_key, kX, kf, ky = jax.random.split(rng_key, 4)
+X = jax.random.uniform(kX, shape=(n, d))
 Sigma = jax.vmap(
     lambda x: jax.vmap(lambda y: squared_exponential(x, y, length, scale))(X)
 )(X) + 1e-3 * jnp.eye(n)
 invSigma = jnp.linalg.inv(Sigma)
-f = jrnd.multivariate_normal(kf, jnp.zeros(n), Sigma)
-y = f + jrnd.normal(ky, shape=(n,)) * y_sd
+f = jax.random.multivariate_normal(kf, jnp.zeros(n), Sigma)
+y = f + jax.random.normal(ky, shape=(n,)) * y_sd
 
 # conjugate results
 posterior_cov = jnp.linalg.inv(invSigma + 1 / y_sd**2 * jnp.eye(n))
@@ -121,7 +135,8 @@ n_iter = 8000
 %%time
 loglikelihood_fn = lambda f: -0.5 * jnp.dot(y - f, y - f) / y_sd**2
 es_init_fn, es_step_fn = elliptical_slice(loglikelihood_fn, mean=jnp.zeros(n), cov=Sigma)
-states, info = inference_loop(jrnd.key(0), es_init_fn(f), es_step_fn, n_warm + n_iter)
+rng_key, sample_key = jax.random.split(rng_key)
+states, info = inference_loop(sample_key, es_init_fn(f), es_step_fn, n_warm + n_iter)
 samples = states.position[n_warm:]
 ```
 
@@ -131,7 +146,7 @@ n_iter = 2000
 
 logdensity_fn = lambda f: loglikelihood_fn(f) - 0.5 * jnp.dot(f @ invSigma, f)
 warmup = window_adaptation(nuts, logdensity_fn, n_warm, target_acceptance_rate=0.8)
-key_warm, key_sample = jrnd.split(jrnd.key(0))
+rng_key, key_warm, key_sample = jax.random.split(rng_key, 3)
 (state, params), _ = warmup.run(key_warm, f)
 nuts_step_fn = nuts(logdensity_fn, **params).step
 states, _ = inference_loop(key_sample, state, nuts_step_fn, n_iter)
@@ -148,8 +163,9 @@ print(
 ```
 
 ```{code-cell} ipython3
-keys = jrnd.split(rng, 1000)
-predictive = jax.vmap(lambda k, f: f + jrnd.normal(k, (n,)) * y_sd)(
+rng_key, key_predictive = jax.random.split(rng_key)
+keys = jax.random.split(key_predictive, 1000)
+predictive = jax.vmap(lambda k, f: f + jax.random.normal(k, (n,)) * y_sd)(
     keys, samples[-1000:]
 )
 ```
