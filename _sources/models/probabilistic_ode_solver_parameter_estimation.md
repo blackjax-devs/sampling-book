@@ -102,7 +102,7 @@ plt.rcParams["axes.spines.top"] = False
 :tags: [remove-output]
 
 import jax
-from jax.config import config
+from jax import config
 
 # x64 precision
 config.update("jax_enable_x64", True)
