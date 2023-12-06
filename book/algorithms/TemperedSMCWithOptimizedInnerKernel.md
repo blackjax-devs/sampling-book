@@ -39,10 +39,10 @@ hmc_parameters = dict(
     step_size=1e-4, inverse_mass_matrix=inv_mass_matrix, num_integration_steps=1
 )
 ```
-these were fixed across all iterations of SMC. The efficiency of an SMC sampler can be improven by
+these were fixed across all iterations of SMC. The efficiency of an SMC sampler can be improved by
 informing the inner kernel parameters using the particles population. We can tune one or many inner 
 kernel parameters before mutating the particles in step $i$, using the particles outputted by step $i-1$.
-This notebook ilustrates such tuning using IRMH (Independent Rosenbluth Metropolis Hastings) with a multivariate normal proposal distribution.
+This notebook illustrates such tuning using IRMH (Independent Rosenbluth Metropolis-Hastings) with a multivariate normal proposal distribution.
 
 See Design choice (c) of section 2.1.3 from https://arxiv.org/abs/1808.07730.
 
@@ -98,7 +98,7 @@ from blackjax import adaptive_tempered_smc
 from blackjax.smc import resampling as resampling, solver
 from blackjax import irmh
 def irmh_experiment(dimensions, target_ess, num_mcmc_steps):
-    mean = jnp.ones(dimensions) * 0.0
+    mean = jnp.zeros(dimensions)
     cov = jnp.diag(jnp.ones(dimensions)) * 2
 
     def irmh_proposal_distribution(rng_key):
@@ -149,12 +149,12 @@ the particles outcome of the $i-th$ step, in order to mutate them in the step $i
 
 ```python
 from blackjax.smc.inner_kernel_tuning import inner_kernel_tuning
-from blackjax.smc.optimizations.from_particles import particles_covariance_matrix, particles_stds, particles_means
+from blackjax.smc.tuning.from_particles import particles_covariance_matrix, particles_stds, particles_means
 
 def tuned_irmh_loop(kernel, rng_key, initial_state):
     def cond(carry):
         _, state, *_ = carry
-        return state.sampling_state.lmbda < 1
+        return state.sampler_state.lmbda < 1
 
     def body(carry):
         i, state, op_key = carry
@@ -170,7 +170,7 @@ def tuned_irmh_loop(kernel, rng_key, initial_state):
         return total_iter, final_state
 
     total_iter, final_state = f(initial_state, rng_key)
-    return total_iter, final_state.sampling_state.particles
+    return total_iter, final_state.sampler_state.particles
 
 
 def tuned_irmh_experiment(dimensions, target_ess, num_mcmc_steps):
@@ -193,8 +193,8 @@ def tuned_irmh_experiment(dimensions, target_ess, num_mcmc_steps):
         resampling_fn=resampling.systematic,
         smc_algorithm=adaptive_tempered_smc,
         mcmc_parameters={},
-        mcmc_parameter_factory=lambda state, info: (particles_means(state.particles), particles_stds(state.particles)),
-        initial_parameter_value=(jnp.ones(dimensions) * 0, jnp.ones(dimensions) * 2),
+        mcmc_parameter_update_fn=lambda state, info: (particles_means(state.particles), particles_stds(state.particles)),
+        initial_parameter_value=(jnp.zeros(dimensions), jnp.ones(dimensions) * 2),
         target_ess=target_ess,
         num_mcmc_steps=num_mcmc_steps
     )
@@ -219,8 +219,9 @@ def irmh_full_cov_experiment(dimensions, target_ess, num_mcmc_steps):
                                  proposal_distribution=proposal_distribution,
                                  proposal_logdensity_fn=proposal_logdensity_fn)
 
-    def mcmc_parameter_factory(state, info):
-        return particles_means(state.particles), particles_covariance_matrix(state.particles)
+    def mcmc_parameter_update_fn(state, info):
+        covariance = jnp.atleast_2d(particles_covariance_matrix(state.particles))
+        return particles_means(state.particles), covariance
 
     kernel_tuned_proposal = inner_kernel_tuning(
         logprior_fn=prior_log_prob,
@@ -230,8 +231,8 @@ def irmh_full_cov_experiment(dimensions, target_ess, num_mcmc_steps):
         resampling_fn=resampling.systematic,
         smc_algorithm=adaptive_tempered_smc,
         mcmc_parameters={},
-        mcmc_parameter_factory=mcmc_parameter_factory,
-        initial_parameter_value=(jnp.ones(dimensions) * 0, jnp.diag(jnp.ones(dimensions)) * 2),
+        mcmc_parameter_update_fn=mcmc_parameter_update_fn,
+        initial_parameter_value=(jnp.zeros(dimensions), jnp.eye(dimensions) * 2),
         target_ess=target_ess,
         num_mcmc_steps=num_mcmc_steps
     )
@@ -246,8 +247,6 @@ def smc_run_experiment(runnable, target_ess, num_mcmc_steps, dimen):
     key, initial_particles_key, iterations_key = jax.random.split(key, 3)
     initial_particles = initial_particles_multivariate_normal(dimen, initial_particles_key, n_particles)
     kernel, inference_loop = runnable(dimen, target_ess, num_mcmc_steps)
-    
-    
     _, particles = inference_loop(kernel.step, iterations_key, kernel.init(initial_particles))
     return particles
 ```
@@ -263,7 +262,7 @@ particles = []
 for dims in dimensions_to_try:
     for exp_id, experiment in (("irmh", irmh_experiment),
                                ("tune_diag",tuned_irmh_experiment),
-                               ("tune_full_cov", irmh_full_cov_experiment)):
+                               ("tune_full_cov", irmh_full_cov_experiment)):               
         experiment_particles = smc_run_experiment(experiment, 0.5, 50 , dims)
         experiments.append(exp_id)
         dimensions.append(dims)
