@@ -180,8 +180,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/PeriodicOrbitalMCMC.html">Periodic Orbital MCMC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/TemperedSMC.html">Use Tempered SMC to Improve Exploration of MCMC Methods.</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/TemperedSMCWithOptimizedInnerKernel.html">Tuning inner kernel parameters of SMC</a></li>
-
-
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/mclmc.html">Microcanonical Langevin Monte Carlo</a></li>
 
 </ul>
@@ -434,6 +432,7 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
 
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+
 <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
 </pre></div>
 </div>
@@ -480,7 +479,7 @@ document.write(`
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/37673dc919067bfb37756fad44ec4d49a48a90f1887c5245673cebff5e40501d.png" src="../_images/37673dc919067bfb37756fad44ec4d49a48a90f1887c5245673cebff5e40501d.png" />
+<img alt="../_images/e6c6b43e6d240c8d4a68eb2cf23ee0dad7744c6b79cee332e58982043bad5cb3.png" src="../_images/e6c6b43e6d240c8d4a68eb2cf23ee0dad7744c6b79cee332e58982043bad5cb3.png" />
 </div>
 </div>
 </section>
@@ -535,10 +534,27 @@ p = \operatorname{logistic}(\Phi\,\boldsymbol{w})
 <p>We use <code class="docutils literal notranslate"><span class="pre">blackjax</span></code>’s Latent Gaussian sampler to sample from the posterior distribution.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">blackjax.mcmc.marginal_latent_gaussian</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">init</span><span class="p">,</span>
+    <span class="n">build_kernel</span><span class="p">,</span>
+    <span class="n">svd_from_covariance</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">cov_svd</span> <span class="o">=</span> <span class="n">svd_from_covariance</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="n">U</span><span class="p">,</span> <span class="n">Gamma</span><span class="p">,</span> <span class="n">U_t</span> <span class="o">=</span> <span class="n">cov_svd</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">w0</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">M</span><span class="p">,))</span>
 
-<span class="n">init</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mgrad_gaussian</span><span class="p">(</span><span class="n">log_likelihood</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span>
-<span class="n">initial_state</span> <span class="o">=</span> <span class="n">init</span><span class="p">(</span><span class="n">w0</span><span class="p">)</span>
+<span class="n">init_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">init</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">log_likelihood</span><span class="p">,</span> <span class="n">U_t</span><span class="p">)</span>
+<span class="n">initial_state</span> <span class="o">=</span> <span class="n">init_fn</span><span class="p">(</span><span class="n">w0</span><span class="p">)</span>
+
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">build_kernel</span><span class="p">(</span><span class="n">cov_svd</span><span class="p">)</span>
+<span class="n">step</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="n">kernel</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">log_likelihood</span><span class="p">,</span> <span class="n">delta</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -612,7 +628,7 @@ p = \operatorname{logistic}(\Phi\,\boldsymbol{w})
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Percentage of accepted samples (after calibration): 63.08%
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Percentage of accepted samples (after calibration): 78.04%
 </pre></div>
 </div>
 </div>
@@ -635,7 +651,7 @@ p = \operatorname{logistic}(\Phi\,\boldsymbol{w})
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/e3f2a8e566e09e15edc7ce148ae5d09c85021d7cadf3816c9b53a2442996c352.png" src="../_images/e3f2a8e566e09e15edc7ce148ae5d09c85021d7cadf3816c9b53a2442996c352.png" />
+<img alt="../_images/4a1645aa97d33df92120614d47b074ada3b72bd81e0df4b9478e4f14f2202506.png" src="../_images/4a1645aa97d33df92120614d47b074ada3b72bd81e0df4b9478e4f14f2202506.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -683,7 +699,7 @@ p = \operatorname{logistic}(\Phi\,\boldsymbol{w})
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/d2e3458e9f9de9cfc7e5e44b404d6f5378ef737c055e6c4ce9025b78b42c402f.png" src="../_images/d2e3458e9f9de9cfc7e5e44b404d6f5378ef737c055e6c4ce9025b78b42c402f.png" />
+<img alt="../_images/c896db9f01ea3edbd4aef37388d1a0aad02b1f72798de2511de0c591072ce793.png" src="../_images/c896db9f01ea3edbd4aef37388d1a0aad02b1f72798de2511de0c591072ce793.png" />
 </div>
 </div>
 <p>We essentially recover the same contours as with the standard random walk approach.</p>

@@ -13,7 +13,7 @@ kernelspec:
 
 # Microcanonical Langevin Monte Carlo
 
-This is an algorithm based on https://arxiv.org/abs/2212.08549. A website with detailed information about the algorithm can be found [here](https://microcanonical-monte-carlo.netlify.app/). 
+This is an algorithm based on https://arxiv.org/abs/2212.08549 ({cite:p}`robnik2023microcanonical`, {cite:p}`robnik2023microcanonical2`). A website with detailed information about the algorithm can be found [here](https://microcanonical-monte-carlo.netlify.app/). 
 
 The original derivation comes from thinking about the microcanonical ensemble (a concept from statistical mechanics), but the upshot is that we integrate the following SDE:
 
@@ -276,4 +276,8 @@ ax.plot(dates, median, color="navy", label="volatility posterior")
 ax.fill_between(dates, lower_quartile, upper_quartile, color="navy", alpha=0.5)
 
 ax.legend()
+```
+
+```{bibliography}
+:filter: docname in docnames
 ```

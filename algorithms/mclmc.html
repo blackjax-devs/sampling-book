@@ -180,8 +180,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="PeriodicOrbitalMCMC.html">Periodic Orbital MCMC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TemperedSMC.html">Use Tempered SMC to Improve Exploration of MCMC Methods.</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TemperedSMCWithOptimizedInnerKernel.html">Tuning inner kernel parameters of SMC</a></li>
-
-
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Microcanonical Langevin Monte Carlo</a></li>
 
 </ul>
@@ -411,7 +409,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="microcanonical-langevin-monte-carlo">
 <h1>Microcanonical Langevin Monte Carlo<a class="headerlink" href="#microcanonical-langevin-monte-carlo" title="Permalink to this heading">#</a></h1>
-<p>This is an algorithm based on https://arxiv.org/abs/2212.08549. A website with detailed information about the algorithm can be found <a class="reference external" href="https://microcanonical-monte-carlo.netlify.app/">here</a>.</p>
+<p>This is an algorithm based on https://arxiv.org/abs/2212.08549 (<span id="id1">[<a class="reference internal" href="#id23" title="Jakob Robnik, G Bruno De Luca, Eva Silverstein, and Uroš Seljak. Microcanonical hamiltonian monte carlo. Journal of Machine Learning Research, 24:1–34, 2023.">RDLSS23</a>]</span>, <span id="id2">[<a class="reference internal" href="#id24" title="Jakob Robnik and Uroš Seljak. Microcanonical langevin monte carlo. arXiv preprint arXiv:2303.18221, 2023.">RS23</a>]</span>). A website with detailed information about the algorithm can be found <a class="reference external" href="https://microcanonical-monte-carlo.netlify.app/">here</a>.</p>
 <p>The original derivation comes from thinking about the microcanonical ensemble (a concept from statistical mechanics), but the upshot is that we integrate the following SDE:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -782,6 +780,17 @@ Download complete.
 </pre></div>
 </div>
 <img alt="../_images/792ea450b9f714f51080880f964d8603b7edbb7a459f81ca1c74e1e97fcce745.png" src="../_images/792ea450b9f714f51080880f964d8603b7edbb7a459f81ca1c74e1e97fcce745.png" />
+</div>
+</div>
+<div class="docutils container" id="id3">
+<div class="citation" id="id23" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">RDLSS23</a><span class="fn-bracket">]</span></span>
+<p>Jakob Robnik, G Bruno De Luca, Eva Silverstein, and Uroš Seljak. Microcanonical hamiltonian monte carlo. <em>Journal of Machine Learning Research</em>, 24:1–34, 2023.</p>
+</div>
+<div class="citation" id="id24" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">RS23</a><span class="fn-bracket">]</span></span>
+<p>Jakob Robnik and Uroš Seljak. Microcanonical langevin monte carlo. <em>arXiv preprint arXiv:2303.18221</em>, 2023.</p>
+</div>
 </div>
 </div>
 </section>
