@@ -103,6 +103,7 @@ plt.rcParams["axes.spines.top"] = False
 import jax
 
 from datetime import date
+
 rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
 ```
 
@@ -186,7 +187,9 @@ step:
 ```
 
 ```{code-cell} ipython3
-init, step = mgrad_gaussian(logdensity_fn=logdensity_fn, mean=jnp.zeros(n), covariance=Sigma)
+init, kernel = mgrad_gaussian(
+    logdensity_fn=logdensity_fn, mean=jnp.zeros(n), covariance=Sigma, step_size=0.5
+)
 ```
 
 We continue by setting the inference loop.
@@ -212,7 +215,6 @@ Note that one can calibrate the `delta` parameter as described in the example [B
 ```{code-cell} ipython3
 %%time
 
-kernel = lambda key, x: step(rng_key=key, state=x, delta=0.5)
 initial_state = init(f)
 rng_key, sample_key = jax.random.split(rng_key, 2)
 states, info = inference_loop(sample_key, init(f), kernel, n_warm + n_iter)
