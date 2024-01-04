@@ -36,6 +36,7 @@ rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
 ```{code-cell} ipython3
 from matplotlib.patches import Ellipse
 from sklearn.datasets import make_biclusters
+import numpy as np
 
 import jax.numpy as jnp
 import blackjax
@@ -118,10 +119,14 @@ The optimizer is the limited memory BFGS algorithm.
 To help understand the approximations that pathfinder evaluates during its run, here we plot for each step of the L-BFGS optimizer the approximation of the posterior distribution of the model derived by pathfinder and its ELBO:
 
 ```{code-cell} ipython3
-rng_key, init_key, infer_key = jax.random.split(rng_key, 3)
-w0 = jax.random.multivariate_normal(init_key, 2.0 + jnp.zeros(M), jnp.eye(M))
-_, info = blackjax.vi.pathfinder.approximate(infer_key, logdensity_fn, w0, ftol=1e-4)
-path = info.path
+# jaxopt lbfgs could fail, hack to keep trying util it works
+stop = 0
+while stop == 0:
+    rng_key, init_key, infer_key = jax.random.split(rng_key, 3)
+    w0 = jax.random.multivariate_normal(init_key, 2.0 + jnp.zeros(M), jnp.eye(M))
+    _, info = blackjax.vi.pathfinder.approximate(infer_key, logdensity_fn, w0, ftol=1e-6)
+    path = info.path
+    stop = np.isfinite(path.elbo).mean()
 ```
 
 ```{code-cell} ipython3
