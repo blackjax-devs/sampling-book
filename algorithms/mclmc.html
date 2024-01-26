@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Microcanonical Langevin Monte Carlo &#8212; The Sampling Book Project</title>
   
@@ -29,39 +28,43 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'algorithms/mclmc';</script>
@@ -156,7 +159,18 @@ const thebe_selector_output = ".output, .cell_output"
     <p class="title logo__title">The Sampling Book Project</p>
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
@@ -402,7 +416,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="microcanonical-langevin-monte-carlo">
-<h1>Microcanonical Langevin Monte Carlo<a class="headerlink" href="#microcanonical-langevin-monte-carlo" title="Permalink to this heading">#</a></h1>
+<h1>Microcanonical Langevin Monte Carlo<a class="headerlink" href="#microcanonical-langevin-monte-carlo" title="Link to this heading">#</a></h1>
 <p>This is an algorithm based on https://arxiv.org/abs/2212.08549 (<span id="id1">[<a class="reference internal" href="#id23" title="Jakob Robnik, G Bruno De Luca, Eva Silverstein, and Uroš Seljak. Microcanonical hamiltonian monte carlo. Journal of Machine Learning Research, 24:1–34, 2023.">RDLSS23</a>]</span>, <span id="id2">[<a class="reference internal" href="#id24" title="Jakob Robnik and Uroš Seljak. Microcanonical langevin monte carlo. arXiv preprint arXiv:2303.18221, 2023.">RS23</a>]</span>). A website with detailed information about the algorithm can be found <a class="reference external" href="https://microcanonical-monte-carlo.netlify.app/">here</a>.</p>
 <p>The original derivation comes from thinking about the microcanonical ensemble (a concept from statistical mechanics), but the upshot is that we integrate the following SDE:</p>
 <div class="math notranslate nohighlight">
@@ -419,7 +433,7 @@ u \\
 \end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(u\)</span> is an auxilliary variable, <span class="math notranslate nohighlight">\(S(x)\)</span> is the PDF of the distribution from which we are sampling and the last term describes spherically symmetric noise. After <span class="math notranslate nohighlight">\(u\)</span> is marginalized out, this converges to the target distribution <span class="math notranslate nohighlight">\(S(x)\)</span>.</p>
 <section id="how-to-run-mclmc-in-blackjax">
-<h2>How to run MCLMC in BlackJax<a class="headerlink" href="#how-to-run-mclmc-in-blackjax" title="Permalink to this heading">#</a></h2>
+<h2>How to run MCLMC in BlackJax<a class="headerlink" href="#how-to-run-mclmc-in-blackjax" title="Link to this heading">#</a></h2>
 <p>It is very important to use the tuning algorithm provided, which controls the step size of the integrator and also <span class="math notranslate nohighlight">\(L\)</span>, a parameter related to <span class="math notranslate nohighlight">\(\eta\)</span> above.</p>
 <p>An example is given below, of a 1000 dim Gaussian (of which 2 dimensions are plotted).</p>
 <div class="cell tag_hide-cell docutils container">
@@ -572,7 +586,7 @@ u \\
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="second-example-stochastic-volatility">
-<h1>Second example: Stochastic Volatility<a class="headerlink" href="#second-example-stochastic-volatility" title="Permalink to this heading">#</a></h1>
+<h1>Second example: Stochastic Volatility<a class="headerlink" href="#second-example-stochastic-volatility" title="Link to this heading">#</a></h1>
 <p>This is ported from Jakob Robnik’s <a class="reference external" href="https://github.com/JakobRobnik/MicroCanonicalHMC/blob/master/notebooks/tutorials/advanced_tutorial.ipynb">example notebook</a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -777,6 +791,7 @@ Download complete.
 </div>
 </div>
 <div class="docutils container" id="id3">
+<div role="list" class="citation-list">
 <div class="citation" id="id23" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">RDLSS23</a><span class="fn-bracket">]</span></span>
 <p>Jakob Robnik, G Bruno De Luca, Eva Silverstein, and Uroš Seljak. Microcanonical hamiltonian monte carlo. <em>Journal of Machine Learning Research</em>, 24:1–34, 2023.</p>

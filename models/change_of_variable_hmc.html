@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Change of Variable in HMC &#8212; The Sampling Book Project</title>
   
@@ -29,39 +28,43 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'models/change_of_variable_hmc';</script>
@@ -156,7 +159,18 @@ const thebe_selector_output = ".output, .cell_output"
     <p class="title logo__title">The Sampling Book Project</p>
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
@@ -400,7 +414,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="change-of-variable-in-hmc">
-<h1>Change of Variable in HMC<a class="headerlink" href="#change-of-variable-in-hmc" title="Permalink to this heading">#</a></h1>
+<h1>Change of Variable in HMC<a class="headerlink" href="#change-of-variable-in-hmc" title="Link to this heading">#</a></h1>
 <p><strong>Rat tumor problem:</strong> We have J certain kinds of rat tumor diseases. For each kind of tumor, we test <span class="math notranslate nohighlight">\(N_{j}\)</span> people/animals and among those <span class="math notranslate nohighlight">\(y_{j}\)</span> tested positive. Here we assume that <span class="math notranslate nohighlight">\(y_{j}\)</span> is distrubuted with <strong>Binom</strong>(<span class="math notranslate nohighlight">\(N_{i}\)</span>, <span class="math notranslate nohighlight">\(\theta_{i}\)</span>). Our objective is to approximate <span class="math notranslate nohighlight">\(\theta_{j}\)</span> for each type of tumor.</p>
 <p>In particular we use following binomial hierarchical model where <span class="math notranslate nohighlight">\(y_{j}\)</span> and <span class="math notranslate nohighlight">\(N_{j}\)</span> are observed variables.</p>
 <div class="math notranslate nohighlight">
@@ -654,7 +668,7 @@ document.write(`
 </div>
 </div>
 <section id="posterior-sampling">
-<h2>Posterior Sampling<a class="headerlink" href="#posterior-sampling" title="Permalink to this heading">#</a></h2>
+<h2>Posterior Sampling<a class="headerlink" href="#posterior-sampling" title="Link to this heading">#</a></h2>
 <p>Now we use Blackjax’s NUTS algorithm to get posterior samples of <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(b\)</span>, and <span class="math notranslate nohighlight">\(\theta\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -783,7 +797,7 @@ Wall time: 7.14 s
 </div>
 </section>
 <section id="arviz-plots">
-<h2>Arviz Plots<a class="headerlink" href="#arviz-plots" title="Permalink to this heading">#</a></h2>
+<h2>Arviz Plots<a class="headerlink" href="#arviz-plots" title="Link to this heading">#</a></h2>
 <p>We have all our posterior samples stored in <code class="docutils literal notranslate"><span class="pre">states.position</span></code> dictionary and <code class="docutils literal notranslate"><span class="pre">infos</span></code> store additional information like acceptance probability, divergence, etc. Now, we can use certain diagnostics to judge if our MCMC samples are converged on stationary distribution. Some of widely diagnostics are trace plots, potential scale reduction factor (R hat), divergences, etc. <code class="docutils literal notranslate"><span class="pre">Arviz</span></code> library provides quicker ways to anaylze these diagnostics. We can use <code class="docutils literal notranslate"><span class="pre">arviz.summary()</span></code> and <code class="docutils literal notranslate"><span class="pre">arviz_plot_trace()</span></code>, but these functions take specific format (arviz’s trace) as a input.</p>
 <div class="cell tag_hide-cell docutils container">
 <details class="hide above-input">
@@ -1768,7 +1782,7 @@ Wall time: 7.14 s
 <p>Well, it’s related to support of latent variable. In HMC, the latent variable must be in an unconstrained space, but in above model <code class="docutils literal notranslate"><span class="pre">theta</span></code> is constrained in between 0 to 1. We can use change of variable trick to solve above problem</p>
 </section>
 <section id="change-of-variable">
-<h2>Change of Variable<a class="headerlink" href="#change-of-variable" title="Permalink to this heading">#</a></h2>
+<h2>Change of Variable<a class="headerlink" href="#change-of-variable" title="Link to this heading">#</a></h2>
 <p>We can sample from logits which is in unconstrained space and in <code class="docutils literal notranslate"><span class="pre">joint_logdensity()</span></code> we can convert logits to theta by suitable bijector (sigmoid). We calculate jacobian (first order derivaive) of bijector to tranform one probability distribution to another</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -2851,7 +2865,7 @@ Wall time: 7.39 s
 <p>We can see that <strong>r_hat</strong> is less than or equal to 1.01 for each latent variable, trace plots looks converged to stationary distribution, and only few samples are diverged.</p>
 </section>
 <section id="using-a-ppl">
-<h2>Using a PPL<a class="headerlink" href="#using-a-ppl" title="Permalink to this heading">#</a></h2>
+<h2>Using a PPL<a class="headerlink" href="#using-a-ppl" title="Link to this heading">#</a></h2>
 <p>Probabilistic programming language usually provides functionality to apply change of variable easily (often done automatically). In this case for TFP, we can use its modeling API <code class="docutils literal notranslate"><span class="pre">tfd.JointDistribution*</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

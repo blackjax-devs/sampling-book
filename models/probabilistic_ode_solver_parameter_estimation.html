@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Parameter estimation in ODE models with a probabilistic ODE solver &#8212; The Sampling Book Project</title>
   
@@ -29,39 +28,43 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'models/probabilistic_ode_solver_parameter_estimation';</script>
@@ -155,7 +158,18 @@ const thebe_selector_output = ".output, .cell_output"
     <p class="title logo__title">The Sampling Book Project</p>
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
@@ -403,18 +417,18 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="parameter-estimation-in-ode-models-with-a-probabilistic-ode-solver">
-<h1>Parameter estimation in ODE models with a probabilistic ODE solver<a class="headerlink" href="#parameter-estimation-in-ode-models-with-a-probabilistic-ode-solver" title="Permalink to this heading">#</a></h1>
+<h1>Parameter estimation in ODE models with a probabilistic ODE solver<a class="headerlink" href="#parameter-estimation-in-ode-models-with-a-probabilistic-ode-solver" title="Link to this heading">#</a></h1>
 <p>This tutorial explains how to estimate unknown parameters of initial value problems (IVPs) using
 probabilistic solvers as provided by <a class="reference external" href="https://pnkraemer.github.io/probdiffeq/">ProbDiffEq</a> in combination
 with Markov Chain Monte Carlo (MCMC) methods from <a class="reference external" href="https://blackjax-devs.github.io/blackjax/">BlackJAX</a>.</p>
 <section id="tl-dr">
-<h2>TL;DR<a class="headerlink" href="#tl-dr" title="Permalink to this heading">#</a></h2>
+<h2>TL;DR<a class="headerlink" href="#tl-dr" title="Link to this heading">#</a></h2>
 <p>Compute log-posterior of IVP parameters given observations of the IVP solution with ProbDiffEq. Sample from this posterior using BlackJAX.
 Evaluating the log-likelihood of the data is described <a class="reference external" href="https://arxiv.org/abs/2202.01287">in this paper</a> <span id="id1">[<a class="reference internal" href="#id20" title="Filip Tronarp, Nathanael Bosch, and Philipp Hennig. Fenrir: physics-enhanced regression for initial value problems. In International Conference on Machine Learning, 21776–21794. PMLR, 2022.">TBH22</a>]</span>.
 Based on this log-likelihood, sampling from the log-posterior is as done <a class="reference external" href="https://arxiv.org/abs/2002.09301">in this paper</a> <span id="id2">[<a class="reference internal" href="#id21" title="Hans Kersting, Nicholas Krämer, Martin Schiegg, Christian Daniel, Michael Tiemann, and Philipp Hennig. Differentiable likelihoods for fast inversion of 'likelihood-free' dynamical systems. In International Conference on Machine Learning, 5198–5208. PMLR, 2020.">KKramerS+20</a>]</span>.</p>
 </section>
 <section id="technical-setup">
-<h2>Technical setup<a class="headerlink" href="#technical-setup" title="Permalink to this heading">#</a></h2>
+<h2>Technical setup<a class="headerlink" href="#technical-setup" title="Link to this heading">#</a></h2>
 <p>Let <span class="math notranslate nohighlight">\(f\)</span> be a known vector field. In this example, we use the Lotka-Volterra model.
 (We get our IVP implementations from <a class="reference external" href="https://diffeqzoo.readthedocs.io/en/latest/">DiffEqZoo</a>.)
 Consider an ordinary differential equation</p>
@@ -520,7 +534,7 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 </div>
 </section>
 <section id="problem-setting">
-<h2>Problem setting<a class="headerlink" href="#problem-setting" title="Permalink to this heading">#</a></h2>
+<h2>Problem setting<a class="headerlink" href="#problem-setting" title="Link to this heading">#</a></h2>
 <p>First, we set up an IVP and create some artificial data by simulating the system with “incorrect” initial conditions.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -592,7 +606,7 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 </div>
 </section>
 <section id="log-posterior-densities-via-probdiffeq">
-<h2>Log-posterior densities via ProbDiffEq<a class="headerlink" href="#log-posterior-densities-via-probdiffeq" title="Permalink to this heading">#</a></h2>
+<h2>Log-posterior densities via ProbDiffEq<a class="headerlink" href="#log-posterior-densities-via-probdiffeq" title="Link to this heading">#</a></h2>
 <p>Set up a log-posterior density function that we can plug into BlackJAX. Choose a Gaussian prior centered at the initial guess with a large variance.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -644,7 +658,7 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 </div>
 </section>
 <section id="sampling-with-blackjax">
-<h2>Sampling with BlackJAX<a class="headerlink" href="#sampling-with-blackjax" title="Permalink to this heading">#</a></h2>
+<h2>Sampling with BlackJAX<a class="headerlink" href="#sampling-with-blackjax" title="Link to this heading">#</a></h2>
 <p>From here on, BlackJAX takes over:</p>
 <p>Set up a sampler.</p>
 <div class="cell docutils container">
@@ -728,7 +742,7 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 </div>
 </section>
 <section id="visualisation">
-<h2>Visualisation<a class="headerlink" href="#visualisation" title="Permalink to this heading">#</a></h2>
+<h2>Visualisation<a class="headerlink" href="#visualisation" title="Link to this heading">#</a></h2>
 <p>Now that we have samples of <span class="math notranslate nohighlight">\(\theta\)</span>, let’s plot the corresponding solutions:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -828,17 +842,18 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 <p>Looks great!</p>
 </section>
 <section id="conclusion">
-<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this heading">#</a></h2>
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
 <p>In conclusion, a log-posterior density function can be provided by ProbDiffEq such that any of BlackJAX’ samplers yield parameter estimates of IVPs.</p>
 </section>
 <section id="what-s-next">
-<h2>What’s next<a class="headerlink" href="#what-s-next" title="Permalink to this heading">#</a></h2>
+<h2>What’s next<a class="headerlink" href="#what-s-next" title="Link to this heading">#</a></h2>
 <p>Try to get a feeling for how the sampler reacts to changing observation noises, solver parameters, and so on.
 We could extend the sampling problem from <span class="math notranslate nohighlight">\(\theta \mapsto \log M(\theta)\)</span> to some <span class="math notranslate nohighlight">\((\theta, \sigma) \mapsto \log \tilde M(\theta, \sigma)\)</span>, i.e., treat the observation noise as unknown and run Hamiltonian Monte Carlo in a higher-dimensional parameter space.
 We could also add a more suitable prior distribution <span class="math notranslate nohighlight">\(p(\theta)\)</span> to regularise the problem.</p>
 <p>A final side note:
 We could also replace the sampler with an optimisation algorithm and use this procedure to solve boundary value problems (albeit this may not be very efficient; use <a class="reference external" href="https://arxiv.org/abs/2106.07761">this</a> algorithm instead  <span id="id4">[<a class="reference internal" href="#id23" title="Nicholas Krämer and Philipp Hennig. Linear-time probabilistic solutions of boundary value problems. Advances in Neural Information Processing Systems, 34:11160–11171, 2021.">KramerH21</a>]</span>).</p>
 <div class="docutils container" id="id5">
+<div role="list" class="citation-list">
 <div class="citation" id="id21" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">KKramerS+20</a><span class="fn-bracket">]</span></span>
 <p>Hans Kersting, Nicholas Krämer, Martin Schiegg, Christian Daniel, Michael Tiemann, and Philipp Hennig. Differentiable likelihoods for fast inversion of 'likelihood-free' dynamical systems. In <em>International Conference on Machine Learning</em>, 5198–5208. PMLR, 2020.</p>

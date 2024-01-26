@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Bayesian Regression With Latent Gaussian Sampler &#8212; The Sampling Book Project</title>
   
@@ -29,39 +28,43 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'models/GP_Marginal';</script>
@@ -156,7 +159,18 @@ const thebe_selector_output = ".output, .cell_output"
     <p class="title logo__title">The Sampling Book Project</p>
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
@@ -404,13 +418,13 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="bayesian-regression-with-latent-gaussian-sampler">
-<h1>Bayesian Regression With Latent Gaussian Sampler<a class="headerlink" href="#bayesian-regression-with-latent-gaussian-sampler" title="Permalink to this heading">#</a></h1>
+<h1>Bayesian Regression With Latent Gaussian Sampler<a class="headerlink" href="#bayesian-regression-with-latent-gaussian-sampler" title="Link to this heading">#</a></h1>
 <p>In this example, we want to illustrate how to use the marginal sampler implementation <a class="reference external" href="https://blackjax-devs.github.io/blackjax/mcmc.html#blackjax.mgrad_gaussian"><code class="docutils literal notranslate"><span class="pre">mgrad_gaussian</span></code></a> of the article <a class="reference external" href="https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/rssb.12269">Auxiliary gradient-based sampling algorithms</a> <span id="id1">[<a class="reference internal" href="#id12" title="Michalis K. Titsias and Omiros Papaspiliopoulos. Auxiliary gradient-based sampling algorithms. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 80(4):749-767, 2018. URL: https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/rssb.12269, arXiv:https://rss.onlinelibrary.wiley.com/doi/pdf/10.1111/rssb.12269, doi:https://doi.org/10.1111/rssb.12269.">TP18</a>]</span>. We do so by using the simulated data from the example <a class="reference external" href="https://blackjax-devs.github.io/blackjax/examples/GP_Elliauxgradientalgo2018pticalSliceSampler.html">Gaussian Regression with the Elliptical Slice Sampler</a>. Please also refer to the complementary example <a class="reference external" href="https://blackjax-devs.github.io/blackjax/examples/LogisticRegressionWithLatentGaussianSampler.html">Bayesian Logistic Regression With Latent Gaussian Sampler</a>.</p>
 <section id="sampler-overview">
-<h2>Sampler Overview<a class="headerlink" href="#sampler-overview" title="Permalink to this heading">#</a></h2>
+<h2>Sampler Overview<a class="headerlink" href="#sampler-overview" title="Link to this heading">#</a></h2>
 <p>In section we give a brief overview of the idea behind this particular sampler. For more details please refer to the original paper <a class="reference external" href="https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/rssb.12269">Auxiliary gradient-based sampling algorithms</a> (<a class="reference external" href="https://arxiv.org/abs/1610.09641">here</a> you can access the arXiv preprint).</p>
 <section id="motivation-auxiliary-metropolis-hastings-samplers">
-<h3>Motivation: Auxiliary Metropolis-Hastings samplers<a class="headerlink" href="#motivation-auxiliary-metropolis-hastings-samplers" title="Permalink to this heading">#</a></h3>
+<h3>Motivation: Auxiliary Metropolis-Hastings samplers<a class="headerlink" href="#motivation-auxiliary-metropolis-hastings-samplers" title="Link to this heading">#</a></h3>
 <p>Let us recall how to sample from a target density <span class="math notranslate nohighlight">\(\pi(\mathbf{x})\)</span> using a Metropolis-Hasting sampler trough a <em>marginal scheme process</em>. The main idea is to have a mechanism that generate proposals <span class="math notranslate nohighlight">\(y\)</span> which we then accept or reject according to a specific criterion. Concretely, suppose that we have an <em>auxiliary</em> scheme given by</p>
 <ol class="arabic simple">
 <li><p>Sample <span class="math notranslate nohighlight">\(\mathbf{u}|\mathbf{x} \sim \pi(\mathbf{u}|\mathbf{x}) = q(\mathbf{u}|\mathbf{x})\)</span>.</p></li>
@@ -435,7 +449,7 @@ document.write(`
 </ol>
 </section>
 <section id="example-auxiliary-metropolis-adjusted-langevin-algorithm-mala">
-<h3>Example: Auxiliary Metropolis-Adjusted Langevin Algorithm (MALA)<a class="headerlink" href="#example-auxiliary-metropolis-adjusted-langevin-algorithm-mala" title="Permalink to this heading">#</a></h3>
+<h3>Example: Auxiliary Metropolis-Adjusted Langevin Algorithm (MALA)<a class="headerlink" href="#example-auxiliary-metropolis-adjusted-langevin-algorithm-mala" title="Link to this heading">#</a></h3>
 <p>Let’s consider the case of an auxiliary random walk proposal <span class="math notranslate nohighlight">\(q(\mathbf{u}|\mathbf{x}) = N(\mathbf{u}|\mathbf{x}, (\delta /2) \mathbf{I})\)</span> for <span class="math notranslate nohighlight">\(\delta &gt; 0\)</span> as in <a class="reference external" href="https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/rssb.12269">[Section 2.2]  Auxiliary gradient-based sampling algorithms</a>, it is shown that one can use a first order approximation to sample from the (intractable) <span class="math notranslate nohighlight">\(\pi(\mathbf{x}|\mathbf{u})\)</span> density by choosing</p>
 <div class="math notranslate nohighlight">
 \[q(\mathbf{y}|\mathbf{u}, \mathbf{x}) \propto N(\mathbf{y}|\mathbf{u} + (\delta/2)\nabla \log \pi(\mathbf{x}), (\delta/2) I).\]</div>
@@ -444,7 +458,7 @@ document.write(`
 \[q(\mathbf{y}| \mathbf{x}) = N(\mathbf{y}|\mathbf{x} + (\delta/2)\nabla \log \pi(\mathbf{x}), \delta I).\]</div>
 </section>
 <section id="latent-gaussian-models">
-<h3>Latent Gaussian Models<a class="headerlink" href="#latent-gaussian-models" title="Permalink to this heading">#</a></h3>
+<h3>Latent Gaussian Models<a class="headerlink" href="#latent-gaussian-models" title="Link to this heading">#</a></h3>
 <p>A particular case of interest is the latent Gaussian model where the target density has the form</p>
 <div class="math notranslate nohighlight">
 \[\pi(\mathbf{x}) \propto \overbrace{\exp\{f(\mathbf{x})\}}^{\text{likelihood}} \underbrace{N(\mathbf{x}|\mathbf{0}, \mathbf{C})}_{\text{Gaussian Prior}}\]</div>
@@ -553,7 +567,7 @@ document.write(`
 </section>
 </section>
 <section id="sampling">
-<h2>Sampling<a class="headerlink" href="#sampling" title="Permalink to this heading">#</a></h2>
+<h2>Sampling<a class="headerlink" href="#sampling" title="Link to this heading">#</a></h2>
 <p>Now we proceed to run the sampler. First, we set the sampler parameters:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -635,7 +649,7 @@ Wall time: 5.17 s
 </div>
 </section>
 <section id="diagnostics">
-<h2>Diagnostics<a class="headerlink" href="#diagnostics" title="Permalink to this heading">#</a></h2>
+<h2>Diagnostics<a class="headerlink" href="#diagnostics" title="Link to this heading">#</a></h2>
 <p>Finally we evaluate the results.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -686,6 +700,7 @@ Wall time: 5.17 s
 </div>
 </div>
 <div class="docutils container" id="id2">
+<div role="list" class="citation-list">
 <div class="citation" id="id12" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">TP18</a><span class="fn-bracket">]</span></span>
 <p>Michalis K. Titsias and Omiros Papaspiliopoulos. Auxiliary gradient-based sampling algorithms. <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em>, 80(4):749–767, 2018. URL: <a class="reference external" href="https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/rssb.12269">https://rss.onlinelibrary.wiley.com/doi/abs/10.1111/rssb.12269</a>, <a class="reference external" href="https://arxiv.org/abs/https://rss.onlinelibrary.wiley.com/doi/pdf/10.1111/rssb.12269">arXiv:https://rss.onlinelibrary.wiley.com/doi/pdf/10.1111/rssb.12269</a>, <a class="reference external" href="https://doi.org/https://doi.org/10.1111/rssb.12269">doi:https://doi.org/10.1111/rssb.12269</a>.</p>

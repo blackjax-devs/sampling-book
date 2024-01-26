@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Periodic Orbital MCMC &#8212; The Sampling Book Project</title>
   
@@ -29,39 +28,43 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'algorithms/PeriodicOrbitalMCMC';</script>
@@ -156,7 +159,18 @@ const thebe_selector_output = ".output, .cell_output"
     <p class="title logo__title">The Sampling Book Project</p>
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
@@ -406,7 +420,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="periodic-orbital-mcmc">
-<h1>Periodic Orbital MCMC<a class="headerlink" href="#periodic-orbital-mcmc" title="Permalink to this heading">#</a></h1>
+<h1>Periodic Orbital MCMC<a class="headerlink" href="#periodic-orbital-mcmc" title="Link to this heading">#</a></h1>
 <p>Illustrating the usage of Algorithm 2 of <a class="reference external" href="https://arxiv.org/abs/2010.08047">Neklyudov &amp; Welling, (2021)</a> <span id="id1">[<a class="reference internal" href="#id18" title="Kirill Neklyudov and Max Welling. Orbital mcmc. 2021. URL: https://arxiv.org/abs/2010.08047, doi:10.48550/ARXIV.2010.08047.">NW21</a>]</span> on the Banana density</p>
 <div class="math notranslate nohighlight">
 \[
@@ -521,7 +535,7 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 </details>
 </div>
 <section id="banana-density">
-<h2>Banana Density<a class="headerlink" href="#banana-density" title="Permalink to this heading">#</a></h2>
+<h2>Banana Density<a class="headerlink" href="#banana-density" title="Link to this heading">#</a></h2>
 <p>We will be sampling from the banana density:</p>
 <div class="cell tag_hide-input docutils container">
 <details class="hide above-input">
@@ -549,7 +563,7 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 </div>
 </section>
 <section id="initial-state-and-sampler-parameters">
-<h2>Initial State and Sampler Parameters<a class="headerlink" href="#initial-state-and-sampler-parameters" title="Permalink to this heading">#</a></h2>
+<h2>Initial State and Sampler Parameters<a class="headerlink" href="#initial-state-and-sampler-parameters" title="Link to this heading">#</a></h2>
 <p>Since the algorithm doesn’t have an accept/reject step, we can’t tune the parameters of the bijection according to its acceptance probability. By weighing the samples we are are doing, in a sense, importance sampling; hence, an alternative would be develop and adaptive procedure that aims at reducing the variance of the weights.</p>
 <p>The algorithm samples orbits of length <code class="docutils literal notranslate"><span class="pre">period</span></code>. Each iteration, starting from an initial point sampled from the previous orbit, shifts its initial point’s position in the orbit, hence making the algorithm irreversible, and samples the whole orbit, forwards and backwards in order to cover the whole period, for steps of length <code class="docutils literal notranslate"><span class="pre">step_size</span></code>. The samples are then weighted and returned with its corresponding weights.</p>
 <div class="cell docutils container">
@@ -570,7 +584,7 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 </div>
 </section>
 <section id="velocity-verlet">
-<h2>Velocity Verlet<a class="headerlink" href="#velocity-verlet" title="Permalink to this heading">#</a></h2>
+<h2>Velocity Verlet<a class="headerlink" href="#velocity-verlet" title="Link to this heading">#</a></h2>
 <p>The integrator usually found in implementations of HMC. It creates an orbit by discretizing the solution to Hamilton’s equations of the Hamiltonian function</p>
 <div class="math notranslate nohighlight">
 \[
@@ -625,7 +639,7 @@ Wall time: 995 ms
 </div>
 </section>
 <section id="mclachlan">
-<h2>McLachlan<a class="headerlink" href="#mclachlan" title="Permalink to this heading">#</a></h2>
+<h2>McLachlan<a class="headerlink" href="#mclachlan" title="Link to this heading">#</a></h2>
 <p>A different method of discretizing the solution to Hamilton’s equations, see <a class="reference external" href="https://arxiv.org/abs/1405.3153">Blanes, Casas &amp; Sanz-Serna (2014)</a> <span id="id3">[<a class="reference internal" href="#id17" title="Sergio Blanes, Fernando Casas, and J. M. Sanz-Serna. Numerical integrators for the hybrid monte carlo method. SIAM Journal on Scientific Computing, 36(4):A1556–A1580, jan 2014. URL: https://doi.org/10.1137%2F130932740, doi:10.1137/130932740.">BCSS14</a>]</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -681,7 +695,7 @@ Wall time: 670 ms
 </div>
 </section>
 <section id="yoshida">
-<h2>Yoshida<a class="headerlink" href="#yoshida" title="Permalink to this heading">#</a></h2>
+<h2>Yoshida<a class="headerlink" href="#yoshida" title="Link to this heading">#</a></h2>
 <p>A different method of discretizing the solution to Hamilton’s equations, see <a class="reference external" href="https://arxiv.org/abs/1405.3153">Blanes, Casas &amp; Sanz-Serna (2014)</a> <span id="id4">[<a class="reference internal" href="#id17" title="Sergio Blanes, Fernando Casas, and J. M. Sanz-Serna. Numerical integrators for the hybrid monte carlo method. SIAM Journal on Scientific Computing, 36(4):A1556–A1580, jan 2014. URL: https://doi.org/10.1137%2F130932740, doi:10.1137/130932740.">BCSS14</a>]</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -737,7 +751,7 @@ Wall time: 717 ms
 </div>
 </section>
 <section id="ellipsis">
-<h2>Ellipsis<a class="headerlink" href="#ellipsis" title="Permalink to this heading">#</a></h2>
+<h2>Ellipsis<a class="headerlink" href="#ellipsis" title="Link to this heading">#</a></h2>
 <p>We now create and use a bijection given by an ellipsis using the <code class="docutils literal notranslate"><span class="pre">IntegratorState</span></code> class. The bijection must have as inputs the potential and kinetic energy functions, which are the negative log densities of our target posterior and the auxiliary distribution used for the momentum variable. In the case of our banana density, we are targeting the “posterior” <span class="math notranslate nohighlight">\(N(x_1|0, 8)N(x_2|1/4x_1^2, 1)\)</span> and using a standard normal distribution for our momentum variable, hence our potential and kinetic energies are <span class="math notranslate nohighlight">\(1/2\left(x_1^2/8 + \left(x_2 - 1/4x_1^2\right)^2\right)\)</span> and <span class="math notranslate nohighlight">\(1/2v^Tv\)</span>, respectively. However, the orbit we build now is independent of these two energies and moves around an ellipsis given by</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{align*}
@@ -837,7 +851,7 @@ Wall time: 602 ms
 </div>
 </section>
 <section id="ellipsis-iaf">
-<h2>Ellipsis + IAF<a class="headerlink" href="#ellipsis-iaf" title="Permalink to this heading">#</a></h2>
+<h2>Ellipsis + IAF<a class="headerlink" href="#ellipsis-iaf" title="Link to this heading">#</a></h2>
 <p>The ellipsis used to build the orbit on the previous algorithm solves Hamilton’s equations for <span class="math notranslate nohighlight">\(p(x,v) = N(x|0,I)N(v|0,I)\)</span>. We can use normalizing flows to approximate the pullback density of our target to a standard normal, thus allowing the algorithm to sample from a density similar to what it is targeting.</p>
 <p>To do this we parametrize a diffeomorphism as an <a class="reference external" href="https://arxiv.org/abs/1705.07057">MAF</a> <span id="id5">[<a class="reference internal" href="#id19" title="George Papamakarios, Theo Pavlakou, and Iain Murray. Masked autoregressive flow for density estimation. 2017. URL: https://arxiv.org/abs/1705.07057, doi:10.48550/ARXIV.1705.07057.">PPM17</a>]</span> and optimize its parameters by minimizing the the Kullback-Liebler divergence between the pullback density and a standard normal (equivalently maximizing the Evidence Lower BOund (ELBO) or the Variational Lower Bound).</p>
 <p>Once we have a diffeomorphism that “transports” our target to something close enough to a standard normal, we can use our orbital MCMC sampler travelling around the ellipsis to sample from our target pullback density (the target density “transported” to a standard normal). This will be equivalent to sampling using periodic orbital MCMC where the bijection used to move around the orbit is the composition of: first the inverse diffeomorphism which transports samples from our target to the standard normal, then the ellipsis solving Hamilton’s equations for <span class="math notranslate nohighlight">\(p(x,v) = N(x|0,I)N(v|0,I)\)</span>, and finally the diffeomorphism which transports standard normal samples back to samples from our target. Formally, if there is a smooth, invertible transformation <span class="math notranslate nohighlight">\(T\)</span> such that for <span class="math notranslate nohighlight">\(x\)</span>, a random variable distributed as our target density <span class="math notranslate nohighlight">\(\pi(x)\)</span>, we have that</p>
@@ -901,7 +915,7 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 </div>
 </div>
 <section id="some-utility-functions">
-<h3>Some Utility Functions<a class="headerlink" href="#some-utility-functions" title="Permalink to this heading">#</a></h3>
+<h3>Some Utility Functions<a class="headerlink" href="#some-utility-functions" title="Link to this heading">#</a></h3>
 <p>Define the log pullback density, our loss function (negative ELBO) and the optimization loop used to train our transformation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1083,6 +1097,7 @@ Wall time: 688 ms
 </div>
 </div>
 <div class="docutils container" id="id6">
+<div role="list" class="citation-list">
 <div class="citation" id="id17" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>BCSS14<span class="fn-bracket">]</span></span>
 <span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id4">2</a>)</span>

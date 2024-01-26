@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Pathfinder &#8212; The Sampling Book Project</title>
   
@@ -29,39 +28,43 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../_static/design-tabs.js"></script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'algorithms/pathfinder';</script>
@@ -156,7 +159,18 @@ const thebe_selector_output = ".output, .cell_output"
     <p class="title logo__title">The Sampling Book Project</p>
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
@@ -404,7 +418,7 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="pathfinder">
-<h1>Pathfinder<a class="headerlink" href="#pathfinder" title="Permalink to this heading">#</a></h1>
+<h1>Pathfinder<a class="headerlink" href="#pathfinder" title="Link to this heading">#</a></h1>
 <p>In this notebook we introduce the <a class="reference external" href="https://arxiv.org/abs/2108.03782">pathfinder</a> <span id="id1">[<a class="reference internal" href="#id21" title="Lu Zhang, Bob Carpenter, Andrew Gelman, and Aki Vehtari. Pathfinder: parallel quasi-newton variational inference. 2022. arXiv:2108.03782.">ZCGV22</a>]</span> algorithm and we show how to use it as a variational inference method or as an initialization tool for MCMC kernels.</p>
 <div class="cell tag_hide-cell docutils container">
 <details class="hide above-input">
@@ -445,7 +459,7 @@ document.write(`
 </div>
 </div>
 <section id="the-data">
-<h2>The Data<a class="headerlink" href="#the-data" title="Permalink to this heading">#</a></h2>
+<h2>The Data<a class="headerlink" href="#the-data" title="Link to this heading">#</a></h2>
 <p>We create two clusters of points using <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_biclusters.html?highlight=bicluster%20data#sklearn.datasets.make_biclusters">scikit-learn’s <code class="docutils literal notranslate"><span class="pre">make_bicluster</span></code> function</a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -479,7 +493,7 @@ document.write(`
 </div>
 </section>
 <section id="the-model">
-<h2>The Model<a class="headerlink" href="#the-model" title="Permalink to this heading">#</a></h2>
+<h2>The Model<a class="headerlink" href="#the-model" title="Link to this heading">#</a></h2>
 <p>We use a simple logistic regression model to infer to which cluster each of the points belongs. We note <span class="math notranslate nohighlight">\(y\)</span> a binary variable that indicates whether a point belongs to the first cluster:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -524,7 +538,7 @@ p = \operatorname{logistic}(\Phi\,\boldsymbol{w})
 </div>
 </section>
 <section id="pathfinder-parallel-quasi-newton-variational-inference">
-<h2>Pathfinder: Parallel Quasi-Newton Variational Inference<a class="headerlink" href="#pathfinder-parallel-quasi-newton-variational-inference" title="Permalink to this heading">#</a></h2>
+<h2>Pathfinder: Parallel Quasi-Newton Variational Inference<a class="headerlink" href="#pathfinder-parallel-quasi-newton-variational-inference" title="Link to this heading">#</a></h2>
 <p>Starting from a random initialization, Pathfinder locates normal approximations to the target
 density along a quasi-Newton optimization path, with local covariance estimated using the inverse Hessian
 estimates produced by the optimizer. Pathfinder returns draws from the approximation with the lowest
@@ -624,7 +638,7 @@ WARNING: jaxopt.ZoomLineSearch: Cannot even make a step without getting Inf or N
 </div>
 </section>
 <section id="pathfinder-as-a-variational-inference-method">
-<h2>Pathfinder as a Variational Inference Method<a class="headerlink" href="#pathfinder-as-a-variational-inference-method" title="Permalink to this heading">#</a></h2>
+<h2>Pathfinder as a Variational Inference Method<a class="headerlink" href="#pathfinder-as-a-variational-inference-method" title="Link to this heading">#</a></h2>
 <p>Pathfinder can be used as a variational inference method. We first create a pathfinder object <code class="docutils literal notranslate"><span class="pre">pf</span></code> which contains two functions <code class="docutils literal notranslate"><span class="pre">approximate</span></code> and <code class="docutils literal notranslate"><span class="pre">sample</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -736,7 +750,7 @@ Wall time: 3.1 s
 </div>
 </div>
 <section id="pathfinder-as-an-initialization-tool-for-mcmc-kernels">
-<h3>Pathfinder as an Initialization Tool for MCMC Kernels<a class="headerlink" href="#pathfinder-as-an-initialization-tool-for-mcmc-kernels" title="Permalink to this heading">#</a></h3>
+<h3>Pathfinder as an Initialization Tool for MCMC Kernels<a class="headerlink" href="#pathfinder-as-an-initialization-tool-for-mcmc-kernels" title="Link to this heading">#</a></h3>
 <p>Pathfinder uses internally the inverse hessian estimation of the L-BFGS optimizer to evaluate the approximations to the target distribution along the quasi-Newton optimization path.</p>
 <p>We can calculate explicitly this inverse hessian matrix for a step of the optimization path using the <code class="docutils literal notranslate"><span class="pre">blackjax.optimizers.lbfgs.lbfgs_inverse_hessian_formula_1</span></code> function:</p>
 <div class="cell docutils container">
@@ -802,13 +816,14 @@ Wall time: 3.1 s
 </section>
 </section>
 <section id="some-caveats">
-<h2>Some Caveats<a class="headerlink" href="#some-caveats" title="Permalink to this heading">#</a></h2>
+<h2>Some Caveats<a class="headerlink" href="#some-caveats" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>L-BFGS algorithm struggles with float32s and log-likelihood functions; it’s suggested to use double precision numbers. In order to do that in <code class="docutils literal notranslate"><span class="pre">jax</span></code> a configuration variable needs to be set up at initialization time (see <a class="reference external" href="https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html#double-64bit-precision">here</a>)</p></li>
 <li><p>Otherwise you can stick with float32 mode and try to tweak <code class="docutils literal notranslate"><span class="pre">ftol</span></code>, <code class="docutils literal notranslate"><span class="pre">gtol</span></code>, or the initialization point</p></li>
 <li><p>It may make sense to start pathfinder with a “bad” initialization point, in order to make the L-BFGS algorithm run longer and have more datapoints to estimate the inverse hessian matrix.</p></li>
 </ul>
 <div class="docutils container" id="id2">
+<div role="list" class="citation-list">
 <div class="citation" id="id21" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">ZCGV22</a><span class="fn-bracket">]</span></span>
 <p>Lu Zhang, Bob Carpenter, Andrew Gelman, and Aki Vehtari. Pathfinder: parallel quasi-newton variational inference. 2022. <a class="reference external" href="https://arxiv.org/abs/2108.03782">arXiv:2108.03782</a>.</p>
