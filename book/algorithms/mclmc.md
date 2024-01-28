@@ -29,7 +29,7 @@ u \\
 \end{bmatrix}
 $$
 
-where $u$ is an auxilliary variable, $S(x)$ is the PDF of the distribution from which we are sampling and the last term describes spherically symmetric noise. After $u$ is marginalized out, this converges to the target distribution $S(x)$.
+where $u$ is an auxilliary variable, $S(x)$ is the negative log PDF of the distribution from which we are sampling and the last term describes spherically symmetric noise. After $u$ is marginalized out, this converges to the target PDF, $p(x) \propto e^{-S(x)}$.
 
 ## How to run MCLMC in BlackJax
 
