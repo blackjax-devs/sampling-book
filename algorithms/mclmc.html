@@ -431,7 +431,7 @@ u \\
 -P(u)(\nabla S(x)/(d − 1)) + \eta P(u)dW
 \end{bmatrix}
 \end{split}\]</div>
-<p>where <span class="math notranslate nohighlight">\(u\)</span> is an auxilliary variable, <span class="math notranslate nohighlight">\(S(x)\)</span> is the PDF of the distribution from which we are sampling and the last term describes spherically symmetric noise. After <span class="math notranslate nohighlight">\(u\)</span> is marginalized out, this converges to the target distribution <span class="math notranslate nohighlight">\(S(x)\)</span>.</p>
+<p>where <span class="math notranslate nohighlight">\(u\)</span> is an auxilliary variable, <span class="math notranslate nohighlight">\(S(x)\)</span> is the negative log PDF of the distribution from which we are sampling and the last term describes spherically symmetric noise. After <span class="math notranslate nohighlight">\(u\)</span> is marginalized out, this converges to the target PDF, <span class="math notranslate nohighlight">\(p(x) \propto e^{-S(x)}\)</span>.</p>
 <section id="how-to-run-mclmc-in-blackjax">
 <h2>How to run MCLMC in BlackJax<a class="headerlink" href="#how-to-run-mclmc-in-blackjax" title="Link to this heading">#</a></h2>
 <p>It is very important to use the tuning algorithm provided, which controls the step size of the integrator and also <span class="math notranslate nohighlight">\(L\)</span>, a parameter related to <span class="math notranslate nohighlight">\(\eta\)</span> above.</p>
