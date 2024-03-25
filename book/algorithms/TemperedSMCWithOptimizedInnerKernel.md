@@ -95,7 +95,7 @@ The proposal distribution is normal with fixed parameters across all iterations.
 
 ```{code-cell} ipython3
 from blackjax import adaptive_tempered_smc
-from blackjax.smc import resampling as resampling, solver, extend_params_inner_kernel
+from blackjax.smc import resampling as resampling, solver, extend_params
 from blackjax import irmh
 
 
@@ -111,11 +111,13 @@ def irmh_experiment(dimensions, target_ess, num_mcmc_steps):
         return jnp.log(
             jax.scipy.stats.multivariate_normal.pdf(state.position, mean=mean, cov=cov)
         )
-
+    def step(key, state, logdensity):
+        return irmh(logdensity, irmh_proposal_distribution,proposal_logdensity_fn).step(key, state)
+    
     fixed_proposal_kernel = adaptive_tempered_smc(
         prior_log_prob,
         loglikelihood,
-        lambda k, s, ldf: irmh(ldf, irmh_proposal_distribution,proposal_logdensity_fn).step(k, s),
+        step,
         irmh.init,
         mcmc_parameters={},
         resampling_fn=resampling.systematic,
@@ -210,10 +212,10 @@ def tuned_irmh_experiment(dimensions, target_ess, num_mcmc_steps):
         mcmc_init_fn=irmh.init,
         resampling_fn=resampling.systematic,
         smc_algorithm=adaptive_tempered_smc,
-        mcmc_parameter_update_fn=lambda state, info: extend_params_inner_kernel(n_particles, 
+        mcmc_parameter_update_fn=lambda state, info: extend_params(n_particles, 
                                                                                 {"means":particles_means(state.particles),
                                                                                  "stds":particles_stds(state.particles)}),
-        initial_parameter_value=extend_params_inner_kernel(n_particles, {"means":jnp.zeros(dimensions), "stds":jnp.ones(dimensions) * 2}),
+        initial_parameter_value=extend_params(n_particles, {"means":jnp.zeros(dimensions), "stds":jnp.ones(dimensions) * 2}),
         target_ess=target_ess,
         num_mcmc_steps=num_mcmc_steps,
     )
@@ -246,7 +248,7 @@ def irmh_full_cov_experiment(dimensions, target_ess, num_mcmc_steps):
 
     def mcmc_parameter_update_fn(state, info):
         covariance = jnp.atleast_2d(particles_covariance_matrix(state.particles))
-        return extend_params_inner_kernel(n_particles, {"means":particles_means(state.particles), "cov":covariance})
+        return extend_params(n_particles, {"means":particles_means(state.particles), "cov":covariance})
 
     kernel_tuned_proposal = inner_kernel_tuning(
         logprior_fn=prior_log_prob,
@@ -256,7 +258,7 @@ def irmh_full_cov_experiment(dimensions, target_ess, num_mcmc_steps):
         resampling_fn=resampling.systematic,
         smc_algorithm=adaptive_tempered_smc,
         mcmc_parameter_update_fn=mcmc_parameter_update_fn,
-        initial_parameter_value=extend_params_inner_kernel(n_particles, {"means":jnp.zeros(dimensions), "cov":jnp.eye(dimensions) * 2}),
+        initial_parameter_value=extend_params(n_particles, {"means":jnp.zeros(dimensions), "cov":jnp.eye(dimensions) * 2}),
         target_ess=target_ess,
         num_mcmc_steps=num_mcmc_steps,
     )
