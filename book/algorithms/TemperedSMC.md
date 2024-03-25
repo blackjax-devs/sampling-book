@@ -52,7 +52,7 @@ from jax.scipy.stats import multivariate_normal
 
 import blackjax
 import blackjax.smc.resampling as resampling
-from blackjax.smc import extend_params_inner_kernel
+from blackjax.smc import extend_params
 ```
 
 ## Sampling From a Bimodal Potential
@@ -219,7 +219,7 @@ tempered = blackjax.adaptive_tempered_smc(
     loglikelihood,
     blackjax.hmc.build_kernel(),
     blackjax.hmc.init,
-    extend_params_inner_kernel(n_samples, hmc_parameters),
+    extend_params(n_samples, hmc_parameters),
     resampling.systematic,
     0.5,
     num_mcmc_steps=1,
@@ -367,7 +367,7 @@ tempered = blackjax.adaptive_tempered_smc(
     loglikelihood,
     blackjax.hmc.build_kernel(),
     blackjax.hmc.init,
-    extend_params_inner_kernel(n_samples, hmc_parameters),
+    extend_params(n_samples, hmc_parameters),
     resampling.systematic,
     0.75,
     num_mcmc_steps=1,
