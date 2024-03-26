@@ -464,6 +464,7 @@ is not well calibrated (too small step size, etc) like in the example below.</p>
 
 <span class="kn">import</span> <span class="nn">blackjax</span>
 <span class="kn">import</span> <span class="nn">blackjax.smc.resampling</span> <span class="k">as</span> <span class="nn">resampling</span>
+<span class="kn">from</span> <span class="nn">blackjax.smc</span> <span class="kn">import</span> <span class="n">extend_params</span>
 </pre></div>
 </div>
 </div>
@@ -525,7 +526,7 @@ V(x) = (x^2 - 1)^2
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/75e0cea51a136e1019d7c05376e6c52bc3a698e21e32f065b343cb0517d5e6c7.png" src="../_images/75e0cea51a136e1019d7c05376e6c52bc3a698e21e32f065b343cb0517d5e6c7.png" />
+<img alt="../_images/2c049cea509eba34b71265727458ecabf80269e64cc5226198aa6717c077c123.png" src="../_images/2c049cea509eba34b71265727458ecabf80269e64cc5226198aa6717c077c123.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -573,8 +574,8 @@ V(x) = (x^2 - 1)^2
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.41 s, sys: 583 µs, total: 1.41 s
-Wall time: 1.4 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.13 s, sys: 101 ms, total: 1.24 s
+Wall time: 1.23 s
 </pre></div>
 </div>
 </div>
@@ -594,7 +595,7 @@ Wall time: 1.4 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/7c2b928e728464949306f528984235f07d5ad5fc8fbc01633094d9b6e4aae7b0.png" src="../_images/7c2b928e728464949306f528984235f07d5ad5fc8fbc01633094d9b6e4aae7b0.png" />
+<img alt="../_images/2758bf489c3a55debcbcc62ddbf827f5594c86670e7f490f71f1c81e9423a723.png" src="../_images/2758bf489c3a55debcbcc62ddbf827f5594c86670e7f490f71f1c81e9423a723.png" />
 </div>
 </div>
 </section>
@@ -616,8 +617,8 @@ Wall time: 1.4 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 6.88 s, sys: 105 µs, total: 6.88 s
-Wall time: 6.87 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 5.01 s, sys: 58.7 ms, total: 5.06 s
+Wall time: 5.05 s
 </pre></div>
 </div>
 </div>
@@ -637,7 +638,7 @@ Wall time: 6.87 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/ac81c6a89ef3f5152b0f4228744553e1132eb362d209b17d885b28b2dc25582b.png" src="../_images/ac81c6a89ef3f5152b0f4228744553e1132eb362d209b17d885b28b2dc25582b.png" />
+<img alt="../_images/d7afee25587435a2537cb76f8d79294930be231fa6bfd962c47617a5fafcd892.png" src="../_images/d7afee25587435a2537cb76f8d79294930be231fa6bfd962c47617a5fafcd892.png" />
 </div>
 </div>
 </section>
@@ -689,7 +690,7 @@ Wall time: 6.87 s
     <span class="n">loglikelihood</span><span class="p">,</span>
     <span class="n">blackjax</span><span class="o">.</span><span class="n">hmc</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(),</span>
     <span class="n">blackjax</span><span class="o">.</span><span class="n">hmc</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
-    <span class="n">hmc_parameters</span><span class="p">,</span>
+    <span class="n">extend_params</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">hmc_parameters</span><span class="p">),</span>
     <span class="n">resampling</span><span class="o">.</span><span class="n">systematic</span><span class="p">,</span>
     <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">num_mcmc_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -707,9 +708,9 @@ Wall time: 6.87 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of steps in the adaptive algorithm:  13
-CPU times: user 2.94 s, sys: 40.3 ms, total: 2.98 s
-Wall time: 2.96 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of steps in the adaptive algorithm:  11
+CPU times: user 2.57 s, sys: 433 ms, total: 3 s
+Wall time: 2.64 s
 </pre></div>
 </div>
 </div>
@@ -729,7 +730,7 @@ Wall time: 2.96 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/a09d05c7c37b7a7affd1caaf2607cb6cd62cb19f31bb2c2a7e34e15f36ce7a23.png" src="../_images/a09d05c7c37b7a7affd1caaf2607cb6cd62cb19f31bb2c2a7e34e15f36ce7a23.png" />
+<img alt="../_images/339ee114f11bbf6861a3218da4230f196175677a54fd1d337711b21a90f1a1ac.png" src="../_images/339ee114f11bbf6861a3218da4230f196175677a54fd1d337711b21a90f1a1ac.png" />
 </div>
 </div>
 </section>
@@ -776,10 +777,10 @@ Wall time: 2.96 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fa940122700&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f14007be810&gt;
 </pre></div>
 </div>
-<img alt="../_images/52f2b3126c883c93ea7a8280a71ae42d268c3567c364cdd70c7d7944c0f1841d.png" src="../_images/52f2b3126c883c93ea7a8280a71ae42d268c3567c364cdd70c7d7944c0f1841d.png" />
+<img alt="../_images/b2a0f58d4e01305aba052cf37d3a6091c86ab3e5dd523d62005846b85f823cf7.png" src="../_images/b2a0f58d4e01305aba052cf37d3a6091c86ab3e5dd523d62005846b85f823cf7.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -824,8 +825,8 @@ Wall time: 2.96 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 705 ms, sys: 45 µs, total: 705 ms
-Wall time: 702 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 564 ms, sys: 35.4 ms, total: 599 ms
+Wall time: 592 ms
 </pre></div>
 </div>
 </div>
@@ -846,7 +847,7 @@ Wall time: 702 ms
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/4c215037355f257939e17cd4c4d8012f32a6c904925553bd122fc9796e7a36ca.png" src="../_images/4c215037355f257939e17cd4c4d8012f32a6c904925553bd122fc9796e7a36ca.png" />
+<img alt="../_images/050d52c074b03ce18b18dc5f9af439ee1bc1b827eff4df2eaea3de7e61563de9.png" src="../_images/050d52c074b03ce18b18dc5f9af439ee1bc1b827eff4df2eaea3de7e61563de9.png" />
 </div>
 </div>
 </section>
@@ -868,8 +869,8 @@ Wall time: 702 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.33 s, sys: 15.8 ms, total: 1.35 s
-Wall time: 1.34 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 887 ms, sys: 48 ms, total: 935 ms
+Wall time: 923 ms
 </pre></div>
 </div>
 </div>
@@ -890,7 +891,7 @@ Wall time: 1.34 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/df230d09e310d25bc6dcfaad5634e9a930d5cced1a37f79723971187b51e9162.png" src="../_images/df230d09e310d25bc6dcfaad5634e9a930d5cced1a37f79723971187b51e9162.png" />
+<img alt="../_images/133a5fc8824868e2fefd6b34a6e813c0696318b4b366d8dcdc45e0e3adbf770b.png" src="../_images/133a5fc8824868e2fefd6b34a6e813c0696318b4b366d8dcdc45e0e3adbf770b.png" />
 </div>
 </div>
 </section>
@@ -913,7 +914,7 @@ We correct the bias introduced by the (arbitrary) prior.</p>
     <span class="n">loglikelihood</span><span class="p">,</span>
     <span class="n">blackjax</span><span class="o">.</span><span class="n">hmc</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(),</span>
     <span class="n">blackjax</span><span class="o">.</span><span class="n">hmc</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
-    <span class="n">hmc_parameters</span><span class="p">,</span>
+    <span class="n">extend_params</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">hmc_parameters</span><span class="p">),</span>
     <span class="n">resampling</span><span class="o">.</span><span class="n">systematic</span><span class="p">,</span>
     <span class="mf">0.75</span><span class="p">,</span>
     <span class="n">num_mcmc_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -932,8 +933,8 @@ We correct the bias introduced by the (arbitrary) prior.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of steps in the adaptive algorithm:  9
-CPU times: user 2.28 s, sys: 24.1 ms, total: 2.3 s
-Wall time: 2.28 s
+CPU times: user 1.93 s, sys: 114 ms, total: 2.04 s
+Wall time: 2.02 s
 </pre></div>
 </div>
 </div>
@@ -954,7 +955,7 @@ Wall time: 2.28 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/62fc3aded8e1df8d79197bb7309ebb46d0af0c5012fbb7276e687971305f7d40.png" src="../_images/62fc3aded8e1df8d79197bb7309ebb46d0af0c5012fbb7276e687971305f7d40.png" />
+<img alt="../_images/daca3ab1f4fb020e635da73f9785e7a3e245389198bd5c457714f7d919aebb4a.png" src="../_images/daca3ab1f4fb020e635da73f9785e7a3e245389198bd5c457714f7d919aebb4a.png" />
 </div>
 </div>
 <p>The tempered SMC algorithm with the HMC kernel clearly outperfoms the HMC and NUTS kernels alone.</p>

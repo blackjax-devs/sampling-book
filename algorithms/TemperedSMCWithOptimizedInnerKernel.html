@@ -410,22 +410,14 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
-
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
-
-<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">arviz</span> <span class="k">as</span> <span class="nn">az</span>
+<span class="kn">import</span> <span class="nn">arviz</span> <span class="k">as</span> <span class="nn">az</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+
+<span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
@@ -503,8 +495,9 @@ This notebook illustrates such tuning using IRMH (Independent Rosenbluth Metropo
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">blackjax</span> <span class="kn">import</span> <span class="n">adaptive_tempered_smc</span>
-<span class="kn">from</span> <span class="nn">blackjax.smc</span> <span class="kn">import</span> <span class="n">resampling</span> <span class="k">as</span> <span class="n">resampling</span><span class="p">,</span> <span class="n">solver</span>
+<span class="kn">from</span> <span class="nn">blackjax.smc</span> <span class="kn">import</span> <span class="n">resampling</span> <span class="k">as</span> <span class="n">resampling</span><span class="p">,</span> <span class="n">solver</span><span class="p">,</span> <span class="n">extend_params</span>
 <span class="kn">from</span> <span class="nn">blackjax</span> <span class="kn">import</span> <span class="n">irmh</span>
+
 
 
 <span class="k">def</span> <span class="nf">irmh_experiment</span><span class="p">(</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">target_ess</span><span class="p">,</span> <span class="n">num_mcmc_steps</span><span class="p">):</span>
@@ -518,16 +511,15 @@ This notebook illustrates such tuning using IRMH (Independent Rosenbluth Metropo
         <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
             <span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">cov</span><span class="p">)</span>
         <span class="p">)</span>
-
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">logdensity</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">irmh</span><span class="p">(</span><span class="n">logdensity</span><span class="p">,</span> <span class="n">irmh_proposal_distribution</span><span class="p">,</span><span class="n">proposal_logdensity_fn</span><span class="p">)</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+    
     <span class="n">fixed_proposal_kernel</span> <span class="o">=</span> <span class="n">adaptive_tempered_smc</span><span class="p">(</span>
         <span class="n">prior_log_prob</span><span class="p">,</span>
         <span class="n">loglikelihood</span><span class="p">,</span>
-        <span class="n">irmh</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(),</span>
+        <span class="n">step</span><span class="p">,</span>
         <span class="n">irmh</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
-        <span class="n">mcmc_parameters</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;proposal_distribution&quot;</span><span class="p">:</span> <span class="n">irmh_proposal_distribution</span><span class="p">,</span>
-            <span class="s2">&quot;proposal_logdensity_fn&quot;</span><span class="p">:</span> <span class="n">proposal_logdensity_fn</span><span class="p">,</span>
-        <span class="p">},</span>
+        <span class="n">mcmc_parameters</span><span class="o">=</span><span class="p">{},</span>
         <span class="n">resampling_fn</span><span class="o">=</span><span class="n">resampling</span><span class="o">.</span><span class="n">systematic</span><span class="p">,</span>
         <span class="n">target_ess</span><span class="o">=</span><span class="n">target_ess</span><span class="p">,</span>
         <span class="n">root_solver</span><span class="o">=</span><span class="n">solver</span><span class="o">.</span><span class="n">dichotomy</span><span class="p">,</span>
@@ -598,8 +590,8 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
 
 
 <span class="k">def</span> <span class="nf">tuned_irmh_experiment</span><span class="p">(</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">target_ess</span><span class="p">,</span> <span class="n">num_mcmc_steps</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">kernel_factory</span><span class="p">(</span><span class="n">normal_proposal_parameters</span><span class="p">):</span>
-        <span class="n">means</span><span class="p">,</span> <span class="n">stds</span> <span class="o">=</span> <span class="n">normal_proposal_parameters</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">irmh</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">step_fn</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">logdensity</span><span class="p">,</span> <span class="n">means</span><span class="p">,</span> <span class="n">stds</span><span class="p">):</span>
         <span class="n">cov</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">stds</span><span class="p">))</span>
         <span class="n">proposal_distribution</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span>
             <span class="n">key</span><span class="p">,</span> <span class="n">means</span><span class="p">,</span> <span class="n">cov</span>
@@ -612,25 +604,20 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
                 <span class="p">)</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
-            <span class="n">irmh</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(),</span>
-            <span class="n">proposal_logdensity_fn</span><span class="o">=</span><span class="n">proposal_logdensity_fn</span><span class="p">,</span>
-            <span class="n">proposal_distribution</span><span class="o">=</span><span class="n">proposal_distribution</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">kernel</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">logdensity</span><span class="p">,</span> <span class="n">proposal_distribution</span><span class="p">,</span> <span class="n">proposal_logdensity_fn</span><span class="p">)</span>
+            
 
     <span class="n">kernel_tuned_proposal</span> <span class="o">=</span> <span class="n">inner_kernel_tuning</span><span class="p">(</span>
         <span class="n">logprior_fn</span><span class="o">=</span><span class="n">prior_log_prob</span><span class="p">,</span>
         <span class="n">loglikelihood_fn</span><span class="o">=</span><span class="n">loglikelihood</span><span class="p">,</span>
-        <span class="n">mcmc_factory</span><span class="o">=</span><span class="n">kernel_factory</span><span class="p">,</span>
+        <span class="n">mcmc_step_fn</span><span class="o">=</span><span class="n">step_fn</span><span class="p">,</span>
         <span class="n">mcmc_init_fn</span><span class="o">=</span><span class="n">irmh</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
         <span class="n">resampling_fn</span><span class="o">=</span><span class="n">resampling</span><span class="o">.</span><span class="n">systematic</span><span class="p">,</span>
         <span class="n">smc_algorithm</span><span class="o">=</span><span class="n">adaptive_tempered_smc</span><span class="p">,</span>
-        <span class="n">mcmc_parameters</span><span class="o">=</span><span class="p">{},</span>
-        <span class="n">mcmc_parameter_update_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">state</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="p">(</span>
-            <span class="n">particles_means</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">),</span>
-            <span class="n">particles_stds</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">),</span>
-        <span class="p">),</span>
-        <span class="n">initial_parameter_value</span><span class="o">=</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dimensions</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">mcmc_parameter_update_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">state</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">extend_params</span><span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> 
+                                                                                <span class="p">{</span><span class="s2">&quot;means&quot;</span><span class="p">:</span><span class="n">particles_means</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">),</span>
+                                                                                 <span class="s2">&quot;stds&quot;</span><span class="p">:</span><span class="n">particles_stds</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">)}),</span>
+        <span class="n">initial_parameter_value</span><span class="o">=</span><span class="n">extend_params</span><span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;means&quot;</span><span class="p">:</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dimensions</span><span class="p">),</span> <span class="s2">&quot;stds&quot;</span><span class="p">:</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">}),</span>
         <span class="n">target_ess</span><span class="o">=</span><span class="n">target_ess</span><span class="p">,</span>
         <span class="n">num_mcmc_steps</span><span class="o">=</span><span class="n">num_mcmc_steps</span><span class="p">,</span>
     <span class="p">)</span>
@@ -647,8 +634,9 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">irmh_full_cov_experiment</span><span class="p">(</span><span class="n">dimensions</span><span class="p">,</span> <span class="n">target_ess</span><span class="p">,</span> <span class="n">num_mcmc_steps</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">factory</span><span class="p">(</span><span class="n">normal_proposal_parameters</span><span class="p">):</span>
-        <span class="n">means</span><span class="p">,</span> <span class="n">cov</span> <span class="o">=</span> <span class="n">normal_proposal_parameters</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">irmh</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">logdensity</span><span class="p">,</span> <span class="n">means</span><span class="p">,</span> <span class="n">cov</span><span class="p">):</span>
+        <span class="s2">&quot;We need step to be vmappable over the parameter space, so we wrap it to make all parameter Jax Arrays or JaxTrees&quot;</span>
         <span class="n">proposal_distribution</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span>
             <span class="n">key</span><span class="p">,</span> <span class="n">means</span><span class="p">,</span> <span class="n">cov</span>
         <span class="p">)</span>
@@ -660,26 +648,22 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
                 <span class="p">)</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
-            <span class="n">irmh</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(),</span>
-            <span class="n">proposal_distribution</span><span class="o">=</span><span class="n">proposal_distribution</span><span class="p">,</span>
-            <span class="n">proposal_logdensity_fn</span><span class="o">=</span><span class="n">proposal_logdensity_fn</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">kernel</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">logdensity</span><span class="p">,</span> <span class="n">proposal_distribution</span><span class="p">,</span> <span class="n">proposal_logdensity_fn</span><span class="p">)</span>
+            
 
     <span class="k">def</span> <span class="nf">mcmc_parameter_update_fn</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
         <span class="n">covariance</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">particles_covariance_matrix</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">particles_means</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">),</span> <span class="n">covariance</span>
+        <span class="k">return</span> <span class="n">extend_params</span><span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;means&quot;</span><span class="p">:</span><span class="n">particles_means</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">),</span> <span class="s2">&quot;cov&quot;</span><span class="p">:</span><span class="n">covariance</span><span class="p">})</span>
 
     <span class="n">kernel_tuned_proposal</span> <span class="o">=</span> <span class="n">inner_kernel_tuning</span><span class="p">(</span>
         <span class="n">logprior_fn</span><span class="o">=</span><span class="n">prior_log_prob</span><span class="p">,</span>
         <span class="n">loglikelihood_fn</span><span class="o">=</span><span class="n">loglikelihood</span><span class="p">,</span>
-        <span class="n">mcmc_factory</span><span class="o">=</span><span class="n">factory</span><span class="p">,</span>
+        <span class="n">mcmc_step_fn</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
         <span class="n">mcmc_init_fn</span><span class="o">=</span><span class="n">irmh</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
         <span class="n">resampling_fn</span><span class="o">=</span><span class="n">resampling</span><span class="o">.</span><span class="n">systematic</span><span class="p">,</span>
         <span class="n">smc_algorithm</span><span class="o">=</span><span class="n">adaptive_tempered_smc</span><span class="p">,</span>
-        <span class="n">mcmc_parameters</span><span class="o">=</span><span class="p">{},</span>
         <span class="n">mcmc_parameter_update_fn</span><span class="o">=</span><span class="n">mcmc_parameter_update_fn</span><span class="p">,</span>
-        <span class="n">initial_parameter_value</span><span class="o">=</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dimensions</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">initial_parameter_value</span><span class="o">=</span><span class="n">extend_params</span><span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;means&quot;</span><span class="p">:</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dimensions</span><span class="p">),</span> <span class="s2">&quot;cov&quot;</span><span class="p">:</span><span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">}),</span>
         <span class="n">target_ess</span><span class="o">=</span><span class="n">target_ess</span><span class="p">,</span>
         <span class="n">num_mcmc_steps</span><span class="o">=</span><span class="n">num_mcmc_steps</span><span class="p">,</span>
     <span class="p">)</span>
@@ -789,9 +773,6 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/75c1a9627af506ba605c341594618741ebd035d97e353f01cf5ca1f8004a13ac.png" src="../_images/75c1a9627af506ba605c341594618741ebd035d97e353f01cf5ca1f8004a13ac.png" />
 </div>
 </div>
 <p>As seen in the previous figure, as dimensions increase, performance degrades. More tuning, less performance degradation.</p>

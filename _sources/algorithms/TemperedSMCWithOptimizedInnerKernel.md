@@ -11,7 +11,6 @@ kernelspec:
   name: python3
 ---
 
-
 # Tuning inner kernel parameters of SMC
 
 ```{code-cell} ipython3
@@ -19,19 +18,14 @@ kernelspec:
 
 import jax
 from jax import numpy as jnp
-
-from datetime import date
-
-rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
-```
-
-```{code-cell} ipython3
 import arviz as az
 import numpy as np
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import functools
+from datetime import date
+
+rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
 ```
 
 This notebook is a continuation of `Use Tempered SMC to Improve Exploration of MCMC Methods`.
@@ -101,8 +95,9 @@ The proposal distribution is normal with fixed parameters across all iterations.
 
 ```{code-cell} ipython3
 from blackjax import adaptive_tempered_smc
-from blackjax.smc import resampling as resampling, solver
+from blackjax.smc import resampling as resampling, solver, extend_params
 from blackjax import irmh
+
 
 
 def irmh_experiment(dimensions, target_ess, num_mcmc_steps):
@@ -116,16 +111,15 @@ def irmh_experiment(dimensions, target_ess, num_mcmc_steps):
         return jnp.log(
             jax.scipy.stats.multivariate_normal.pdf(state.position, mean=mean, cov=cov)
         )
-
+    def step(key, state, logdensity):
+        return irmh(logdensity, irmh_proposal_distribution,proposal_logdensity_fn).step(key, state)
+    
     fixed_proposal_kernel = adaptive_tempered_smc(
         prior_log_prob,
         loglikelihood,
-        irmh.build_kernel(),
+        step,
         irmh.init,
-        mcmc_parameters={
-            "proposal_distribution": irmh_proposal_distribution,
-            "proposal_logdensity_fn": proposal_logdensity_fn,
-        },
+        mcmc_parameters={},
         resampling_fn=resampling.systematic,
         target_ess=target_ess,
         root_solver=solver.dichotomy,
@@ -194,8 +188,8 @@ def tuned_irmh_loop(kernel, rng_key, initial_state):
 
 
 def tuned_irmh_experiment(dimensions, target_ess, num_mcmc_steps):
-    def kernel_factory(normal_proposal_parameters):
-        means, stds = normal_proposal_parameters
+    kernel = irmh.build_kernel()
+    def step_fn(key, state, logdensity, means, stds):
         cov = jnp.square(jnp.diag(stds))
         proposal_distribution = lambda key: jax.random.multivariate_normal(
             key, means, cov
@@ -208,25 +202,20 @@ def tuned_irmh_experiment(dimensions, target_ess, num_mcmc_steps):
                 )
             )
 
-        return functools.partial(
-            irmh.build_kernel(),
-            proposal_logdensity_fn=proposal_logdensity_fn,
-            proposal_distribution=proposal_distribution,
-        )
+        return kernel(key, state, logdensity, proposal_distribution, proposal_logdensity_fn)
+            
 
     kernel_tuned_proposal = inner_kernel_tuning(
         logprior_fn=prior_log_prob,
         loglikelihood_fn=loglikelihood,
-        mcmc_factory=kernel_factory,
+        mcmc_step_fn=step_fn,
         mcmc_init_fn=irmh.init,
         resampling_fn=resampling.systematic,
         smc_algorithm=adaptive_tempered_smc,
-        mcmc_parameters={},
-        mcmc_parameter_update_fn=lambda state, info: (
-            particles_means(state.particles),
-            particles_stds(state.particles),
-        ),
-        initial_parameter_value=(jnp.zeros(dimensions), jnp.ones(dimensions) * 2),
+        mcmc_parameter_update_fn=lambda state, info: extend_params(n_particles, 
+                                                                                {"means":particles_means(state.particles),
+                                                                                 "stds":particles_stds(state.particles)}),
+        initial_parameter_value=extend_params(n_particles, {"means":jnp.zeros(dimensions), "stds":jnp.ones(dimensions) * 2}),
         target_ess=target_ess,
         num_mcmc_steps=num_mcmc_steps,
     )
@@ -240,8 +229,9 @@ In this case not only the diagonal but all elements of the covariance matrix are
 
 ```{code-cell} ipython3
 def irmh_full_cov_experiment(dimensions, target_ess, num_mcmc_steps):
-    def factory(normal_proposal_parameters):
-        means, cov = normal_proposal_parameters
+    kernel = irmh.build_kernel()
+    def step(key, state, logdensity, means, cov):
+        "We need step to be vmappable over the parameter space, so we wrap it to make all parameter Jax Arrays or JaxTrees"
         proposal_distribution = lambda key: jax.random.multivariate_normal(
             key, means, cov
         )
@@ -253,26 +243,22 @@ def irmh_full_cov_experiment(dimensions, target_ess, num_mcmc_steps):
                 )
             )
 
-        return functools.partial(
-            irmh.build_kernel(),
-            proposal_distribution=proposal_distribution,
-            proposal_logdensity_fn=proposal_logdensity_fn,
-        )
+        return kernel(key, state, logdensity, proposal_distribution, proposal_logdensity_fn)
+            
 
     def mcmc_parameter_update_fn(state, info):
         covariance = jnp.atleast_2d(particles_covariance_matrix(state.particles))
-        return particles_means(state.particles), covariance
+        return extend_params(n_particles, {"means":particles_means(state.particles), "cov":covariance})
 
     kernel_tuned_proposal = inner_kernel_tuning(
         logprior_fn=prior_log_prob,
         loglikelihood_fn=loglikelihood,
-        mcmc_factory=factory,
+        mcmc_step_fn=step,
         mcmc_init_fn=irmh.init,
         resampling_fn=resampling.systematic,
         smc_algorithm=adaptive_tempered_smc,
-        mcmc_parameters={},
         mcmc_parameter_update_fn=mcmc_parameter_update_fn,
-        initial_parameter_value=(jnp.zeros(dimensions), jnp.eye(dimensions) * 2),
+        initial_parameter_value=extend_params(n_particles, {"means":jnp.zeros(dimensions), "cov":jnp.eye(dimensions) * 2}),
         target_ess=target_ess,
         num_mcmc_steps=num_mcmc_steps,
     )
@@ -365,3 +351,7 @@ plt.show()
 ```
 
 As seen in the previous figure, as dimensions increase, performance degrades. More tuning, less performance degradation.
+
+```{code-cell} ipython3
+
+```
