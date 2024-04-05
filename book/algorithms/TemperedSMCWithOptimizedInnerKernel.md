@@ -28,11 +28,6 @@ from datetime import date
 rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
 ```
 
-```{code-cell} ipython3
-from time import time
-a = time()
-```
-
 This notebook is a continuation of `Use Tempered SMC to Improve Exploration of MCMC Methods`.
 In that notebook, we tried sampling from a multimodal distribution using HMC, NUTS
 and SMC with an HMC kernel. Only the latter was able to get samples from both modes of the distribution.
