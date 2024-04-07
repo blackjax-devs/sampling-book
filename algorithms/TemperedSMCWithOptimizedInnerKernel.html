@@ -438,7 +438,7 @@ This notebook illustrates such tuning using IRMH (Independent Rosenbluth Metropo
 <p>See Design choice (c) of section 2.1.3 from https://arxiv.org/abs/1808.07730.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_particles</span> <span class="o">=</span> <span class="mi">4000</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_particles</span> <span class="o">=</span> <span class="mi">5000</span>
 </pre></div>
 </div>
 </div>
@@ -691,7 +691,7 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dimensions_to_try</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dimensions_to_try</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -707,7 +707,7 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
         <span class="p">(</span><span class="s2">&quot;tune_diag&quot;</span><span class="p">,</span> <span class="n">tuned_irmh_experiment</span><span class="p">),</span>
         <span class="p">(</span><span class="s2">&quot;tune_full_cov&quot;</span><span class="p">,</span> <span class="n">irmh_full_cov_experiment</span><span class="p">),</span>
     <span class="p">):</span>
-        <span class="n">experiment_particles</span> <span class="o">=</span> <span class="n">smc_run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">dims</span><span class="p">)</span>
+        <span class="n">experiment_particles</span> <span class="o">=</span> <span class="n">smc_run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">dims</span><span class="p">)</span>
         <span class="n">experiments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">exp_id</span><span class="p">)</span>
         <span class="n">dimensions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span>
         <span class="n">particles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">experiment_particles</span><span class="p">)</span>
@@ -773,6 +773,9 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/a5885f5def5c340562692ce5876e541615a1a42342fa8a51c46f2dab398c5700.png" src="../_images/a5885f5def5c340562692ce5876e541615a1a42342fa8a51c46f2dab398c5700.png" />
 </div>
 </div>
 <p>As seen in the previous figure, as dimensions increase, performance degrades. More tuning, less performance degradation.</p>

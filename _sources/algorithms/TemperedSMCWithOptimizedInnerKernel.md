@@ -46,7 +46,7 @@ This notebook illustrates such tuning using IRMH (Independent Rosenbluth Metropo
 See Design choice (c) of section 2.1.3 from https://arxiv.org/abs/1808.07730.
 
 ```{code-cell} ipython3
-n_particles = 4000
+n_particles = 5000
 ```
 
 ```{code-cell} ipython3
@@ -280,7 +280,7 @@ def smc_run_experiment(runnable, target_ess, num_mcmc_steps, dimen, key=rng_key)
 ```
 
 ```{code-cell} ipython3
-dimensions_to_try = [1, 5, 20, 50]
+dimensions_to_try = [10, 20, 30]
 ```
 
 ```{code-cell} ipython3
@@ -293,7 +293,7 @@ for dims in dimensions_to_try:
         ("tune_diag", tuned_irmh_experiment),
         ("tune_full_cov", irmh_full_cov_experiment),
     ):
-        experiment_particles = smc_run_experiment(experiment, 0.5, 50, dims)
+        experiment_particles = smc_run_experiment(experiment, 0.5, 20, dims)
         experiments.append(exp_id)
         dimensions.append(dims)
         particles.append(experiment_particles)
@@ -351,7 +351,3 @@ plt.show()
 ```
 
 As seen in the previous figure, as dimensions increase, performance degrades. More tuning, less performance degradation.
-
-```{code-cell} ipython3
-
-```
