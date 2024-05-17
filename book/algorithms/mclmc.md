@@ -13,7 +13,7 @@ kernelspec:
 
 # Microcanonical Langevin Monte Carlo
 
-This is an algorithm based on https://arxiv.org/abs/2212.08549 ({cite:p}`robnik2023microcanonical`, {cite:p}`robnik2023microcanonical2`). A website with detailed information about the algorithm can be found [here](https://microcanonical-monte-carlo.netlify.app/). 
+This is an algorithm based on https://arxiv.org/abs/2212.08549 ({cite:p}`robnik2023microcanonical`, {cite:p}`robnik2023microcanonical2`). A website with detailed information can be found [here](https://microcanonical-monte-carlo.netlify.app/). The algorithm is provided in both adjusted (i.e. with an Metropolis-Hastings step) and unadjusted versions; by default we use "MCLMC" to refer to the unadjusted version.
 
 The original derivation comes from thinking about the microcanonical ensemble (a concept from statistical mechanics), but the upshot is that we integrate the following SDE:
 
@@ -278,6 +278,18 @@ ax.fill_between(dates, lower_quartile, upper_quartile, color="navy", alpha=0.5)
 ax.legend()
 ```
 
+
+## Adjusted MCLMC
+
+Blackjax also provides an adjusted version of the algorithm. This also has two hyperparameters, `step_size` and `L`. `L` is related to the `L` parameter of the unadjusted version, but not identical. The tuning algorithm is also similar, but uses a dual averaging scheme to tune the step size. We find in practice that a target MH acceptance rate of 0.9 is a good choice.
+
+```{code-cell} ipython3
+
+```
+
 ```{bibliography}
 :filter: docname in docnames
+```
+
+
 ```
