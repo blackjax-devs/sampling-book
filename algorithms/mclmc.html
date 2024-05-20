@@ -502,7 +502,7 @@ u \\
     <span class="c1"># run the sampler</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">run_inference_algorithm</span><span class="p">(</span>
         <span class="n">rng_key</span><span class="o">=</span><span class="n">run_key</span><span class="p">,</span>
-        <span class="n">initial_state_or_position</span><span class="o">=</span><span class="n">blackjax_state_after_tuning</span><span class="p">,</span>
+        <span class="n">initial_state</span><span class="o">=</span><span class="n">blackjax_state_after_tuning</span><span class="p">,</span>
         <span class="n">inference_algorithm</span><span class="o">=</span><span class="n">sampling_alg</span><span class="p">,</span>
         <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
@@ -531,31 +531,38 @@ u \\
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">
-<style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    progress:not([value]), progress:not([value])::-webkit-progress-bar {
-        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
-</style>
-</div><div class="output text_html">
-    <div>
-      <progress value='1000' class='' max='1000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [1000/1000 00:00&lt;?]
-    </div>
-    </div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(0.0127253, dtype=float32)
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">4</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="c1"># run the algorithm on a high dimensional gaussian, and show two of the dimensions</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">sample_key</span><span class="p">,</span> <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">run_mclmc</span><span class="p">(</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="n">logdensity_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span>     <span class="n">num_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span>     <span class="n">initial_position</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1000</span><span class="p">,)),</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span>     <span class="n">key</span><span class="o">=</span><span class="n">sample_key</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span>     <span class="n">transform</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="n">samples</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="nn">Cell In[4], line 34,</span> in <span class="ni">run_mclmc</span><span class="nt">(logdensity_fn, num_steps, initial_position, key, transform)</span>
+<span class="g g-Whitespace">     </span><span class="mi">27</span> <span class="n">sampling_alg</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mclmc</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">28</span>     <span class="n">logdensity_fn</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">29</span>     <span class="n">L</span><span class="o">=</span><span class="n">blackjax_mclmc_sampler_params</span><span class="o">.</span><span class="n">L</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">30</span>     <span class="n">step_size</span><span class="o">=</span><span class="n">blackjax_mclmc_sampler_params</span><span class="o">.</span><span class="n">step_size</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">31</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">33</span> <span class="c1"># run the sampler</span>
+<span class="ne">---&gt; </span><span class="mi">34</span> <span class="n">_</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">run_inference_algorithm</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">35</span>     <span class="n">rng_key</span><span class="o">=</span><span class="n">run_key</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">36</span>     <span class="n">initial_state</span><span class="o">=</span><span class="n">blackjax_state_after_tuning</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">37</span>     <span class="n">inference_algorithm</span><span class="o">=</span><span class="n">sampling_alg</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">38</span>     <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">39</span>     <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">40</span>     <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">41</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">43</span> <span class="k">return</span> <span class="n">samples</span>
+
+<span class="ne">TypeError</span>: run_inference_algorithm() got an unexpected keyword argument &#39;initial_state&#39;
 </pre></div>
 </div>
 </div>
@@ -567,12 +574,6 @@ u \\
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Scatter Plot of Samples&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Scatter Plot of Samples&#39;)
-</pre></div>
-</div>
-<img alt="../_images/6b4dd135653cd35635b4d208d70075b67501d39225b99f873e5d03243aa4e023.png" src="../_images/6b4dd135653cd35635b4d208d70075b67501d39225b99f873e5d03243aa4e023.png" />
 </div>
 </div>
 </section>
@@ -608,20 +609,6 @@ u \\
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;S&amp;P500 returns&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.9.18/x64/lib/python3.9/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
-  from .autonotebook import tqdm as notebook_tqdm
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading - https://d2hg8soec8ck9v.cloudfront.net/datasets/SP500.csv.
-Download complete.
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;S&amp;P500 returns&#39;)
-</pre></div>
-</div>
-<img alt="../_images/26ea56417798479a28abeeec3cb5dde81104cc7f61ba23d8794bef74ae308478.png" src="../_images/26ea56417798479a28abeeec3cb5dde81104cc7f61ba23d8794bef74ae308478.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -712,32 +699,6 @@ Download complete.
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_html">
-<style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    progress:not([value]), progress:not([value])::-webkit-progress-bar {
-        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
-</style>
-</div><div class="output text_html">
-    <div>
-      <progress value='10000' class='' max='10000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [10000/10000 00:00&lt;?]
-    </div>
-    </div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -774,12 +735,6 @@ Download complete.
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f57e5c5a160&gt;
-</pre></div>
-</div>
-<img alt="../_images/792ea450b9f714f51080880f964d8603b7edbb7a459f81ca1c74e1e97fcce745.png" src="../_images/792ea450b9f714f51080880f964d8603b7edbb7a459f81ca1c74e1e97fcce745.png" />
 </div>
 </div>
 <div class="docutils container" id="id3">
