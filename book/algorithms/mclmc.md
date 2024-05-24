@@ -74,10 +74,10 @@ def run_mclmc(logdensity_fn, num_steps, initial_position, key, transform):
     )
 
     # build the kernel
-    kernel = lambda sqrt_diag_cov_mat : blackjax.mcmc.mclmc.build_kernel(
+    kernel = lambda sqrt_diag_cov : blackjax.mcmc.mclmc.build_kernel(
         logdensity_fn=logdensity_fn,
         integrator=blackjax.mcmc.integrators.isokinetic_mclachlan,
-        sqrt_diag_cov_mat=sqrt_diag_cov_mat,
+        sqrt_diag_cov=sqrt_diag_cov,
     )
 
     # find values for L and step_size
@@ -293,10 +293,10 @@ def run_adjusted_mclmc(logdensity_fn, num_steps, initial_position, key, transfor
         position=initial_position, logdensity_fn=logdensity_fn, random_generator_arg=init_key
     )
 
-    kernel = lambda rng_key, state, avg_num_integration_steps, step_size, sqrt_diag_cov_mat: blackjax.mcmc.adjusted_mclmc.build_kernel(
+    kernel = lambda rng_key, state, avg_num_integration_steps, step_size, sqrt_diag_cov: blackjax.mcmc.adjusted_mclmc.build_kernel(
                 integrator=blackjax.mcmc.integrators.isokinetic_mclachlan,
                 integration_steps_fn = lambda k : jnp.ceil(jax.random.uniform(k) * rescale(avg_num_integration_steps)),
-                sqrt_diag_cov_mat=sqrt_diag_cov_mat,
+                sqrt_diag_cov=sqrt_diag_cov,
             )(
                 rng_key=rng_key, 
                 state=state, 
@@ -330,7 +330,7 @@ def run_adjusted_mclmc(logdensity_fn, num_steps, initial_position, key, transfor
         step_size=step_size,
         integration_steps_fn = lambda key: jnp.ceil(jax.random.uniform(key) * rescale(L/step_size)) ,
         integrator=blackjax.mcmc.integrators.isokinetic_mclachlan,
-        sqrt_diag_cov_mat=blackjax_mclmc_sampler_params.sqrt_diag_cov_mat,
+        sqrt_diag_cov=blackjax_mclmc_sampler_params.sqrt_diag_cov,
         
 
     )
