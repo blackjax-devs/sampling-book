@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.2
+    jupytext_version: 1.16.0
 kernelspec:
   display_name: mclmc
   language: python
@@ -13,7 +13,7 @@ kernelspec:
 
 # Microcanonical Langevin Monte Carlo
 
-This is an algorithm based on https://arxiv.org/abs/2212.08549 ({cite:p}`robnik2023microcanonical`, {cite:p}`robnik2023microcanonical2`). A website with detailed information about the algorithm can be found [here](https://microcanonical-monte-carlo.netlify.app/). 
+This is an algorithm based on https://arxiv.org/abs/2212.08549 ({cite:p}`robnik2023microcanonical`, {cite:p}`robnik2023microcanonical2`). A website with detailed information can be found [here](https://microcanonical-monte-carlo.netlify.app/). The algorithm is provided in both adjusted (i.e. with an Metropolis-Hastings step) and unadjusted versions; by default we use "MCLMC" to refer to the unadjusted version.
 
 The original derivation comes from thinking about the microcanonical ensemble (a concept from statistical mechanics), but the upshot is that we integrate the following SDE:
 
@@ -73,9 +73,10 @@ def run_mclmc(logdensity_fn, num_steps, initial_position, key, transform):
     )
 
     # build the kernel
-    kernel = blackjax.mcmc.mclmc.build_kernel(
+    kernel = lambda sqrt_diag_cov : blackjax.mcmc.mclmc.build_kernel(
         logdensity_fn=logdensity_fn,
         integrator=blackjax.mcmc.integrators.isokinetic_mclachlan,
+        sqrt_diag_cov=sqrt_diag_cov,
     )
 
     # find values for L and step_size
@@ -87,6 +88,7 @@ def run_mclmc(logdensity_fn, num_steps, initial_position, key, transform):
         num_steps=num_steps,
         state=initial_state,
         rng_key=tune_key,
+        diagonal_preconditioning=False,
     )
 
     # use the quick wrapper to build a new kernel with the tuned parameters
@@ -133,7 +135,6 @@ plt.title("Scatter Plot of Samples")
 
 This is ported from Jakob Robnik's [example notebook](https://github.com/JakobRobnik/MicroCanonicalHMC/blob/master/notebooks/tutorials/advanced_tutorial.ipynb)
 
-
 ```{code-cell} ipython3
 import matplotlib.dates as mdates
 
@@ -167,7 +168,7 @@ dim = 2429
 lambda_sigma, lambda_nu = 50, 0.1
 
 
-def logp(x):
+def logp_volatility(x):
     """log p of the target distribution"""
 
     sigma = (
@@ -234,7 +235,7 @@ def prior_draw(key):
 ```{code-cell} ipython3
 key1, key2, rng_key = jax.random.split(rng_key, 3)
 samples = run_mclmc(
-    logdensity_fn=logp,
+    logdensity_fn=logp_volatility,
     num_steps=10000,
     initial_position=prior_draw(key1),
     key=key2,
@@ -280,4 +281,7 @@ ax.legend()
 
 ```{bibliography}
 :filter: docname in docnames
+```
+
+
 ```
