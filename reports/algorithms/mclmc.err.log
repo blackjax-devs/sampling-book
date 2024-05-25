@@ -46,22 +46,29 @@ Cell [0;32mIn[5], line 4[0m
 [1;32m     10[0m [43m)[49m
 [1;32m     11[0m samples[38;5;241m.[39mmean()
 
-Cell [0;32mIn[4], line 34[0m, in [0;36mrun_mclmc[0;34m(logdensity_fn, num_steps, initial_position, key, transform)[0m
-[1;32m     27[0m sampling_alg [38;5;241m=[39m blackjax[38;5;241m.[39mmclmc(
-[1;32m     28[0m     logdensity_fn,
-[1;32m     29[0m     L[38;5;241m=[39mblackjax_mclmc_sampler_params[38;5;241m.[39mL,
-[1;32m     30[0m     step_size[38;5;241m=[39mblackjax_mclmc_sampler_params[38;5;241m.[39mstep_size,
-[1;32m     31[0m )
-[1;32m     33[0m [38;5;66;03m# run the sampler[39;00m
-[0;32m---> 34[0m _, samples, _ [38;5;241m=[39m [43mblackjax[49m[38;5;241;43m.[39;49m[43mutil[49m[38;5;241;43m.[39;49m[43mrun_inference_algorithm[49m[43m([49m
-[1;32m     35[0m [43m    [49m[43mrng_key[49m[38;5;241;43m=[39;49m[43mrun_key[49m[43m,[49m
-[1;32m     36[0m [43m    [49m[43minitial_state[49m[38;5;241;43m=[39;49m[43mblackjax_state_after_tuning[49m[43m,[49m
-[1;32m     37[0m [43m    [49m[43minference_algorithm[49m[38;5;241;43m=[39;49m[43msampling_alg[49m[43m,[49m
-[1;32m     38[0m [43m    [49m[43mnum_steps[49m[38;5;241;43m=[39;49m[43mnum_steps[49m[43m,[49m
-[1;32m     39[0m [43m    [49m[43mtransform[49m[38;5;241;43m=[39;49m[43mtransform[49m[43m,[49m
-[1;32m     40[0m [43m    [49m[43mprogress_bar[49m[38;5;241;43m=[39;49m[38;5;28;43;01mTrue[39;49;00m[43m,[49m
-[1;32m     41[0m [43m[49m[43m)[49m
-[1;32m     43[0m [38;5;28;01mreturn[39;00m samples
+Cell [0;32mIn[4], line 20[0m, in [0;36mrun_mclmc[0;34m(logdensity_fn, num_steps, initial_position, key, transform)[0m
+[1;32m     10[0m kernel [38;5;241m=[39m [38;5;28;01mlambda[39;00m sqrt_diag_cov : blackjax[38;5;241m.[39mmcmc[38;5;241m.[39mmclmc[38;5;241m.[39mbuild_kernel(
+[1;32m     11[0m     logdensity_fn[38;5;241m=[39mlogdensity_fn,
+[1;32m     12[0m     integrator[38;5;241m=[39mblackjax[38;5;241m.[39mmcmc[38;5;241m.[39mintegrators[38;5;241m.[39misokinetic_mclachlan,
+[1;32m     13[0m     sqrt_diag_cov[38;5;241m=[39msqrt_diag_cov,
+[1;32m     14[0m )
+[1;32m     16[0m [38;5;66;03m# find values for L and step_size[39;00m
+[1;32m     17[0m (
+[1;32m     18[0m     blackjax_state_after_tuning,
+[1;32m     19[0m     blackjax_mclmc_sampler_params,
+[0;32m---> 20[0m ) [38;5;241m=[39m [43mblackjax[49m[38;5;241;43m.[39;49m[43mmclmc_find_L_and_step_size[49m[43m([49m
+[1;32m     21[0m [43m    [49m[43mmclmc_kernel[49m[38;5;241;43m=[39;49m[43mkernel[49m[43m,[49m
+[1;32m     22[0m [43m    [49m[43mnum_steps[49m[38;5;241;43m=[39;49m[43mnum_steps[49m[43m,[49m
+[1;32m     23[0m [43m    [49m[43mstate[49m[38;5;241;43m=[39;49m[43minitial_state[49m[43m,[49m
+[1;32m     24[0m [43m    [49m[43mrng_key[49m[38;5;241;43m=[39;49m[43mtune_key[49m[43m,[49m
+[1;32m     25[0m [43m    [49m[43mdiagonal_preconditioning[49m[38;5;241;43m=[39;49m[38;5;28;43;01mFalse[39;49;00m[43m,[49m
+[1;32m     26[0m [43m[49m[43m)[49m
+[1;32m     28[0m [38;5;66;03m# use the quick wrapper to build a new kernel with the tuned parameters[39;00m
+[1;32m     29[0m sampling_alg [38;5;241m=[39m blackjax[38;5;241m.[39mmclmc(
+[1;32m     30[0m     logdensity_fn,
+[1;32m     31[0m     L[38;5;241m=[39mblackjax_mclmc_sampler_params[38;5;241m.[39mL,
+[1;32m     32[0m     step_size[38;5;241m=[39mblackjax_mclmc_sampler_params[38;5;241m.[39mstep_size,
+[1;32m     33[0m )
 
-[0;31mTypeError[0m: run_inference_algorithm() got an unexpected keyword argument 'initial_state'
+[0;31mTypeError[0m: mclmc_find_L_and_step_size() got an unexpected keyword argument 'diagonal_preconditioning'
 

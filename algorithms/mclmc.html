@@ -409,7 +409,8 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="microcanonical-langevin-monte-carlo">
 <h1>Microcanonical Langevin Monte Carlo<a class="headerlink" href="#microcanonical-langevin-monte-carlo" title="Link to this heading">#</a></h1>
-<p>This is an algorithm based on https://arxiv.org/abs/2212.08549 (<span id="id1">[<a class="reference internal" href="#id23" title="Jakob Robnik, G Bruno De Luca, Eva Silverstein, and Uroš Seljak. Microcanonical hamiltonian monte carlo. Journal of Machine Learning Research, 24:1–34, 2023.">RDLSS23</a>]</span>, <span id="id2">[<a class="reference internal" href="#id24" title="Jakob Robnik and Uroš Seljak. Microcanonical langevin monte carlo. arXiv preprint arXiv:2303.18221, 2023.">RS23</a>]</span>). A website with detailed information about the algorithm can be found <a class="reference external" href="https://microcanonical-monte-carlo.netlify.app/">here</a>.</p>
+<p>This is an algorithm based on https://arxiv.org/abs/2212.08549 (<span id="id1">[<a class="reference internal" href="#id23" title="Jakob Robnik, G Bruno De Luca, Eva Silverstein, and Uroš Seljak. Microcanonical hamiltonian monte carlo. Journal of Machine Learning Research, 24:1–34, 2023.">RDLSS23</a>]</span>, <span id="id2">[<a class="reference internal" href="#id24" title="Jakob Robnik and Uroš Seljak. Microcanonical langevin monte carlo. arXiv preprint arXiv:2303.18221, 2023.">RS23</a>]</span>). A website with detailed information can be found <a class="reference external" href="https://microcanonical-monte-carlo.netlify.app/">here</a>.</p>
+<!-- The algorithm is provided in both adjusted (i.e. with an Metropolis-Hastings step) and unadjusted versions; by default we use "MCLMC" to refer to the unadjusted version. -->
 <p>The original derivation comes from thinking about the microcanonical ensemble (a concept from statistical mechanics), but the upshot is that we integrate the following SDE:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -476,9 +477,10 @@ u \\
     <span class="p">)</span>
 
     <span class="c1"># build the kernel</span>
-    <span class="n">kernel</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">mclmc</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">sqrt_diag_cov</span> <span class="p">:</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">mclmc</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(</span>
         <span class="n">logdensity_fn</span><span class="o">=</span><span class="n">logdensity_fn</span><span class="p">,</span>
         <span class="n">integrator</span><span class="o">=</span><span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">integrators</span><span class="o">.</span><span class="n">isokinetic_mclachlan</span><span class="p">,</span>
+        <span class="n">sqrt_diag_cov</span><span class="o">=</span><span class="n">sqrt_diag_cov</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># find values for L and step_size</span>
@@ -490,6 +492,7 @@ u \\
         <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span>
         <span class="n">state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span>
         <span class="n">rng_key</span><span class="o">=</span><span class="n">tune_key</span><span class="p">,</span>
+        <span class="n">diagonal_preconditioning</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># use the quick wrapper to build a new kernel with the tuned parameters</span>
@@ -545,24 +548,31 @@ u \\
 <span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="p">)</span>
 <span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="n">samples</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
-<span class="nn">Cell In[4], line 34,</span> in <span class="ni">run_mclmc</span><span class="nt">(logdensity_fn, num_steps, initial_position, key, transform)</span>
-<span class="g g-Whitespace">     </span><span class="mi">27</span> <span class="n">sampling_alg</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mclmc</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">28</span>     <span class="n">logdensity_fn</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">29</span>     <span class="n">L</span><span class="o">=</span><span class="n">blackjax_mclmc_sampler_params</span><span class="o">.</span><span class="n">L</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">30</span>     <span class="n">step_size</span><span class="o">=</span><span class="n">blackjax_mclmc_sampler_params</span><span class="o">.</span><span class="n">step_size</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">31</span> <span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">33</span> <span class="c1"># run the sampler</span>
-<span class="ne">---&gt; </span><span class="mi">34</span> <span class="n">_</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">run_inference_algorithm</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">35</span>     <span class="n">rng_key</span><span class="o">=</span><span class="n">run_key</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">36</span>     <span class="n">initial_state</span><span class="o">=</span><span class="n">blackjax_state_after_tuning</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">37</span>     <span class="n">inference_algorithm</span><span class="o">=</span><span class="n">sampling_alg</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">38</span>     <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">39</span>     <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">40</span>     <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">41</span> <span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">43</span> <span class="k">return</span> <span class="n">samples</span>
+<span class="nn">Cell In[4], line 20,</span> in <span class="ni">run_mclmc</span><span class="nt">(logdensity_fn, num_steps, initial_position, key, transform)</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="n">kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">sqrt_diag_cov</span> <span class="p">:</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">mclmc</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span>     <span class="n">logdensity_fn</span><span class="o">=</span><span class="n">logdensity_fn</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span>     <span class="n">integrator</span><span class="o">=</span><span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">integrators</span><span class="o">.</span><span class="n">isokinetic_mclachlan</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span>     <span class="n">sqrt_diag_cov</span><span class="o">=</span><span class="n">sqrt_diag_cov</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">14</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="c1"># find values for L and step_size</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">18</span>     <span class="n">blackjax_state_after_tuning</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">19</span>     <span class="n">blackjax_mclmc_sampler_params</span><span class="p">,</span>
+<span class="ne">---&gt; </span><span class="mi">20</span> <span class="p">)</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mclmc_find_L_and_step_size</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">21</span>     <span class="n">mclmc_kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">22</span>     <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">23</span>     <span class="n">state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">24</span>     <span class="n">rng_key</span><span class="o">=</span><span class="n">tune_key</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">25</span>     <span class="n">diagonal_preconditioning</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">26</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">28</span> <span class="c1"># use the quick wrapper to build a new kernel with the tuned parameters</span>
+<span class="g g-Whitespace">     </span><span class="mi">29</span> <span class="n">sampling_alg</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mclmc</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">30</span>     <span class="n">logdensity_fn</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">31</span>     <span class="n">L</span><span class="o">=</span><span class="n">blackjax_mclmc_sampler_params</span><span class="o">.</span><span class="n">L</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">32</span>     <span class="n">step_size</span><span class="o">=</span><span class="n">blackjax_mclmc_sampler_params</span><span class="o">.</span><span class="n">step_size</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">33</span> <span class="p">)</span>
 
-<span class="ne">TypeError</span>: run_inference_algorithm() got an unexpected keyword argument &#39;initial_state&#39;
+<span class="ne">TypeError</span>: mclmc_find_L_and_step_size() got an unexpected keyword argument &#39;diagonal_preconditioning&#39;
 </pre></div>
 </div>
 </div>
@@ -618,7 +628,7 @@ u \\
 <span class="n">lambda_sigma</span><span class="p">,</span> <span class="n">lambda_nu</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="mf">0.1</span>
 
 
-<span class="k">def</span> <span class="nf">logp</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">logp_volatility</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;log p of the target distribution&quot;&quot;&quot;</span>
 
     <span class="n">sigma</span> <span class="o">=</span> <span class="p">(</span>
@@ -688,7 +698,7 @@ u \\
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">key1</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="n">samples</span> <span class="o">=</span> <span class="n">run_mclmc</span><span class="p">(</span>
-    <span class="n">logdensity_fn</span><span class="o">=</span><span class="n">logp</span><span class="p">,</span>
+    <span class="n">logdensity_fn</span><span class="o">=</span><span class="n">logp_volatility</span><span class="p">,</span>
     <span class="n">num_steps</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
     <span class="n">initial_position</span><span class="o">=</span><span class="n">prior_draw</span><span class="p">(</span><span class="n">key1</span><span class="p">),</span>
     <span class="n">key</span><span class="o">=</span><span class="n">key2</span><span class="p">,</span>
@@ -748,6 +758,9 @@ u \\
 <p>Jakob Robnik and Uroš Seljak. Microcanonical langevin monte carlo. <em>arXiv preprint arXiv:2303.18221</em>, 2023.</p>
 </div>
 </div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
 </div>
 </section>
 
