@@ -158,7 +158,7 @@ We now use a NUTS kernel.
 ```{code-cell} ipython3
 %%time
 
-nuts_parameters = dict(step_size=1e-4, inverse_mass_matrix=inv_mass_matrix, max_num_doublings=7)
+nuts_parameters = dict(step_size=1e-4, inverse_mass_matrix=inv_mass_matrix, max_num_doublings=6)
 
 nuts = blackjax.nuts(full_logdensity, **nuts_parameters)
 nuts_state = nuts.init(jnp.ones((1,)))
