@@ -12,7 +12,7 @@ jupytext
 aeppl
 aesara
 arviz
-blackjax-nightly
+git+https://github.com/blackjax-devs/blackjax.git@main
 datasets
 fastprogress
 flax
