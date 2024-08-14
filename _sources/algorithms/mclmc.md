@@ -101,7 +101,7 @@ def run_mclmc(logdensity_fn, num_steps, initial_position, key, transform):
     )
 
     # run the sampler
-    _, samples, _ = blackjax.util.run_inference_algorithm(
+    _, samples = blackjax.util.run_inference_algorithm(
         rng_key=run_key,
         initial_state=blackjax_state_after_tuning,
         inference_algorithm=sampling_alg,
@@ -122,7 +122,7 @@ samples = run_mclmc(
     num_steps=1000,
     initial_position=jnp.ones((1000,)),
     key=sample_key,
-    transform=lambda x: x.position[:2],
+    transform=lambda state, info: state.position[:2],
 )
 samples.mean()
 ```

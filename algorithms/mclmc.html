@@ -506,7 +506,7 @@ u \\
     <span class="p">)</span>
 
     <span class="c1"># run the sampler</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">run_inference_algorithm</span><span class="p">(</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">run_inference_algorithm</span><span class="p">(</span>
         <span class="n">rng_key</span><span class="o">=</span><span class="n">run_key</span><span class="p">,</span>
         <span class="n">initial_state</span><span class="o">=</span><span class="n">blackjax_state_after_tuning</span><span class="p">,</span>
         <span class="n">inference_algorithm</span><span class="o">=</span><span class="n">sampling_alg</span><span class="p">,</span>
@@ -530,7 +530,7 @@ u \\
     <span class="n">num_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">initial_position</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1000</span><span class="p">,)),</span>
     <span class="n">key</span><span class="o">=</span><span class="n">sample_key</span><span class="p">,</span>
-    <span class="n">transform</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span>
+    <span class="n">transform</span><span class="o">=</span><span class="k">lambda</span> <span class="n">state</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="n">samples</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 </pre></div>
@@ -558,7 +558,7 @@ u \\
       <progress value='1000' class='' max='1000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [1000/1000 00:00&lt;?]
     </div>
-    </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(0.00585143, dtype=float32)
+    </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(-0.05584522, dtype=float32)
 </pre></div>
 </div>
 </div>
@@ -575,7 +575,7 @@ u \\
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Scatter Plot of Samples&#39;)
 </pre></div>
 </div>
-<img alt="../_images/cabb0a2c35d002f195ccd665323ae9a6869d93c277f53ad68d37439f25b0c59a.png" src="../_images/cabb0a2c35d002f195ccd665323ae9a6869d93c277f53ad68d37439f25b0c59a.png" />
+<img alt="../_images/7be1fc093d4db6f9418fb461f3df84fa872573186e960ab3fa71c92ebcf05286.png" src="../_images/7be1fc093d4db6f9418fb461f3df84fa872573186e960ab3fa71c92ebcf05286.png" />
 </div>
 </div>
 </section>
@@ -618,13 +618,15 @@ u \\
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading - https://d2hg8soec8ck9v.cloudfront.net/datasets/SP500.csv.
-Download complete.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Download complete.
 </pre></div>
 </div>
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;S&amp;P500 returns&#39;)
 </pre></div>
 </div>
-<img alt="../_images/813a2af307332a0ee24cd26c679c133b7a1e38c938424621a5b91f9a9f8b229e.png" src="../_images/813a2af307332a0ee24cd26c679c133b7a1e38c938424621a5b91f9a9f8b229e.png" />
+<img alt="../_images/f7fd34fb893d79efc3e37fb858a4589d8551017b468c16da4ac5f51a3ad224d1.png" src="../_images/f7fd34fb893d79efc3e37fb858a4589d8551017b468c16da4ac5f51a3ad224d1.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -716,28 +718,65 @@ Download complete.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">
-<style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    progress:not([value]), progress:not([value])::-webkit-progress-bar {
-        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
-</style>
-</div><div class="output text_html">
-    <div>
-      <progress value='10000' class='' max='10000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [10000/10000 00:00&lt;?]
-    </div>
-    </div></div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">key1</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">2</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">run_mclmc</span><span class="p">(</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span>     <span class="n">logdensity_fn</span><span class="o">=</span><span class="n">logp_volatility</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span>     <span class="n">num_steps</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="n">initial_position</span><span class="o">=</span><span class="n">prior_draw</span><span class="p">(</span><span class="n">key1</span><span class="p">),</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span>     <span class="n">key</span><span class="o">=</span><span class="n">key2</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span>     <span class="n">transform</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+
+<span class="nn">Cell In[4], line 36,</span> in <span class="ni">run_mclmc</span><span class="nt">(logdensity_fn, num_steps, initial_position, key, transform)</span>
+<span class="g g-Whitespace">     </span><span class="mi">29</span> <span class="n">sampling_alg</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mclmc</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">30</span>     <span class="n">logdensity_fn</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">31</span>     <span class="n">L</span><span class="o">=</span><span class="n">blackjax_mclmc_sampler_params</span><span class="o">.</span><span class="n">L</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">32</span>     <span class="n">step_size</span><span class="o">=</span><span class="n">blackjax_mclmc_sampler_params</span><span class="o">.</span><span class="n">step_size</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">33</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">35</span> <span class="c1"># run the sampler</span>
+<span class="ne">---&gt; </span><span class="mi">36</span> <span class="n">_</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">run_inference_algorithm</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">37</span>     <span class="n">rng_key</span><span class="o">=</span><span class="n">run_key</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">38</span>     <span class="n">initial_state</span><span class="o">=</span><span class="n">blackjax_state_after_tuning</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">39</span>     <span class="n">inference_algorithm</span><span class="o">=</span><span class="n">sampling_alg</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">40</span>     <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">41</span>     <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">42</span>     <span class="n">progress_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">43</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">45</span> <span class="k">return</span> <span class="n">samples</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/blackjax/util.py:207,</span> in <span class="ni">run_inference_algorithm</span><span class="nt">(rng_key, inference_algorithm, num_steps, initial_state, initial_position, progress_bar, transform)</span>
+<span class="g g-Whitespace">    </span><span class="mi">204</span> <span class="n">scan_fn</span> <span class="o">=</span> <span class="n">gen_scan_fn</span><span class="p">(</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">progress_bar</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">206</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_steps</span><span class="p">),</span> <span class="n">keys</span>
+<span class="ne">--&gt; </span><span class="mi">207</span> <span class="n">final_state</span><span class="p">,</span> <span class="n">history</span> <span class="o">=</span> <span class="n">scan_fn</span><span class="p">(</span><span class="n">one_step</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">xs</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">209</span> <span class="k">return</span> <span class="n">final_state</span><span class="p">,</span> <span class="n">history</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/blackjax/progress_bar.py:105,</span> in <span class="ni">gen_scan_fn.&lt;locals&gt;.scan_wrap</span><span class="nt">(f, init, *args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">103</span> <span class="n">func</span> <span class="o">=</span> <span class="n">progress_bar_scan</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">print_rate</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">104</span> <span class="n">carry</span> <span class="o">=</span> <span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">105</span> <span class="p">(</span><span class="n">last_state</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="n">output</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">carry</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">106</span> <span class="k">return</span> <span class="n">last_state</span><span class="p">,</span> <span class="n">output</span>
+
+    <span class="p">[</span><span class="o">...</span> <span class="n">skipping</span> <span class="n">hidden</span> <span class="mi">9</span> <span class="n">frame</span><span class="p">]</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/blackjax/progress_bar.py:90,</span> in <span class="ni">progress_bar_scan.&lt;locals&gt;._progress_bar_scan.&lt;locals&gt;.wrapper_progress_bar</span><span class="nt">(carry, x)</span>
+<span class="g g-Whitespace">     </span><span class="mi">88</span> <span class="n">subcarry</span><span class="p">,</span> <span class="n">chain_id</span> <span class="o">=</span> <span class="n">carry</span>
+<span class="g g-Whitespace">     </span><span class="mi">89</span> <span class="n">chain_id</span> <span class="o">=</span> <span class="n">_update_progress_bar</span><span class="p">(</span><span class="n">iter_num</span><span class="p">,</span> <span class="n">chain_id</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">90</span> <span class="n">subcarry</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">subcarry</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">92</span> <span class="k">return</span> <span class="p">(</span><span class="n">subcarry</span><span class="p">,</span> <span class="n">chain_id</span><span class="p">),</span> <span class="n">y</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/blackjax/util.py:202,</span> in <span class="ni">run_inference_algorithm.&lt;locals&gt;.one_step</span><span class="nt">(state, xs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">200</span> <span class="n">_</span><span class="p">,</span> <span class="n">rng_key</span> <span class="o">=</span> <span class="n">xs</span>
+<span class="g g-Whitespace">    </span><span class="mi">201</span> <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">inference_algorithm</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">202</span> <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">transform</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+
+<span class="ne">TypeError</span>: &lt;lambda&gt;() takes 1 positional argument but 2 were given
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -774,12 +813,6 @@ Download complete.
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fd2efbb6550&gt;
-</pre></div>
-</div>
-<img alt="../_images/32e73559d792c8c58b3f9df724c22fdf8882ac07e7e648d7b900c67b1fcb7fb6.png" src="../_images/32e73559d792c8c58b3f9df724c22fdf8882ac07e7e648d7b900c67b1fcb7fb6.png" />
 </div>
 </div>
 <div class="docutils container" id="id3">
