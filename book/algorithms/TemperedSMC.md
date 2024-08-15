@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.2
+    jupytext_version: 1.16.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -158,7 +158,7 @@ We now use a NUTS kernel.
 ```{code-cell} ipython3
 %%time
 
-nuts_parameters = dict(step_size=1e-4, inverse_mass_matrix=inv_mass_matrix)
+nuts_parameters = dict(step_size=1e-4, inverse_mass_matrix=inv_mass_matrix, max_num_doublings=6)
 
 nuts = blackjax.nuts(full_logdensity, **nuts_parameters)
 nuts_state = nuts.init(jnp.ones((1,)))
@@ -219,7 +219,7 @@ tempered = blackjax.adaptive_tempered_smc(
     loglikelihood,
     blackjax.hmc.build_kernel(),
     blackjax.hmc.init,
-    extend_params(n_samples, hmc_parameters),
+    extend_params(hmc_parameters),
     resampling.systematic,
     0.5,
     num_mcmc_steps=1,
@@ -367,7 +367,7 @@ tempered = blackjax.adaptive_tempered_smc(
     loglikelihood,
     blackjax.hmc.build_kernel(),
     blackjax.hmc.init,
-    extend_params(n_samples, hmc_parameters),
+    extend_params(hmc_parameters),
     resampling.systematic,
     0.75,
     num_mcmc_steps=1,
