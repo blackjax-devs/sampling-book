@@ -1,20 +1,20 @@
 Traceback (most recent call last):
-  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+  File "/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
     executenb(
-  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/nbclient/client.py", line 1314, in execute
+  File "/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/nbclient/client.py", line 1314, in execute
     return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+  File "/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
     return loop.run_until_complete(inner)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+  File "/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
     return future.result()
            ^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/nbclient/client.py", line 709, in async_execute
+  File "/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/nbclient/client.py", line 709, in async_execute
     await self.async_execute_cell(
-  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+  File "/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/nbclient/client.py", line 1062, in async_execute_cell
     await self._check_raise_for_error(cell, cell_index, exec_reply)
-  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+  File "/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
@@ -61,13 +61,13 @@ Cell [0;32mIn[4], line 36[0m, in [0;36mrun_mclmc[0;34m(logdensity_fn, num_st
 [1;32m     43[0m [43m[49m[43m)[49m
 [1;32m     45[0m [38;5;28;01mreturn[39;00m samples
 
-File [0;32m/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/blackjax/util.py:207[0m, in [0;36mrun_inference_algorithm[0;34m(rng_key, inference_algorithm, num_steps, initial_state, initial_position, progress_bar, transform)[0m
+File [0;32m/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/blackjax/util.py:207[0m, in [0;36mrun_inference_algorithm[0;34m(rng_key, inference_algorithm, num_steps, initial_state, initial_position, progress_bar, transform)[0m
 [1;32m    204[0m scan_fn [38;5;241m=[39m gen_scan_fn(num_steps, progress_bar)
 [1;32m    206[0m xs [38;5;241m=[39m jnp[38;5;241m.[39marange(num_steps), keys
 [0;32m--> 207[0m final_state, history [38;5;241m=[39m [43mscan_fn[49m[43m([49m[43mone_step[49m[43m,[49m[43m [49m[43minitial_state[49m[43m,[49m[43m [49m[43mxs[49m[43m)[49m
 [1;32m    209[0m [38;5;28;01mreturn[39;00m final_state, history
 
-File [0;32m/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/blackjax/progress_bar.py:105[0m, in [0;36mgen_scan_fn.<locals>.scan_wrap[0;34m(f, init, *args, **kwargs)[0m
+File [0;32m/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/blackjax/progress_bar.py:105[0m, in [0;36mgen_scan_fn.<locals>.scan_wrap[0;34m(f, init, *args, **kwargs)[0m
 [1;32m    103[0m func [38;5;241m=[39m progress_bar_scan(num_samples, print_rate)(f)
 [1;32m    104[0m carry [38;5;241m=[39m (init, [38;5;241m-[39m[38;5;241m1[39m)
 [0;32m--> 105[0m (last_state, _), output [38;5;241m=[39m [43mlax[49m[38;5;241;43m.[39;49m[43mscan[49m[43m([49m[43mfunc[49m[43m,[49m[43m [49m[43mcarry[49m[43m,[49m[43m [49m[38;5;241;43m*[39;49m[43margs[49m[43m,[49m[43m [49m[38;5;241;43m*[39;49m[38;5;241;43m*[39;49m[43mkwargs[49m[43m)[49m
@@ -75,13 +75,13 @@ File [0;32m/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/
 
     [0;31m[... skipping hidden 9 frame][0m
 
-File [0;32m/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/blackjax/progress_bar.py:90[0m, in [0;36mprogress_bar_scan.<locals>._progress_bar_scan.<locals>.wrapper_progress_bar[0;34m(carry, x)[0m
+File [0;32m/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/blackjax/progress_bar.py:90[0m, in [0;36mprogress_bar_scan.<locals>._progress_bar_scan.<locals>.wrapper_progress_bar[0;34m(carry, x)[0m
 [1;32m     88[0m subcarry, chain_id [38;5;241m=[39m carry
 [1;32m     89[0m chain_id [38;5;241m=[39m _update_progress_bar(iter_num, chain_id)
 [0;32m---> 90[0m subcarry, y [38;5;241m=[39m [43mfunc[49m[43m([49m[43msubcarry[49m[43m,[49m[43m [49m[43mx[49m[43m)[49m
 [1;32m     92[0m [38;5;28;01mreturn[39;00m (subcarry, chain_id), y
 
-File [0;32m/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/blackjax/util.py:202[0m, in [0;36mrun_inference_algorithm.<locals>.one_step[0;34m(state, xs)[0m
+File [0;32m/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/blackjax/util.py:202[0m, in [0;36mrun_inference_algorithm.<locals>.one_step[0;34m(state, xs)[0m
 [1;32m    200[0m _, rng_key [38;5;241m=[39m xs
 [1;32m    201[0m state, info [38;5;241m=[39m inference_algorithm[38;5;241m.[39mstep(rng_key, state)
 [0;32m--> 202[0m [38;5;28;01mreturn[39;00m state, [43mtransform[49m[43m([49m[43mstate[49m[43m,[49m[43m [49m[43minfo[49m[43m)[49m

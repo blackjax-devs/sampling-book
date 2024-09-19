@@ -558,7 +558,7 @@ u \\
       <progress value='1000' class='' max='1000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [1000/1000 00:00&lt;?]
     </div>
-    </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(-0.05788831, dtype=float32)
+    </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(-0.02032827, dtype=float32)
 </pre></div>
 </div>
 </div>
@@ -575,7 +575,7 @@ u \\
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Scatter Plot of Samples&#39;)
 </pre></div>
 </div>
-<img alt="../_images/e9ce08fc609ae18b5ac7f784778fb0a48732ea98cb709214a0c1317bd652d8a8.png" src="../_images/e9ce08fc609ae18b5ac7f784778fb0a48732ea98cb709214a0c1317bd652d8a8.png" />
+<img alt="../_images/5e9adf890219141599675f71a80e0b5e9d91bbf75a98916ffb458b3a21f51b54.png" src="../_images/5e9adf890219141599675f71a80e0b5e9d91bbf75a98916ffb458b3a21f51b54.png" />
 </div>
 </div>
 </section>
@@ -613,7 +613,7 @@ u \\
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
   from .autonotebook import tqdm as notebook_tqdm
 </pre></div>
 </div>
@@ -746,13 +746,13 @@ Download complete.
 <span class="g g-Whitespace">     </span><span class="mi">43</span> <span class="p">)</span>
 <span class="g g-Whitespace">     </span><span class="mi">45</span> <span class="k">return</span> <span class="n">samples</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/blackjax/util.py:207,</span> in <span class="ni">run_inference_algorithm</span><span class="nt">(rng_key, inference_algorithm, num_steps, initial_state, initial_position, progress_bar, transform)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/blackjax/util.py:207,</span> in <span class="ni">run_inference_algorithm</span><span class="nt">(rng_key, inference_algorithm, num_steps, initial_state, initial_position, progress_bar, transform)</span>
 <span class="g g-Whitespace">    </span><span class="mi">204</span> <span class="n">scan_fn</span> <span class="o">=</span> <span class="n">gen_scan_fn</span><span class="p">(</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">progress_bar</span><span class="p">)</span>
 <span class="g g-Whitespace">    </span><span class="mi">206</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_steps</span><span class="p">),</span> <span class="n">keys</span>
 <span class="ne">--&gt; </span><span class="mi">207</span> <span class="n">final_state</span><span class="p">,</span> <span class="n">history</span> <span class="o">=</span> <span class="n">scan_fn</span><span class="p">(</span><span class="n">one_step</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">xs</span><span class="p">)</span>
 <span class="g g-Whitespace">    </span><span class="mi">209</span> <span class="k">return</span> <span class="n">final_state</span><span class="p">,</span> <span class="n">history</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/blackjax/progress_bar.py:105,</span> in <span class="ni">gen_scan_fn.&lt;locals&gt;.scan_wrap</span><span class="nt">(f, init, *args, **kwargs)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/blackjax/progress_bar.py:105,</span> in <span class="ni">gen_scan_fn.&lt;locals&gt;.scan_wrap</span><span class="nt">(f, init, *args, **kwargs)</span>
 <span class="g g-Whitespace">    </span><span class="mi">103</span> <span class="n">func</span> <span class="o">=</span> <span class="n">progress_bar_scan</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">print_rate</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
 <span class="g g-Whitespace">    </span><span class="mi">104</span> <span class="n">carry</span> <span class="o">=</span> <span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="ne">--&gt; </span><span class="mi">105</span> <span class="p">(</span><span class="n">last_state</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="n">output</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">carry</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -760,13 +760,13 @@ Download complete.
 
     <span class="p">[</span><span class="o">...</span> <span class="n">skipping</span> <span class="n">hidden</span> <span class="mi">9</span> <span class="n">frame</span><span class="p">]</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/blackjax/progress_bar.py:90,</span> in <span class="ni">progress_bar_scan.&lt;locals&gt;._progress_bar_scan.&lt;locals&gt;.wrapper_progress_bar</span><span class="nt">(carry, x)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/blackjax/progress_bar.py:90,</span> in <span class="ni">progress_bar_scan.&lt;locals&gt;._progress_bar_scan.&lt;locals&gt;.wrapper_progress_bar</span><span class="nt">(carry, x)</span>
 <span class="g g-Whitespace">     </span><span class="mi">88</span> <span class="n">subcarry</span><span class="p">,</span> <span class="n">chain_id</span> <span class="o">=</span> <span class="n">carry</span>
 <span class="g g-Whitespace">     </span><span class="mi">89</span> <span class="n">chain_id</span> <span class="o">=</span> <span class="n">_update_progress_bar</span><span class="p">(</span><span class="n">iter_num</span><span class="p">,</span> <span class="n">chain_id</span><span class="p">)</span>
 <span class="ne">---&gt; </span><span class="mi">90</span> <span class="n">subcarry</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">subcarry</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 <span class="g g-Whitespace">     </span><span class="mi">92</span> <span class="k">return</span> <span class="p">(</span><span class="n">subcarry</span><span class="p">,</span> <span class="n">chain_id</span><span class="p">),</span> <span class="n">y</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/blackjax/util.py:202,</span> in <span class="ni">run_inference_algorithm.&lt;locals&gt;.one_step</span><span class="nt">(state, xs)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/blackjax/util.py:202,</span> in <span class="ni">run_inference_algorithm.&lt;locals&gt;.one_step</span><span class="nt">(state, xs)</span>
 <span class="g g-Whitespace">    </span><span class="mi">200</span> <span class="n">_</span><span class="p">,</span> <span class="n">rng_key</span> <span class="o">=</span> <span class="n">xs</span>
 <span class="g g-Whitespace">    </span><span class="mi">201</span> <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">inference_algorithm</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
 <span class="ne">--&gt; </span><span class="mi">202</span> <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">transform</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
