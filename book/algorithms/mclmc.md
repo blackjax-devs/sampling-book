@@ -241,7 +241,7 @@ samples = run_mclmc(
     num_steps=10000,
     initial_position=prior_draw(key1),
     key=key2,
-    transform=lambda x: x,
+    transform=lambda state, info: state,
 )
 
 samples = transform(samples.position)
