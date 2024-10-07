@@ -686,8 +686,8 @@ u \\
 <h2>An example where <span class="math notranslate nohighlight">\(\epsilon\)</span> is too large<a class="headerlink" href="#an-example-where-epsilon-is-too-large" title="Link to this heading">#</a></h2>
 <p>We now consider a more complex model, of stock volatility.</p>
 <p>The returns <span class="math notranslate nohighlight">\(r_n\)</span> are modeled by a Student’s-t distribution whose scale (volatility) <span class="math notranslate nohighlight">\(R_n\)</span> is time varying and unknown. The prior for <span class="math notranslate nohighlight">\(\log R_n\)</span> is a Gaussian random walk, with an exponential distribution of the random walk step-size <span class="math notranslate nohighlight">\(\sigma\)</span>. An exponential prior is also taken for the Student’s-t degrees of freedom <span class="math notranslate nohighlight">\(\nu\)</span>. The generative process of the data is:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-faf3e4e7-0bc1-44bb-ace2-102988746bed">
-<span class="eqno">(1)<a class="headerlink" href="#equation-faf3e4e7-0bc1-44bb-ace2-102988746bed" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-1dd27a3f-69c0-4d05-ab32-db31bf57940d">
+<span class="eqno">(1)<a class="headerlink" href="#equation-1dd27a3f-69c0-4d05-ab32-db31bf57940d" title="Permalink to this equation">#</a></span>\[\begin{align}
     &amp;r_n / R_n \sim \text{Student's-t}(\nu) \qquad
     &amp;&amp;\nu \sim \text{Exp}(\lambda = 1/10) \\ \nonumber
     &amp;\log R_n \sim \mathcal{N}(\log R_{n-1}, \sigma) \qquad
