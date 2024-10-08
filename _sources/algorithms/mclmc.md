@@ -31,7 +31,7 @@ u \\
 \end{bmatrix}
 $$
 
-Here $x \in \mathbb{R}^n$ is the variable of interest (i.e. the variable of the target distribution $p$), $u \in \mathbb{S}^{n-1}$ is the momentum (i.e. $u$ lives in $\mathbb{R}^n$ but is constrained to have fixed norm), $S(x)$ is the negative log PDF of the distribution from which we are sampling, and $P$ is the projection operator. The term $\eta P(u)dW$ describes spherically symmetric noise on the $n-1$ sphere $\mathbb{S}^{n-1}$. After $u$ is marginalized out, this converges to the target PDF, $p(x) \propto e^{-S(x)}$.
+Here $x \in \mathbb{R}^n$ is the variable of interest (i.e. the variable of the target distribution $p$), $u \in \mathbb{S}^{n-1}$ is the momentum (i.e. $u$ lives in $\mathbb{R}^n$ but is constrained to have fixed norm), $S(x)$ is the negative log PDF of the distribution from which we are sampling, and $P(u)=(I-uu^T)$ is the projection operator. The term $\eta P(u)dW$ describes spherically symmetric noise on the $n-1$ sphere $\mathbb{S}^{n-1}$. After $u$ is marginalized out, this converges to the target PDF, $p(x) \propto e^{-S(x)}$.
 
 ## How to run MCLMC in BlackJax
 
@@ -140,12 +140,6 @@ plt.axis("equal")
 plt.title("Scatter Plot of Samples")
 ```
 
-# How to analyze the results of your MCLMC run
-
-## Validate the choice of $\epsilon$
-
-A natural sanity check is to see if reducing $\epsilon$ changes the inferred distribution to an extent you care about. For example, let's first inspect the marginal along the first dimension:
-
 ```{code-cell} ipython3
 def visualize_results_gauss(samples, label, color):
   x1 = samples[:, 0]
@@ -164,6 +158,12 @@ def ground_truth_gauss():
 visualize_results_gauss(samples, 'MCLMC', 'teal')
 ground_truth_gauss()
 ```
+
+# How to analyze the results of your MCLMC run
+
+## Validate the choice of $\epsilon$
+
+A natural sanity check is to see if reducing $\epsilon$ changes the inferred distribution to an extent you care about. For example, we can inspect the 1D marginal with a stepsize $\epsilon$ as above, and compare it to a stepsize $\epsilon/2$ (and double the number of steps). We show this comparison below:
 
 ```{code-cell} ipython3
 new_params = params._replace(step_size= params.step_size / 2)
@@ -189,12 +189,11 @@ _, new_samples = blackjax.util.run_inference_algorithm(
 
 visualize_results_gauss(new_samples, 'MCLMC', 'red')
 visualize_results_gauss(samples, 'MCLMC', 'teal')
-ground_truth_gauss()
 ```
 
-So here the original $\epsilon$ seems OK.
+So here the change has little effect in this case.
 
-## An example where $\epsilon$ is too large
+## A more complex example
 
 +++
 
@@ -331,7 +330,7 @@ plt.legend()
 plt.show()
 ```
 
-This looks OK, but if we inspect the hierarchical parameter's marginal alone, we see something different.
+Here, we have again inspected the effect of halving $\epsilon$. This looks OK, but suppose we are interested in the hierarchial parameters in particular, which tend to be harder to infer. We now inspect the marginal of a hierarchical parameter:
 
 ```{code-cell} ipython3
 def visualize_results_sv_marginal(samples, color, label):
@@ -351,7 +350,7 @@ visualize_results_sv_marginal(samples, color= 'teal', label= 'MCLMC')
 visualize_results_sv_marginal(new_samples, color= 'red', label= 'MCLMC (stepsize/2)')
 ```
 
-In this case, we should reduce step size further, until the difference disappears.
+If we care about this parameter in particular, we should reduce step size further, until the difference disappears.
 
 +++
 

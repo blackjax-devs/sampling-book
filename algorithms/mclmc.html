@@ -399,7 +399,7 @@ document.write(`
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-analyze-the-results-of-your-mclmc-run">How to analyze the results of your MCLMC run</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validate-the-choice-of-epsilon">Validate the choice of <span class="math notranslate nohighlight">\(\epsilon\)</span></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example-where-epsilon-is-too-large">An example where <span class="math notranslate nohighlight">\(\epsilon\)</span> is too large</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-more-complex-example">A more complex example</a></li>
 </ul>
 </li>
 </ul>
@@ -431,7 +431,7 @@ u \\
 -P(u)(\nabla S(x)/(d − 1)) + \eta P(u)dW
 \end{bmatrix}
 \end{split}\]</div>
-<p>Here <span class="math notranslate nohighlight">\(x \in \mathbb{R}^n\)</span> is the variable of interest (i.e. the variable of the target distribution <span class="math notranslate nohighlight">\(p\)</span>), <span class="math notranslate nohighlight">\(u \in \mathbb{S}^{n-1}\)</span> is the momentum (i.e. <span class="math notranslate nohighlight">\(u\)</span> lives in <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span> but is constrained to have fixed norm), <span class="math notranslate nohighlight">\(S(x)\)</span> is the negative log PDF of the distribution from which we are sampling, and <span class="math notranslate nohighlight">\(P\)</span> is the projection operator. The term <span class="math notranslate nohighlight">\(\eta P(u)dW\)</span> describes spherically symmetric noise on the <span class="math notranslate nohighlight">\(n-1\)</span> sphere <span class="math notranslate nohighlight">\(\mathbb{S}^{n-1}\)</span>. After <span class="math notranslate nohighlight">\(u\)</span> is marginalized out, this converges to the target PDF, <span class="math notranslate nohighlight">\(p(x) \propto e^{-S(x)}\)</span>.</p>
+<p>Here <span class="math notranslate nohighlight">\(x \in \mathbb{R}^n\)</span> is the variable of interest (i.e. the variable of the target distribution <span class="math notranslate nohighlight">\(p\)</span>), <span class="math notranslate nohighlight">\(u \in \mathbb{S}^{n-1}\)</span> is the momentum (i.e. <span class="math notranslate nohighlight">\(u\)</span> lives in <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span> but is constrained to have fixed norm), <span class="math notranslate nohighlight">\(S(x)\)</span> is the negative log PDF of the distribution from which we are sampling, and <span class="math notranslate nohighlight">\(P(u)=(I-uu^T)\)</span> is the projection operator. The term <span class="math notranslate nohighlight">\(\eta P(u)dW\)</span> describes spherically symmetric noise on the <span class="math notranslate nohighlight">\(n-1\)</span> sphere <span class="math notranslate nohighlight">\(\mathbb{S}^{n-1}\)</span>. After <span class="math notranslate nohighlight">\(u\)</span> is marginalized out, this converges to the target PDF, <span class="math notranslate nohighlight">\(p(x) \propto e^{-S(x)}\)</span>.</p>
 <section id="how-to-run-mclmc-in-blackjax">
 <h2>How to run MCLMC in BlackJax<a class="headerlink" href="#how-to-run-mclmc-in-blackjax" title="Link to this heading">#</a></h2>
 <p>MCLMC has two parameters:</p>
@@ -571,7 +571,7 @@ u \\
       <progress value='10000' class='' max='10000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [10000/10000 00:00&lt;?]
     </div>
-    </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(0.01229683, dtype=float32)
+    </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(0.00264662, dtype=float32)
 </pre></div>
 </div>
 </div>
@@ -588,16 +588,9 @@ u \\
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Scatter Plot of Samples&#39;)
 </pre></div>
 </div>
-<img alt="../_images/511b392b40a6006e39d5678666e0d72519dac6f008d2e8f2b77af8fb481ee561.png" src="../_images/511b392b40a6006e39d5678666e0d72519dac6f008d2e8f2b77af8fb481ee561.png" />
+<img alt="../_images/0ec1b4434d7309896a76cee60b2f67a770c5ddaeb10603670ec5fa8f8e14d4c1.png" src="../_images/0ec1b4434d7309896a76cee60b2f67a770c5ddaeb10603670ec5fa8f8e14d4c1.png" />
 </div>
 </div>
-</section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="how-to-analyze-the-results-of-your-mclmc-run">
-<h1>How to analyze the results of your MCLMC run<a class="headerlink" href="#how-to-analyze-the-results-of-your-mclmc-run" title="Link to this heading">#</a></h1>
-<section id="validate-the-choice-of-epsilon">
-<h2>Validate the choice of <span class="math notranslate nohighlight">\(\epsilon\)</span><a class="headerlink" href="#validate-the-choice-of-epsilon" title="Link to this heading">#</a></h2>
-<p>A natural sanity check is to see if reducing <span class="math notranslate nohighlight">\(\epsilon\)</span> changes the inferred distribution to an extent you care about. For example, let’s first inspect the marginal along the first dimension:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">visualize_results_gauss</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
@@ -620,9 +613,16 @@ u \\
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/bda594f4c2093ff594b89cd0f95ebca5519788cf3bf9a5ae28d0438b5acb8566.png" src="../_images/bda594f4c2093ff594b89cd0f95ebca5519788cf3bf9a5ae28d0438b5acb8566.png" />
+<img alt="../_images/d1c7d7b84b3a6ac445ac29b9c2056d5ff847bed88f6d4718a6a5d831289668c4.png" src="../_images/d1c7d7b84b3a6ac445ac29b9c2056d5ff847bed88f6d4718a6a5d831289668c4.png" />
 </div>
 </div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="how-to-analyze-the-results-of-your-mclmc-run">
+<h1>How to analyze the results of your MCLMC run<a class="headerlink" href="#how-to-analyze-the-results-of-your-mclmc-run" title="Link to this heading">#</a></h1>
+<section id="validate-the-choice-of-epsilon">
+<h2>Validate the choice of <span class="math notranslate nohighlight">\(\epsilon\)</span><a class="headerlink" href="#validate-the-choice-of-epsilon" title="Link to this heading">#</a></h2>
+<p>A natural sanity check is to see if reducing <span class="math notranslate nohighlight">\(\epsilon\)</span> changes the inferred distribution to an extent you care about. For example, we can inspect the 1D marginal with a stepsize <span class="math notranslate nohighlight">\(\epsilon\)</span> as above, and compare it to a stepsize <span class="math notranslate nohighlight">\(\epsilon/2\)</span> (and double the number of steps). We show this comparison below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">step_size</span><span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">step_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
@@ -651,7 +651,6 @@ u \\
 
 <span class="n">visualize_results_gauss</span><span class="p">(</span><span class="n">new_samples</span><span class="p">,</span> <span class="s1">&#39;MCLMC&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
 <span class="n">visualize_results_gauss</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="s1">&#39;MCLMC&#39;</span><span class="p">,</span> <span class="s1">&#39;teal&#39;</span><span class="p">)</span>
-<span class="n">ground_truth_gauss</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -677,17 +676,17 @@ u \\
       <progress value='20000' class='' max='20000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [20000/20000 00:00&lt;?]
     </div>
-    </div><img alt="../_images/6d7fc779978b3b2908a60c2166d718d9614cefc740a28db21375536f7bf21b9e.png" src="../_images/6d7fc779978b3b2908a60c2166d718d9614cefc740a28db21375536f7bf21b9e.png" />
+    </div><img alt="../_images/38d0c9943edeadd2477f421372f67a01eb1b0f4f12fc3a057b3f5a05794aac96.png" src="../_images/38d0c9943edeadd2477f421372f67a01eb1b0f4f12fc3a057b3f5a05794aac96.png" />
 </div>
 </div>
-<p>So here the original <span class="math notranslate nohighlight">\(\epsilon\)</span> seems OK.</p>
+<p>So here the change has little effect in this case.</p>
 </section>
-<section id="an-example-where-epsilon-is-too-large">
-<h2>An example where <span class="math notranslate nohighlight">\(\epsilon\)</span> is too large<a class="headerlink" href="#an-example-where-epsilon-is-too-large" title="Link to this heading">#</a></h2>
+<section id="a-more-complex-example">
+<h2>A more complex example<a class="headerlink" href="#a-more-complex-example" title="Link to this heading">#</a></h2>
 <p>We now consider a more complex model, of stock volatility.</p>
 <p>The returns <span class="math notranslate nohighlight">\(r_n\)</span> are modeled by a Student’s-t distribution whose scale (volatility) <span class="math notranslate nohighlight">\(R_n\)</span> is time varying and unknown. The prior for <span class="math notranslate nohighlight">\(\log R_n\)</span> is a Gaussian random walk, with an exponential distribution of the random walk step-size <span class="math notranslate nohighlight">\(\sigma\)</span>. An exponential prior is also taken for the Student’s-t degrees of freedom <span class="math notranslate nohighlight">\(\nu\)</span>. The generative process of the data is:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-23ff91b0-27f7-4ad7-bde5-9ac6c1ccadf9">
-<span class="eqno">(1)<a class="headerlink" href="#equation-23ff91b0-27f7-4ad7-bde5-9ac6c1ccadf9" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-ed8f82e7-6b67-492d-9dee-f9a6e46db91a">
+<span class="eqno">(1)<a class="headerlink" href="#equation-ed8f82e7-6b67-492d-9dee-f9a6e46db91a" title="Permalink to this equation">#</a></span>\[\begin{align}
     &amp;r_n / R_n \sim \text{Student's-t}(\nu) \qquad
     &amp;&amp;\nu \sim \text{Exp}(\lambda = 1/10) \\ \nonumber
     &amp;\log R_n \sim \mathcal{N}(\log R_{n-1}, \sigma) \qquad
@@ -731,7 +730,9 @@ u \\
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading - https://d2hg8soec8ck9v.cloudfront.net/datasets/SP500.csv.
-Download complete.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Download complete.
 </pre></div>
 </div>
 <img alt="../_images/f7fd34fb893d79efc3e37fb858a4589d8551017b468c16da4ac5f51a3ad224d1.png" src="../_images/f7fd34fb893d79efc3e37fb858a4589d8551017b468c16da4ac5f51a3ad224d1.png" />
@@ -821,7 +822,7 @@ Download complete.
       <progress value='20000' class='' max='20000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [20000/20000 00:00&lt;?]
     </div>
-    </div><img alt="../_images/82596a65cb833e903e6d74a7fb8894da4599fa7b434cf4958470bae1f376d2be.png" src="../_images/82596a65cb833e903e6d74a7fb8894da4599fa7b434cf4958470bae1f376d2be.png" />
+    </div><img alt="../_images/0a70760fa6e9e436f76686fc34a0a16b4091cbcd9d13b793090929596eff7b8e.png" src="../_images/0a70760fa6e9e436f76686fc34a0a16b4091cbcd9d13b793090929596eff7b8e.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -883,10 +884,10 @@ Download complete.
       <progress value='40000' class='' max='40000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [40000/40000 00:00&lt;?]
     </div>
-    </div><img alt="../_images/74f1615dc9a94723cadc7c82ed8f89d201ff210d06c2c01afafdee3525297f15.png" src="../_images/74f1615dc9a94723cadc7c82ed8f89d201ff210d06c2c01afafdee3525297f15.png" />
+    </div><img alt="../_images/50b50a28029252f98e42ed1b367172bcd81c5ebe172126bb0c87553f87976245.png" src="../_images/50b50a28029252f98e42ed1b367172bcd81c5ebe172126bb0c87553f87976245.png" />
 </div>
 </div>
-<p>This looks OK, but if we inspect the hierarchical parameter’s marginal alone, we see something different.</p>
+<p>Here, we have again inspected the effect of halving <span class="math notranslate nohighlight">\(\epsilon\)</span>. This looks OK, but suppose we are interested in the hierarchial parameters in particular, which tend to be harder to infer. We now inspect the marginal of a hierarchical parameter:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">visualize_results_sv_marginal</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
@@ -908,10 +909,10 @@ Download complete.
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/c1a6e5d00a83404b2e3a7badea8d12f4610ae3c4f5d693ac2d33341cbcd1adf6.png" src="../_images/c1a6e5d00a83404b2e3a7badea8d12f4610ae3c4f5d693ac2d33341cbcd1adf6.png" />
+<img alt="../_images/7a204e67bf4cd962187cf778534ae56bbaeb4dbc1bbf19681183439da815d942.png" src="../_images/7a204e67bf4cd962187cf778534ae56bbaeb4dbc1bbf19681183439da815d942.png" />
 </div>
 </div>
-<p>In this case, we should reduce step size further, until the difference disappears.</p>
+<p>If we care about this parameter in particular, we should reduce step size further, until the difference disappears.</p>
 <div class="docutils container" id="id3">
 <div role="list" class="citation-list">
 <div class="citation" id="id23" role="doc-biblioentry">
@@ -1000,7 +1001,7 @@ Download complete.
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-analyze-the-results-of-your-mclmc-run">How to analyze the results of your MCLMC run</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validate-the-choice-of-epsilon">Validate the choice of <span class="math notranslate nohighlight">\(\epsilon\)</span></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example-where-epsilon-is-too-large">An example where <span class="math notranslate nohighlight">\(\epsilon\)</span> is too large</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-more-complex-example">A more complex example</a></li>
 </ul>
 </li>
 </ul>
