@@ -100,7 +100,7 @@ def run_mclmc(logdensity_fn, num_steps, initial_position, key, transform):
     )
 
     # run the sampler
-    _, samples, _ = blackjax.util.run_inference_algorithm(
+    _, samples = blackjax.util.run_inference_algorithm(
         rng_key=run_key,
         initial_state=blackjax_state_after_tuning,
         inference_algorithm=sampling_alg,
@@ -121,7 +121,7 @@ samples = run_mclmc(
     num_steps=1000,
     initial_position=jnp.ones((1000,)),
     key=sample_key,
-    transform=lambda x: x.position[:2],
+    transform=lambda state, _: state.position[:2],
 )
 samples.mean()
 ```
@@ -282,45 +282,63 @@ ax.legend()
 
 ## Adjusted MCLMC
 
-Blackjax also provides an adjusted version of the algorithm. This also has two hyperparameters, `step_size` and `L`. `L` is related to the `L` parameter of the unadjusted version, but not identical. The tuning algorithm is also similar, but uses a dual averaging scheme to tune the step size. We find in practice that a target MH acceptance rate of 0.9 is a good choice.
+Blackjax also provides a version of the algorithm with MH adjustment, along with its own tuning algorithm. This has the same two hyperparameters, `step_size` and `L`. Here `L`, which represents the decoherence length, determines the length of the proposal, since the momentum is refreshed (and therefore decorrelated) after each proposal.
+
+There are two versions of the algorithm. In the first, wthe proposed trajectory has no Langevin noise in it, but the trajectory length is randomized. In the second, the trajectory length is fixed, but there is Langevin noise. Here is how to run both:
 
 ```{code-cell} ipython3
-def run_adjusted_mclmc(logdensity_fn, num_steps, initial_position, key, transform):
+def run_adjusted_mclmc(
+    logdensity_fn,
+    num_steps,
+    initial_position,
+    key,
+    diagonal_preconditioning=False,
+    transform = lambda state, _: state.position,
+    random_trajectory_length=True,
+    L_proposal_factor = jnp.inf
+):
+
     init_key, tune_key, run_key = jax.random.split(key, 3)
 
-    # create an initial state for the sampler
     initial_state = blackjax.mcmc.adjusted_mclmc.init(
-        position=initial_position, logdensity_fn=logdensity_fn, random_generator_arg=init_key
+        position=initial_position,
+        logdensity_fn=logdensity_fn,
+        random_generator_arg=init_key,
     )
 
+    if random_trajectory_length:
+        integration_steps_fn = lambda avg_num_integration_steps: lambda k: jnp.ceil(
+            jax.random.uniform(k) * rescale(avg_num_integration_steps))
+    else:
+        integration_steps_fn = lambda avg_num_integration_steps: lambda _: jnp.ceil(avg_num_integration_steps)
+
     kernel = lambda rng_key, state, avg_num_integration_steps, step_size, sqrt_diag_cov: blackjax.mcmc.adjusted_mclmc.build_kernel(
-                integrator=blackjax.mcmc.integrators.isokinetic_mclachlan,
-                integration_steps_fn = lambda k : jnp.ceil(jax.random.uniform(k) * rescale(avg_num_integration_steps)),
-                sqrt_diag_cov=sqrt_diag_cov,
-            )(
-                rng_key=rng_key, 
-                state=state, 
-                step_size=step_size, 
-                logdensity_fn=logdensity_fn)
-    
-    
+        integration_steps_fn=integration_steps_fn(avg_num_integration_steps),
+        sqrt_diag_cov=sqrt_diag_cov,
+    )(
+        rng_key=rng_key,
+        state=state,
+        step_size=step_size,
+        logdensity_fn=logdensity_fn,
+        L_proposal_factor=L_proposal_factor,
+    )
+
+    target_acc_rate = 0.9 # our recommendation
+
     (
         blackjax_state_after_tuning,
         blackjax_mclmc_sampler_params,
-        params_history,
-        final_da
-    ) = blackjax.adaptation.mclmc_adaptation.adjusted_mclmc_find_L_and_step_size(
+    ) = blackjax.adjusted_mclmc_find_L_and_step_size(
         mclmc_kernel=kernel,
         num_steps=num_steps,
         state=initial_state,
         rng_key=tune_key,
-        target=0.9,
+        target=target_acc_rate,
         frac_tune1=0.1,
         frac_tune2=0.1,
-        frac_tune3=0.1,
-        diagonal_preconditioning=False,
+        frac_tune3=0.0, # our recommendation
+        diagonal_preconditioning=diagonal_preconditioning,
     )
-
 
     step_size = blackjax_mclmc_sampler_params.step_size
     L = blackjax_mclmc_sampler_params.L
@@ -328,22 +346,22 @@ def run_adjusted_mclmc(logdensity_fn, num_steps, initial_position, key, transfor
     alg = blackjax.adjusted_mclmc(
         logdensity_fn=logdensity_fn,
         step_size=step_size,
-        integration_steps_fn = lambda key: jnp.ceil(jax.random.uniform(key) * rescale(L/step_size)) ,
-        integrator=blackjax.mcmc.integrators.isokinetic_mclachlan,
+        integration_steps_fn=lambda key: jnp.ceil(
+            jax.random.uniform(key) * rescale(L / step_size)
+        ),
         sqrt_diag_cov=blackjax_mclmc_sampler_params.sqrt_diag_cov,
-        
-
     )
 
-
-    _, samples, info = blackjax.util.run_inference_algorithm(
+    _, out = blackjax.util.run_inference_algorithm(
         rng_key=run_key,
         initial_state=blackjax_state_after_tuning,
         inference_algorithm=alg,
-        num_steps=num_steps, 
-        transform=lambda x: x.position, 
-        progress_bar=True)
-    return samples
+        num_steps=num_steps,
+        transform=transform,
+        progress_bar=False,
+    )
+
+    return out
 ```
 
 ```{code-cell} ipython3
@@ -352,10 +370,9 @@ def run_adjusted_mclmc(logdensity_fn, num_steps, initial_position, key, transfor
 sample_key, rng_key = jax.random.split(rng_key)
 samples = run_adjusted_mclmc(
     logdensity_fn=lambda x: -0.5 * jnp.sum(jnp.square(x)),
-    num_steps=1000,
+    num_steps=2000,
     initial_position=jnp.ones((1000,)),
     key=sample_key,
-    transform=lambda x: x.position[:2],
 )
 plt.scatter(x=samples[:, 0], y=samples[:, 1], alpha=0.1)
 plt.axis("equal")
@@ -363,51 +380,18 @@ plt.title("Scatter Plot of Samples")
 ```
 
 ```{code-cell} ipython3
-key1, key2, rng_key = jax.random.split(rng_key, 3)
+# run the algorithm on a high dimensional gaussian, and show two of the dimensions
+
+sample_key, rng_key = jax.random.split(rng_key)
 samples = run_adjusted_mclmc(
-    logdensity_fn=logp_volatility,
-    num_steps=10000,
-    initial_position=prior_draw(key1),
-    key=key2,
-    transform=lambda x: x,
+    logdensity_fn=lambda x: -0.5 * jnp.sum(jnp.square(x)),
+    num_steps=2000,
+    initial_position=jnp.ones((1000,)),
+    key=sample_key,
+    random_trajectory_length=False,
+    L_proposal_factor=1.25
 )
-
-R = np.array(samples)[:, :-2]  # remove sigma and nu parameters
-R = np.sort(R, axis=0)  # sort samples for each R_n
-num_samples = len(R)
-lower_quartile, median, upper_quartile = (
-    R[num_samples // 4, :],
-    R[num_samples // 2, :],
-    R[3 * num_samples // 4, :],
-)
-
-# figure setup
-_, ax = plt.subplots(figsize=(12, 5))
-ax.spines["right"].set_visible(False)  # remove the upper and the right axis lines
-ax.spines["top"].set_visible(False)
-
-ax.xaxis.set_major_locator(mdates.YearLocator())  # dates on the xaxis
-ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-ax.xaxis.set_minor_locator(mdates.MonthLocator())
-
-# plot data
-ax.plot(dates, SP500_returns, ".", markersize=3, color="steelblue")
-ax.plot(
-    [], [], ".", markersize=10, color="steelblue", alpha=0.5, label="data"
-)  # larger markersize for the legend
-ax.set_xlabel("time")
-ax.set_ylabel("S&P500 returns")
-
-# plot posterior
-ax.plot(dates, median, color="navy", label="volatility posterior")
-ax.fill_between(dates, lower_quartile, upper_quartile, color="navy", alpha=0.5)
-
-ax.legend()
-```
-
-```{bibliography}
-:filter: docname in docnames
-```
-
-
+plt.scatter(x=samples[:, 0], y=samples[:, 1], alpha=0.1)
+plt.axis("equal")
+plt.title("Scatter Plot of Samples")
 ```
