@@ -5,14 +5,14 @@
 # Build the book
 ipython
 jupyter-cache
-git+https://github.com/executablebooks/jupyter-book.git@master
+jupyter-book
 jupytext
 
 # Dependencies for the notebooks
 aeppl
 aesara
 arviz
-blackjax-nightly
+git+https://github.com/blackjax-devs/blackjax.git@main
 datasets
 fastprogress
 flax
