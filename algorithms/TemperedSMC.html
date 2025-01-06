@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -426,7 +426,7 @@ is not well calibrated (too small step size, etc) like in the example below.</p>
 <span class="expanded">Hide code cell content</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
@@ -437,9 +437,9 @@ is not well calibrated (too small step size, etc) like in the example below.</p>
 </div>
 <div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
 <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
 </pre></div>
 </div>
@@ -447,13 +447,13 @@ is not well calibrated (too small step size, etc) like in the example below.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
-<span class="kn">from</span> <span class="nn">jax.scipy.stats</span> <span class="kn">import</span> <span class="n">multivariate_normal</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">jax.scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">multivariate_normal</span>
 
-<span class="kn">import</span> <span class="nn">blackjax</span>
-<span class="kn">import</span> <span class="nn">blackjax.smc.resampling</span> <span class="k">as</span> <span class="nn">resampling</span>
-<span class="kn">from</span> <span class="nn">blackjax.smc</span> <span class="kn">import</span> <span class="n">extend_params</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">blackjax</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">blackjax.smc.resampling</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">resampling</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.smc</span><span class="w"> </span><span class="kn">import</span> <span class="n">extend_params</span>
 </pre></div>
 </div>
 </div>
@@ -476,11 +476,11 @@ V(x) = (x^2 - 1)^2
 <p>This corresponds to the following distribution. We plot the resulting tempered density for 5 different values of <span class="math notranslate nohighlight">\(\lambda_k\)</span> : from <span class="math notranslate nohighlight">\(\lambda_k =1\)</span> which correponds to the original density to <span class="math notranslate nohighlight">\(\lambda_k=0\)</span>. The lower the value of <span class="math notranslate nohighlight">\(\lambda_k\)</span> the easier it is for the sampler to jump between the modes of the posterior density.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">V</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">V</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">prior_log_prob</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">prior_log_prob</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">multivariate_normal</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">d</span><span class="p">,)),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
 
@@ -520,9 +520,9 @@ V(x) = (x^2 - 1)^2
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">mcmc_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">mcmc_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
     <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
-    <span class="k">def</span> <span class="nf">one_step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">one_step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">mcmc_kernel</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">state</span>
 
@@ -532,7 +532,7 @@ V(x) = (x^2 - 1)^2
     <span class="k">return</span> <span class="n">states</span>
 
 
-<span class="k">def</span> <span class="nf">full_logdensity</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">full_logdensity</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="o">-</span><span class="n">V</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">prior_log_prob</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
 
@@ -637,7 +637,7 @@ Wall time: 5.05 s
 <p>We now use the adaptive tempered SMC algorithm with an HMC kernel. We only take one HMC step before resampling. The algorithm is run until <span class="math notranslate nohighlight">\(\lambda_k\)</span> crosses the <span class="math notranslate nohighlight">\(\lambda_k = 1\)</span> limit.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">smc_inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">smc_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">smc_inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">smc_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the temepered SMC algorithm.</span>
 
 <span class="sd">    We run the adaptive algorithm until the tempering parameter lambda reaches the value</span>
@@ -645,11 +645,11 @@ Wall time: 5.05 s
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">cond</span><span class="p">(</span><span class="n">carry</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cond</span><span class="p">(</span><span class="n">carry</span><span class="p">):</span>
         <span class="n">i</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">_k</span> <span class="o">=</span> <span class="n">carry</span>
         <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span> <span class="o">&lt;</span> <span class="mi">1</span>
 
-    <span class="k">def</span> <span class="nf">one_step</span><span class="p">(</span><span class="n">carry</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">one_step</span><span class="p">(</span><span class="n">carry</span><span class="p">):</span>
         <span class="n">i</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">carry</span>
         <span class="n">k</span><span class="p">,</span> <span class="n">subk</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">smc_kernel</span><span class="p">(</span><span class="n">subk</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
@@ -731,7 +731,7 @@ Wall time: 2.64 s
 <p>We plot the resulting tempered density for 5 different values of <span class="math notranslate nohighlight">\(\lambda_k\)</span>: from <span class="math notranslate nohighlight">\(\lambda_k =1\)</span> which correponds to the original density to <span class="math notranslate nohighlight">\(\lambda_k=0\)</span>. The lower the value of <span class="math notranslate nohighlight">\(\lambda_k\)</span> the easier it is to sampler from the posterior log-density.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">V</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">V</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">res</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span> <span class="o">*</span> <span class="n">d</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">res</span>
@@ -774,8 +774,8 @@ Wall time: 2.64 s
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">mcmc_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">one_step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">mcmc_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">one_step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">mcmc_kernel</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">state</span>
 

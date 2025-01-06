@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -435,21 +435,21 @@ u \\
 <span class="expanded">Hide code cell content</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">19</span>
 
-<span class="kn">import</span> <span class="nn">jax</span>
-<span class="kn">import</span> <span class="nn">blackjax</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
-<span class="kn">import</span> <span class="nn">numpyro</span>
-<span class="kn">import</span> <span class="nn">numpyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">blackjax</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpyro</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpyro.distributions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dist</span>
 
-<span class="kn">from</span> <span class="nn">numpyro.infer.util</span> <span class="kn">import</span> <span class="n">initialize_model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpyro.infer.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">initialize_model</span>
 
 <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
 </pre></div>
@@ -465,7 +465,7 @@ u \\
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_mclmc</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">initial_position</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">desired_energy_variance</span><span class="o">=</span> <span class="mf">5e-4</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">run_mclmc</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">initial_position</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">desired_energy_variance</span><span class="o">=</span> <span class="mf">5e-4</span><span class="p">):</span>
     <span class="n">init_key</span><span class="p">,</span> <span class="n">tune_key</span><span class="p">,</span> <span class="n">run_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 
     <span class="c1"># create an initial state for the sampler</span>
@@ -580,12 +580,12 @@ u \\
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">visualize_results_gauss</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">visualize_results_gauss</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
   <span class="n">x1</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
   <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span> <span class="s1">&#39;step&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span> <span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span> <span class="n">label</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">ground_truth_gauss</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ground_truth_gauss</span><span class="p">():</span>
   <span class="c1"># ground truth</span>
   <span class="n">t</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
   <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span>  <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span> <span class="s1">&#39;exact&#39;</span><span class="p">)</span>
@@ -672,8 +672,8 @@ u \\
 <h2>A more complex example<a class="headerlink" href="#a-more-complex-example" title="Link to this heading">#</a></h2>
 <p>We now consider a more complex model, of stock volatility.</p>
 <p>The returns <span class="math notranslate nohighlight">\(r_n\)</span> are modeled by a Student’s-t distribution whose scale (volatility) <span class="math notranslate nohighlight">\(R_n\)</span> is time varying and unknown. The prior for <span class="math notranslate nohighlight">\(\log R_n\)</span> is a Gaussian random walk, with an exponential distribution of the random walk step-size <span class="math notranslate nohighlight">\(\sigma\)</span>. An exponential prior is also taken for the Student’s-t degrees of freedom <span class="math notranslate nohighlight">\(\nu\)</span>. The generative process of the data is:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6619df6b-2b93-4c7e-96dd-a62ff64670f4">
-<span class="eqno">(1)<a class="headerlink" href="#equation-6619df6b-2b93-4c7e-96dd-a62ff64670f4" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-5eb52a1a-182d-4b37-bca4-7ec7dbd60479">
+<span class="eqno">(1)<a class="headerlink" href="#equation-5eb52a1a-182d-4b37-bca4-7ec7dbd60479" title="Permalink to this equation">#</a></span>\[\begin{align}
     &amp;r_n / R_n \sim \text{Student's-t}(\nu) \qquad
     &amp;&amp;\nu \sim \text{Exp}(\lambda = 1/10) \\ \nonumber
     &amp;\log R_n \sim \mathcal{N}(\log R_{n-1}, \sigma) \qquad
@@ -683,9 +683,9 @@ u \\
 <p>First, we get the data, define a model using NumPyro, and draw samples:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
-<span class="kn">from</span> <span class="nn">numpyro.examples.datasets</span> <span class="kn">import</span> <span class="n">SP500</span><span class="p">,</span> <span class="n">load_dataset</span>
-<span class="kn">from</span> <span class="nn">numpyro.distributions</span> <span class="kn">import</span> <span class="n">StudentT</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.dates</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mdates</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpyro.examples.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">SP500</span><span class="p">,</span> <span class="n">load_dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpyro.distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">StudentT</span>
 
 <span class="c1"># get the data</span>
 <span class="n">_</span><span class="p">,</span> <span class="n">fetch</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">SP500</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -694,7 +694,7 @@ u \\
 
 
 
-<span class="k">def</span> <span class="nf">setup</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">():</span>
   <span class="c1"># figure setup,</span>
   <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
   <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">()</span>
@@ -725,7 +725,7 @@ Download complete.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">from_numpyro</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">,</span> <span class="n">model_args</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">from_numpyro</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">,</span> <span class="n">model_args</span><span class="p">):</span>
   <span class="n">init_params</span><span class="p">,</span> <span class="n">potential_fn_gen</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">initialize_model</span><span class="p">(</span>
       <span class="n">rng_key</span><span class="p">,</span>
       <span class="n">model</span><span class="p">,</span>
@@ -739,7 +739,7 @@ Download complete.
   <span class="k">return</span> <span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">initial_position</span>
 
 
-<span class="k">def</span> <span class="nf">stochastic_volatility</span><span class="p">(</span><span class="n">sigma_mean</span><span class="p">,</span> <span class="n">nu_mean</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">stochastic_volatility</span><span class="p">(</span><span class="n">sigma_mean</span><span class="p">,</span> <span class="n">nu_mean</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;numpyro model&quot;&quot;&quot;</span>
     <span class="n">sigma</span> <span class="o">=</span> <span class="n">numpyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Exponential</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">sigma_mean</span><span class="p">))</span>
     <span class="n">nu</span> <span class="o">=</span> <span class="n">numpyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Exponential</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">nu_mean</span><span class="p">))</span>
@@ -766,7 +766,7 @@ Download complete.
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">visualize_results_sv</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">visualize_results_sv</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
 
   <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]))</span> <span class="c1"># take an exponent to get R</span>
   <span class="n">lower_quantile</span><span class="p">,</span> <span class="n">median</span><span class="p">,</span> <span class="n">upper_quantile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
@@ -875,7 +875,7 @@ Download complete.
 <p>Here, we have again inspected the effect of halving <span class="math notranslate nohighlight">\(\epsilon\)</span>. This looks OK, but suppose we are interested in the hierarchial parameters in particular, which tend to be harder to infer. We now inspect the marginal of a hierarchical parameter:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">visualize_results_sv_marginal</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">visualize_results_sv_marginal</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
     <span class="c1"># plt.subplot(1, 2, 1)</span>
     <span class="c1"># plt.hist(samples[&#39;nu&#39;], bins = 20, histtype= &#39;step&#39;, lw= 4, density= True, color= color, label= label)</span>
     <span class="c1"># plt.xlabel(r&#39;$\nu$&#39;)</span>
@@ -904,10 +904,10 @@ Download complete.
 <p>Blackjax also provides an adjusted version of the algorithm. This also has two hyperparameters, <code class="docutils literal notranslate"><span class="pre">step_size</span></code> and <code class="docutils literal notranslate"><span class="pre">L</span></code>. <code class="docutils literal notranslate"><span class="pre">L</span></code> is related to the <code class="docutils literal notranslate"><span class="pre">L</span></code> parameter of the unadjusted version, but not identical. The tuning algorithm is also similar, but uses a dual averaging scheme to tune the step size. We find in practice that a target MH acceptance rate of 0.9 is a good choice.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">blackjax.mcmc.adjusted_mclmc</span> <span class="kn">import</span> <span class="n">rescale</span>
-<span class="kn">from</span> <span class="nn">blackjax.util</span> <span class="kn">import</span> <span class="n">run_inference_algorithm</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.mcmc.adjusted_mclmc</span><span class="w"> </span><span class="kn">import</span> <span class="n">rescale</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_inference_algorithm</span>
 
-<span class="k">def</span> <span class="nf">run_adjusted_mclmc</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_adjusted_mclmc</span><span class="p">(</span>
     <span class="n">logdensity_fn</span><span class="p">,</span>
     <span class="n">num_steps</span><span class="p">,</span>
     <span class="n">initial_position</span><span class="p">,</span>

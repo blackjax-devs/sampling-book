@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -418,7 +418,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <span class="expanded">Hide code cell content</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
@@ -429,9 +429,9 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 </div>
 <div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
 <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
 </pre></div>
 </div>
@@ -439,7 +439,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">aesara.tensor</span> <span class="k">as</span> <span class="nn">at</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aesara.tensor</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">at</span>
 
 <span class="n">X_at</span> <span class="o">=</span> <span class="n">at</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
 
@@ -477,7 +477,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>We will use the sparse regression model on the German credit dataset <span id="id4">[<a class="reference internal" href="#id9" title="Dheeru Dua and Casey Graff. UCI machine learning repository. 2017. URL: http://archive.ics.uci.edu/ml.">DG17</a>]</span>. We use the numeric version that is adapted to models that cannot handle categorical data:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span>
   <span class="s2">&quot;https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data-numeric&quot;</span><span class="p">,</span>
@@ -514,7 +514,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>The regressors are defined on different scales so we normalize their values, and add a column of <span class="math notranslate nohighlight">\(1\)</span> that corresponds to the intercept:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">X</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -532,9 +532,9 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>We generate a function that computes the model’s logdensity using <a class="reference external" href="https://github.com/aesara-devs/aeppl">AePPL</a>. We transform the values of <span class="math notranslate nohighlight">\(\tau\)</span> and <span class="math notranslate nohighlight">\(\lambda\)</span> so the sampler can operate on variables defined on the real line:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">aesara</span>
-<span class="kn">import</span> <span class="nn">aeppl</span>
-<span class="kn">from</span> <span class="nn">aeppl.transforms</span> <span class="kn">import</span> <span class="n">TransformValuesRewrite</span><span class="p">,</span> <span class="n">LogTransform</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aesara</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">aeppl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aeppl.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransformValuesRewrite</span><span class="p">,</span> <span class="n">LogTransform</span>
 
 <span class="n">transforms_op</span> <span class="o">=</span> <span class="n">TransformValuesRewrite</span><span class="p">(</span>
      <span class="p">{</span><span class="n">lambda_rv</span><span class="p">:</span> <span class="n">LogTransform</span><span class="p">(),</span> <span class="n">tau_rv</span><span class="p">:</span> <span class="n">LogTransform</span><span class="p">()}</span>
@@ -551,7 +551,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 
 <span class="n">logdensity_aesara_fn</span> <span class="o">=</span> <span class="n">aesara</span><span class="o">.</span><span class="n">function</span><span class="p">([</span><span class="n">X_at</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">value_variables</span><span class="p">),</span> <span class="n">logdensity</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;JAX&quot;</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">logdensity_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">logdensity_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">tau</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;log_tau&#39;</span><span class="p">]</span>
     <span class="n">lmbda</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;log_lmbda&#39;</span><span class="p">]</span>
     <span class="n">beta</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span>
@@ -571,10 +571,10 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>Let us now define a utility function that builds a sampling loop:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">):</span>
     <span class="n">keys</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
 
@@ -606,7 +606,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>Here we will not use the adaptive version of the MEADS algorithm, but instead use their heuristics as an adaptation procedure for Generalized Hamiltonian Monte Carlo kernels:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">blackjax</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">blackjax</span>
 
 <span class="n">rng_key</span><span class="p">,</span> <span class="n">key_warmup</span><span class="p">,</span> <span class="n">key_sample</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="n">meads</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">meads_adaptation</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">num_chains</span><span class="p">)</span>
@@ -627,7 +627,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <p>Let us look a high-level summary statistics for the inference, including the split-Rhat value and the number of effective samples:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">numpyro.diagnostics</span> <span class="kn">import</span> <span class="n">print_summary</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">numpyro.diagnostics</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_summary</span>
 
 <span class="n">print_summary</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
 </pre></div>

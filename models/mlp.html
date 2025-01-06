@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -408,7 +408,7 @@
 <span class="expanded">Hide code cell content</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
@@ -419,9 +419,9 @@
 </div>
 <div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
 
 <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
 </pre></div>
@@ -433,8 +433,8 @@
 <p>We download the MNIST data using HuggingFace’s <code class="docutils literal notranslate"><span class="pre">datasets</span></code> library:</p>
 <div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 
 <span class="n">mnist_data</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;mnist&quot;</span><span class="p">)</span>
@@ -457,16 +457,16 @@
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
 
 
-<span class="k">def</span> <span class="nf">one_hot_encode</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">one_hot_encode</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
     <span class="s2">&quot;Create a one-hot encoding of x of size k.&quot;</span>
     <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">==</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 
 
 <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
-<span class="k">def</span> <span class="nf">prepare_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">num_categories</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">num_categories</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">one_hot_encode</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">num_categories</span><span class="p">)</span>
 
     <span class="n">num_examples</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -477,7 +477,7 @@
     <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">num_examples</span>
 
 
-<span class="k">def</span> <span class="nf">batch_data</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">data_size</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">batch_data</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">data_size</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an iterator over batches of data.&quot;&quot;&quot;</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
@@ -506,13 +506,13 @@
 \end{align*}\end{split}\]</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">flax.linen</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">import</span> <span class="nn">jax.scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flax.linen</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.scipy.stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stats</span>
 
 
-<span class="k">class</span> <span class="nc">NN</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NN</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="nd">@nn</span><span class="o">.</span><span class="n">compact</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="mi">500</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="mi">10</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
@@ -522,21 +522,21 @@
 <span class="n">model</span> <span class="o">=</span> <span class="n">NN</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">logprior_fn</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">logprior_fn</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the value of the log-prior density function.&quot;&quot;&quot;</span>
     <span class="n">leaves</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_flatten</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="n">flat_params</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">jnp</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">leaves</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">flat_params</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">loglikelihood_fn</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">loglikelihood_fn</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Categorical log-likelihood&quot;&quot;&quot;</span>
     <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">data</span>
     <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">X</span><span class="p">))</span>
 
 
 <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
-<span class="k">def</span> <span class="nf">compute_accuracy</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_accuracy</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the accuracy of the model.</span>
 
 <span class="sd">    To make predictions we take the number that corresponds to the highest</span>
@@ -557,10 +557,10 @@
 <p>We now sample from the model’s posteriors using SGLD. We discard the first 1000 samples until the sampler has reached the typical set, and then take 2000 samples. We record the model’s accuracy with the current values every 100 steps.</p>
 <div class="cell tag_remove-stderr docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fastprogress.fastprogress</span> <span class="kn">import</span> <span class="n">progress_bar</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fastprogress.fastprogress</span><span class="w"> </span><span class="kn">import</span> <span class="n">progress_bar</span>
 
-<span class="kn">import</span> <span class="nn">blackjax</span>
-<span class="kn">from</span> <span class="nn">blackjax.sgmcmc.gradients</span> <span class="kn">import</span> <span class="n">grad_estimator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">blackjax</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.sgmcmc.gradients</span><span class="w"> </span><span class="kn">import</span> <span class="n">grad_estimator</span>
 
 
 <span class="n">data_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">)</span>
@@ -660,7 +660,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </summary>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
-<span class="k">def</span> <span class="nf">update_test_accuracy</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">logpredictprob</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_test_accuracy</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">logpredictprob</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Update the running average log-predictive probability</span>
 <span class="sd">    and return the current value of the accuracy.</span>
 
@@ -1009,7 +1009,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 <p>Perhaps unsurprisingly, the digit 8 is overrepresented in the set of examples <span class="math notranslate nohighlight">\(i\)</span> for which <span class="math notranslate nohighlight">\(\max_d P(y_i=d|x_i) &lt; 0.95\)</span>. As a purely academic exercise and sanity test of sort, let us now re-compute the point-wise accuracy ignoring the digits for which the model is uncertain, varying the threshold above which we consider the model to be certain:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_accuracy</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_accuracy</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="n">predicted</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">target</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">accuracy</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">predicted</span> <span class="o">==</span> <span class="n">target</span><span class="p">)</span>

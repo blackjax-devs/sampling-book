@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -434,7 +434,7 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 <span class="expanded">Hide code cell content</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
@@ -445,9 +445,9 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 </div>
 <div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
 <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
 </pre></div>
 </div>
@@ -455,11 +455,11 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
-<span class="kn">import</span> <span class="nn">jax.scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.scipy.stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stats</span>
 
-<span class="kn">import</span> <span class="nn">blackjax.mcmc.integrators</span> <span class="k">as</span> <span class="nn">integrators</span>
-<span class="kn">from</span> <span class="nn">blackjax</span> <span class="kn">import</span> <span class="n">orbital_hmc</span> <span class="k">as</span> <span class="n">orbital</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">blackjax.mcmc.integrators</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">integrators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">blackjax</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbital_hmc</span> <span class="k">as</span> <span class="n">orbital</span>
 </pre></div>
 </div>
 </div>
@@ -471,7 +471,7 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 <span class="expanded">Hide code cell content</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_contour</span><span class="p">(</span><span class="n">logdensity</span><span class="p">,</span> <span class="n">orbits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_contour</span><span class="p">(</span><span class="n">logdensity</span><span class="p">,</span> <span class="n">orbits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Contour plots for density w/ or w/o samples.&quot;&quot;&quot;</span>
     <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.5</span><span class="p">,</span> <span class="mf">7.5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mf">12.5</span>
     <span class="n">x1</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
@@ -499,10 +499,10 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 <span class="expanded">Hide code cell content</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">inference_loop</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sequantially draws samples given the kernel of choice.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">one_step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">one_step</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">):</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">state</span><span class="p">,</span> <span class="n">state</span>
 
@@ -525,7 +525,7 @@ H(x, v) = \frac{1}{2}\left(\frac{x_1^2}{8} + \left(x_2 - \frac{1}{4}x_1^2\right)
 <span class="expanded">Hide code cell source</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">logdensity_fn</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">logdensity_fn</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Banana density&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">8.0</span><span class="p">))</span> <span class="o">+</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span>
         <span class="n">x2</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">x1</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">1.0</span>
@@ -743,8 +743,8 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 <p>The bijection must output a function which takes as input an <code class="docutils literal notranslate"><span class="pre">IntegratorState</span></code>, composed of a position, momentum, potential energy (negative log density of our target evaluated at position) and the gradient of the potential energy, and a step size; and outputs a proposed <code class="docutils literal notranslate"><span class="pre">IntegratorState</span></code>. Even if the dynamics of our bijection are independent of the real potential energy, we need to return the potential energy at the proposed position for the computation of the sampler’s weights. But, as our dynamics are gradient-free, we can return the same gradient as the previous state to avoid unnecessary computations.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">elliptical_bijection</span><span class="p">(</span><span class="n">potential_fn</span><span class="p">,</span> <span class="n">kinetic_energy_fn</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">one_step</span><span class="p">(</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">elliptical_bijection</span><span class="p">(</span><span class="n">potential_fn</span><span class="p">,</span> <span class="n">kinetic_energy_fn</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">one_step</span><span class="p">(</span>
         <span class="n">state</span><span class="p">:</span> <span class="n">integrators</span><span class="o">.</span><span class="n">IntegratorState</span><span class="p">,</span> <span class="n">step_size</span><span class="p">:</span> <span class="nb">float</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">integrators</span><span class="o">.</span><span class="n">IntegratorState</span><span class="p">:</span>
         <span class="n">_position</span><span class="p">,</span> <span class="n">_momentum</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">grad</span> <span class="o">=</span> <span class="n">state</span>
@@ -855,8 +855,8 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 <p>First we define our parametrized MAF bijection using autoregressive neural networks.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">optax</span>
-<span class="kn">from</span> <span class="nn">numpyro.nn</span> <span class="kn">import</span> <span class="n">AutoregressiveNN</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">optax</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpyro.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoregressiveNN</span>
 </pre></div>
 </div>
 </div>
@@ -900,7 +900,7 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 <p>Define the log pullback density, our loss function (negative ELBO) and the optimization loop used to train our transformation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">logpullback</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">logpullback</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
     <span class="n">mean</span><span class="p">,</span> <span class="n">log_sd</span> <span class="o">=</span> <span class="n">apply_fun</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_sd</span><span class="p">)</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">mean</span>
     <span class="k">return</span> <span class="n">logdensity</span><span class="p">(</span><span class="n">unraveler</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">log_sd</span><span class="p">)</span>
@@ -910,7 +910,7 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">nelbo_loss</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">log_pullback</span><span class="p">,</span> <span class="n">lognorm</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">nelbo_loss</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">log_pullback</span><span class="p">,</span> <span class="n">lognorm</span><span class="p">):</span>
     <span class="k">return</span> <span class="o">-</span><span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">log_pullback</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">))(</span><span class="n">param</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span> <span class="o">-</span> <span class="n">lognorm</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -918,7 +918,7 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">param_optim</span><span class="p">(</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">param_optim</span><span class="p">(</span>
     <span class="n">rng</span><span class="p">,</span> <span class="n">init_param</span><span class="p">,</span> <span class="n">log_pullback</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">,</span> <span class="n">n_atoms</span><span class="p">,</span> <span class="n">n_epochs</span>
 <span class="p">):</span>
     <span class="n">epoch_size</span><span class="p">,</span> <span class="n">remainder</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">divmod</span><span class="p">(</span><span class="n">n_iter</span><span class="p">,</span> <span class="n">n_epochs</span><span class="p">)</span>
@@ -928,12 +928,12 @@ v(t) &amp;= v(0) \cos(t) - x(t) \sin(t),
     <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optax</span><span class="o">.</span><span class="n">adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">)</span>
     <span class="n">init_state</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">init_param</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_epoch</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">rng</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_epoch</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">rng</span><span class="p">):</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">carry</span>
         <span class="n">Z</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="p">(</span><span class="n">n_atoms</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
         <span class="n">lognorm</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">log_reference</span><span class="p">)(</span><span class="n">Z</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_iter</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_iter</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
             <span class="n">state</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">carry</span>
             <span class="n">grads</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">nelbo_loss</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">log_pullback</span><span class="p">,</span> <span class="n">lognorm</span><span class="p">)</span>
             <span class="n">updates</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">grads</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
@@ -1041,7 +1041,7 @@ Wall time: 688 ms
 <p>We need to push the samples through the learned MAF transformation to have samples from the target density (banana) and not the pullback.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">push_samples</span><span class="p">(</span><span class="n">z1</span><span class="p">,</span> <span class="n">z2</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">push_samples</span><span class="p">(</span><span class="n">z1</span><span class="p">,</span> <span class="n">z2</span><span class="p">):</span>
     <span class="n">z</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">z1</span><span class="p">,</span> <span class="n">z2</span><span class="p">])</span>
     <span class="n">mean</span><span class="p">,</span> <span class="n">log_sd</span> <span class="o">=</span> <span class="n">apply_fun</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_sd</span><span class="p">)</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">mean</span>
