@@ -474,7 +474,3 @@ visualize_results_sv(adjusted_samples, color= 'navy', label= 'volatility posteri
 plt.legend()
 plt.show()
 ```
-
-```{code-cell} ipython3
-
-```
