@@ -403,7 +403,7 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="microcanonical-langevin-monte-carlo">
 <h1>Microcanonical Langevin Monte Carlo<a class="headerlink" href="#microcanonical-langevin-monte-carlo" title="Link to this heading">#</a></h1>
-<p>This is an algorithm based on https://arxiv.org/abs/2212.08549 (<span id="id1">[<a class="reference internal" href="#id23" title="Jakob Robnik, G Bruno De Luca, Eva Silverstein, and Uroš Seljak. Microcanonical hamiltonian monte carlo. Journal of Machine Learning Research, 24:1–34, 2023.">RDLSS23</a>]</span>, <span id="id2">[<a class="reference internal" href="#id24" title="Jakob Robnik and Uroš Seljak. Microcanonical langevin monte carlo. arXiv preprint arXiv:2303.18221, 2023.">RS23</a>]</span>). A website with detailed information can be found <a class="reference external" href="https://microcanonical-monte-carlo.netlify.app/">here</a>.</p>
+<p>This is an algorithm based on https://arxiv.org/abs/2212.08549 (<span id="id1">[]</span>, <span id="id2">[]</span>). A website with detailed information can be found <a class="reference external" href="https://microcanonical-monte-carlo.netlify.app/">here</a>.</p>
 <!-- The algorithm is provided in both adjusted (i.e. with an Metropolis-Hastings step) and unadjusted versions; by default we use "MCLMC" to refer to the unadjusted version. -->
 <p>The idea is that we have a distribution <span class="math notranslate nohighlight">\(p(x)\)</span> from which we want to sample. We numerically integrate the following SDE; the samples we obtain converge (in the limit of many steps and small step size) to samples from the target distribution.</p>
 <div class="math notranslate nohighlight">
@@ -474,16 +474,17 @@ u \\
     <span class="p">)</span>
 
     <span class="c1"># build the kernel</span>
-    <span class="n">kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">sqrt_diag_cov</span> <span class="p">:</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">mclmc</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">inverse_mass_matrix</span> <span class="p">:</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">mclmc</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(</span>
         <span class="n">logdensity_fn</span><span class="o">=</span><span class="n">logdensity_fn</span><span class="p">,</span>
         <span class="n">integrator</span><span class="o">=</span><span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">integrators</span><span class="o">.</span><span class="n">isokinetic_mclachlan</span><span class="p">,</span>
-        <span class="n">sqrt_diag_cov</span><span class="o">=</span><span class="n">sqrt_diag_cov</span><span class="p">,</span>
+        <span class="n">inverse_mass_matrix</span><span class="o">=</span><span class="n">inverse_mass_matrix</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># find values for L and step_size</span>
     <span class="p">(</span>
         <span class="n">blackjax_state_after_tuning</span><span class="p">,</span>
         <span class="n">blackjax_mclmc_sampler_params</span><span class="p">,</span>
+        <span class="n">_</span>
     <span class="p">)</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mclmc_find_L_and_step_size</span><span class="p">(</span>
         <span class="n">mclmc_kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span>
         <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span>
@@ -558,7 +559,7 @@ u \\
       <progress value='10000' class='' max='10000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [10000/10000 00:00&lt;?]
     </div>
-    </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(0.00752303, dtype=float32)
+    </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(0.00647164, dtype=float32)
 </pre></div>
 </div>
 </div>
@@ -575,7 +576,7 @@ u \\
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Scatter Plot of Samples&#39;)
 </pre></div>
 </div>
-<img alt="../_images/f58a28d8bafef836b4f2d1ea0216cb04e354440f8ce63a6016047a6e39295bf5.png" src="../_images/f58a28d8bafef836b4f2d1ea0216cb04e354440f8ce63a6016047a6e39295bf5.png" />
+<img alt="../_images/b0795c1e5c62b5d303e92a745fd7e410dc086fc008d26ed059a58ced21ba049e.png" src="../_images/b0795c1e5c62b5d303e92a745fd7e410dc086fc008d26ed059a58ced21ba049e.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -600,7 +601,7 @@ u \\
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f872d80acedc9f464f69f4829103b9c5bb0b73d3fe8a5c463eee4cc45be0f044.png" src="../_images/f872d80acedc9f464f69f4829103b9c5bb0b73d3fe8a5c463eee4cc45be0f044.png" />
+<img alt="../_images/f6395a165c10e9ef66c3374f5129d21b0d024b2e44683f62516203c90feff88b.png" src="../_images/f6395a165c10e9ef66c3374f5129d21b0d024b2e44683f62516203c90feff88b.png" />
 </div>
 </div>
 </section>
@@ -663,7 +664,7 @@ u \\
       <progress value='20000' class='' max='20000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [20000/20000 00:00&lt;?]
     </div>
-    </div><img alt="../_images/94d18d3d4664c09e29ac2a9f661585be3ea67e4043777c3f339077f031456486.png" src="../_images/94d18d3d4664c09e29ac2a9f661585be3ea67e4043777c3f339077f031456486.png" />
+    </div><img alt="../_images/c3513102181065ab9366b2f8b754adffe2ea0975b960397cbd0a8e10ff841fa6.png" src="../_images/c3513102181065ab9366b2f8b754adffe2ea0975b960397cbd0a8e10ff841fa6.png" />
 </div>
 </div>
 <p>So here the change has little effect in this case.</p>
@@ -672,8 +673,8 @@ u \\
 <h2>A more complex example<a class="headerlink" href="#a-more-complex-example" title="Link to this heading">#</a></h2>
 <p>We now consider a more complex model, of stock volatility.</p>
 <p>The returns <span class="math notranslate nohighlight">\(r_n\)</span> are modeled by a Student’s-t distribution whose scale (volatility) <span class="math notranslate nohighlight">\(R_n\)</span> is time varying and unknown. The prior for <span class="math notranslate nohighlight">\(\log R_n\)</span> is a Gaussian random walk, with an exponential distribution of the random walk step-size <span class="math notranslate nohighlight">\(\sigma\)</span>. An exponential prior is also taken for the Student’s-t degrees of freedom <span class="math notranslate nohighlight">\(\nu\)</span>. The generative process of the data is:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-f2f77a00-5643-43f6-9772-5f9f7af973f2">
-<span class="eqno">(1)<a class="headerlink" href="#equation-f2f77a00-5643-43f6-9772-5f9f7af973f2" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-0ce8af80-2d27-42a9-b42e-4c1ee5091bd6">
+<span class="eqno">(1)<a class="headerlink" href="#equation-0ce8af80-2d27-42a9-b42e-4c1ee5091bd6" title="Permalink to this equation">#</a></span>\[\begin{align}
     &amp;r_n / R_n \sim \text{Student's-t}(\nu) \qquad
     &amp;&amp;\nu \sim \text{Exp}(\lambda = 1/10) \\ \nonumber
     &amp;\log R_n \sim \mathcal{N}(\log R_{n-1}, \sigma) \qquad
@@ -807,7 +808,7 @@ Download complete.
       <progress value='20000' class='' max='20000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [20000/20000 00:00&lt;?]
     </div>
-    </div><img alt="../_images/c80fb9135c61b29129499d74efabdb728d01e90f1b18055728d11bf698744b5c.png" src="../_images/c80fb9135c61b29129499d74efabdb728d01e90f1b18055728d11bf698744b5c.png" />
+    </div><img alt="../_images/e65056c032889afafca5131f16573468646636c9210f15600b2d862e82d8d68c.png" src="../_images/e65056c032889afafca5131f16573468646636c9210f15600b2d862e82d8d68c.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -869,7 +870,7 @@ Download complete.
       <progress value='40000' class='' max='40000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [40000/40000 00:00&lt;?]
     </div>
-    </div><img alt="../_images/adaeffd1cf285dd63535c2c781fb1286bb3bd072812b80b4aadc4cc675736d3a.png" src="../_images/adaeffd1cf285dd63535c2c781fb1286bb3bd072812b80b4aadc4cc675736d3a.png" />
+    </div><img alt="../_images/c6a90582a9a27d7128f975ac19c959f21230fec73babe41ba6df83ebd2c11a4b.png" src="../_images/c6a90582a9a27d7128f975ac19c959f21230fec73babe41ba6df83ebd2c11a4b.png" />
 </div>
 </div>
 <p>Here, we have again inspected the effect of halving <span class="math notranslate nohighlight">\(\epsilon\)</span>. This looks OK, but suppose we are interested in the hierarchial parameters in particular, which tend to be harder to infer. We now inspect the marginal of a hierarchical parameter:</p>
@@ -894,33 +895,35 @@ Download complete.
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/71464f41a600b82a21fb8145d6da6372716a1d658eb09b075628598c1ca0c2c6.png" src="../_images/71464f41a600b82a21fb8145d6da6372716a1d658eb09b075628598c1ca0c2c6.png" />
+<img alt="../_images/dcf4d29f58c5d692e01fa9c4ce964d2c3c74c98f070b7908c1287dd257369dd9.png" src="../_images/dcf4d29f58c5d692e01fa9c4ce964d2c3c74c98f070b7908c1287dd257369dd9.png" />
 </div>
 </div>
 <p>If we care about this parameter in particular, we should reduce step size further, until the difference disappears.</p>
 </section>
 <section id="adjusted-mclmc">
 <h2>Adjusted MCLMC<a class="headerlink" href="#adjusted-mclmc" title="Link to this heading">#</a></h2>
-<p>Blackjax also provides an adjusted version of the algorithm. This also has two hyperparameters, <code class="docutils literal notranslate"><span class="pre">step_size</span></code> and <code class="docutils literal notranslate"><span class="pre">L</span></code>. <code class="docutils literal notranslate"><span class="pre">L</span></code> is related to the <code class="docutils literal notranslate"><span class="pre">L</span></code> parameter of the unadjusted version, but not identical. The tuning algorithm is also similar, but uses a dual averaging scheme to tune the step size. We find in practice that a target MH acceptance rate of 0.9 is a good choice.</p>
+<p>Blackjax also provides an adjusted version of the algorithm. This also has two hyperparameters, <code class="docutils literal notranslate"><span class="pre">step_size</span></code> and <code class="docutils literal notranslate"><span class="pre">L</span></code>. <code class="docutils literal notranslate"><span class="pre">L</span></code> is related to the <code class="docutils literal notranslate"><span class="pre">L</span></code> parameter of the unadjusted version, but not identical (It determines the length of a proposal, and since momentum is resampled after a proposal, length of proposal determines the momentum decoherence rate). It is also possible to have Langevin noise during the trajectory, although we don’t see improvements here.</p>
+<p>The tuning algorithm is also similar, but uses a dual averaging scheme to tune the step size. We find in practice that a target MH acceptance rate of 0.9 is a good choice.</p>
+<p><strong>Our recommendation is to use the unadjusted version when possible</strong>, but if you really believe you need the algorithm to be asymptotically unbiased (it’s not obvious why you would), you should use the adjusted version, with mass matrix preconditioning, randomized trajectory length and no in-proposal Langevin noise. We encapsulate these best practices in <code class="docutils literal notranslate"><span class="pre">run_adjusted_mcmc</span></code> below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.mcmc.adjusted_mclmc</span><span class="w"> </span><span class="kn">import</span> <span class="n">rescale</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.mcmc.adjusted_mclmc_dynamic</span><span class="w"> </span><span class="kn">import</span> <span class="n">rescale</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_inference_algorithm</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">run_adjusted_mclmc</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_adjusted_mclmc_dynamic</span><span class="p">(</span>
     <span class="n">logdensity_fn</span><span class="p">,</span>
     <span class="n">num_steps</span><span class="p">,</span>
     <span class="n">initial_position</span><span class="p">,</span>
     <span class="n">key</span><span class="p">,</span>
     <span class="n">transform</span><span class="o">=</span><span class="k">lambda</span> <span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
-    <span class="n">diagonal_preconditioning</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">diagonal_preconditioning</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">random_trajectory_length</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">L_proposal_factor</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">inf</span>
 <span class="p">):</span>
 
     <span class="n">init_key</span><span class="p">,</span> <span class="n">tune_key</span><span class="p">,</span> <span class="n">run_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 
-    <span class="n">initial_state</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">adjusted_mclmc</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
+    <span class="n">initial_state</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">adjusted_mclmc_dynamic</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
         <span class="n">position</span><span class="o">=</span><span class="n">initial_position</span><span class="p">,</span>
         <span class="n">logdensity_fn</span><span class="o">=</span><span class="n">logdensity_fn</span><span class="p">,</span>
         <span class="n">random_generator_arg</span><span class="o">=</span><span class="n">init_key</span><span class="p">,</span>
@@ -932,9 +935,9 @@ Download complete.
     <span class="k">else</span><span class="p">:</span>
         <span class="n">integration_steps_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">avg_num_integration_steps</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">avg_num_integration_steps</span><span class="p">)</span>
 
-    <span class="n">kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">avg_num_integration_steps</span><span class="p">,</span> <span class="n">step_size</span><span class="p">,</span> <span class="n">sqrt_diag_cov</span><span class="p">:</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">adjusted_mclmc</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">avg_num_integration_steps</span><span class="p">,</span> <span class="n">step_size</span><span class="p">,</span> <span class="n">inverse_mass_matrix</span><span class="p">:</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">mcmc</span><span class="o">.</span><span class="n">adjusted_mclmc_dynamic</span><span class="o">.</span><span class="n">build_kernel</span><span class="p">(</span>
         <span class="n">integration_steps_fn</span><span class="o">=</span><span class="n">integration_steps_fn</span><span class="p">(</span><span class="n">avg_num_integration_steps</span><span class="p">),</span>
-        <span class="n">sqrt_diag_cov</span><span class="o">=</span><span class="n">sqrt_diag_cov</span><span class="p">,</span>
+        <span class="n">inverse_mass_matrix</span><span class="o">=</span><span class="n">inverse_mass_matrix</span><span class="p">,</span>
     <span class="p">)(</span>
         <span class="n">rng_key</span><span class="o">=</span><span class="n">rng_key</span><span class="p">,</span>
         <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span>
@@ -948,6 +951,7 @@ Download complete.
     <span class="p">(</span>
         <span class="n">blackjax_state_after_tuning</span><span class="p">,</span>
         <span class="n">blackjax_mclmc_sampler_params</span><span class="p">,</span>
+        <span class="n">_</span>
     <span class="p">)</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">adjusted_mclmc_find_L_and_step_size</span><span class="p">(</span>
         <span class="n">mclmc_kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span>
         <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span>
@@ -956,20 +960,20 @@ Download complete.
         <span class="n">target</span><span class="o">=</span><span class="n">target_acc_rate</span><span class="p">,</span>
         <span class="n">frac_tune1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
         <span class="n">frac_tune2</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
-        <span class="n">frac_tune3</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="c1"># our recommendation</span>
+        <span class="n">frac_tune3</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="c1"># our recommendation</span>
         <span class="n">diagonal_preconditioning</span><span class="o">=</span><span class="n">diagonal_preconditioning</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">step_size</span> <span class="o">=</span> <span class="n">blackjax_mclmc_sampler_params</span><span class="o">.</span><span class="n">step_size</span>
     <span class="n">L</span> <span class="o">=</span> <span class="n">blackjax_mclmc_sampler_params</span><span class="o">.</span><span class="n">L</span>
 
-    <span class="n">alg</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">adjusted_mclmc</span><span class="p">(</span>
+    <span class="n">alg</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">adjusted_mclmc_dynamic</span><span class="p">(</span>
         <span class="n">logdensity_fn</span><span class="o">=</span><span class="n">logdensity_fn</span><span class="p">,</span>
         <span class="n">step_size</span><span class="o">=</span><span class="n">step_size</span><span class="p">,</span>
         <span class="n">integration_steps_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span>
             <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">*</span> <span class="n">rescale</span><span class="p">(</span><span class="n">L</span> <span class="o">/</span> <span class="n">step_size</span><span class="p">)</span>
         <span class="p">),</span>
-        <span class="n">sqrt_diag_cov</span><span class="o">=</span><span class="n">blackjax_mclmc_sampler_params</span><span class="o">.</span><span class="n">sqrt_diag_cov</span><span class="p">,</span>
+        <span class="n">inverse_mass_matrix</span><span class="o">=</span><span class="n">blackjax_mclmc_sampler_params</span><span class="o">.</span><span class="n">inverse_mass_matrix</span><span class="p">,</span>
         <span class="n">L_proposal_factor</span><span class="o">=</span><span class="n">L_proposal_factor</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -992,7 +996,7 @@ Download complete.
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># run the algorithm on a high dimensional gaussian, and show two of the dimensions</span>
 
 <span class="n">sample_key</span><span class="p">,</span> <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
-<span class="n">samples</span> <span class="o">=</span> <span class="n">run_adjusted_mclmc</span><span class="p">(</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">run_adjusted_mclmc_dynamic</span><span class="p">(</span>
     <span class="n">logdensity_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span>
     <span class="n">num_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
     <span class="n">initial_position</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1000</span><span class="p">,)),</span>
@@ -1008,51 +1012,31 @@ Download complete.
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Scatter Plot of Samples&#39;)
 </pre></div>
 </div>
-<img alt="../_images/9ac388bb73a2903fcc26a9e56d67334a38b7217f1d9fb9fe422768ea6419656d.png" src="../_images/9ac388bb73a2903fcc26a9e56d67334a38b7217f1d9fb9fe422768ea6419656d.png" />
+<img alt="../_images/9d91dd02d6709006a7570f5dce1f98137296cc76adc713f80e67d51aec0410fb.png" src="../_images/9d91dd02d6709006a7570f5dce1f98137296cc76adc713f80e67d51aec0410fb.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># run the algorithm on a high dimensional gaussian, and show two of the dimensions</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_steps</span> <span class="o">=</span> <span class="mi">10000</span>
 
-<span class="n">sample_key</span><span class="p">,</span> <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
-<span class="n">samples</span> <span class="o">=</span> <span class="n">run_adjusted_mclmc</span><span class="p">(</span>
-    <span class="n">logdensity_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span>
-    <span class="n">num_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-    <span class="n">initial_position</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1000</span><span class="p">,)),</span>
-    <span class="n">key</span><span class="o">=</span><span class="n">sample_key</span><span class="p">,</span>
-    <span class="n">random_trajectory_length</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">L_proposal_factor</span><span class="o">=</span><span class="mf">1.25</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">samples</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">samples</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Scatter Plot of Samples&quot;</span><span class="p">)</span>
+<span class="n">adjusted_samples</span> <span class="o">=</span> <span class="n">run_adjusted_mclmc_dynamic</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="o">=</span> <span class="n">logp_sv</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">initial_position</span><span class="o">=</span> <span class="n">x_init</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span> <span class="n">sample_key</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">setup</span><span class="p">()</span>
+<span class="n">visualize_results_sv</span><span class="p">(</span><span class="n">adjusted_samples</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span> <span class="s1">&#39;navy&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span> <span class="s1">&#39;volatility posterior&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Scatter Plot of Samples&#39;)
-</pre></div>
+<img alt="../_images/b76d0fc3ca07a87d50208eb6830efd75dbb5386ebdcc834dcb67c004a326a0f5.png" src="../_images/b76d0fc3ca07a87d50208eb6830efd75dbb5386ebdcc834dcb67c004a326a0f5.png" />
 </div>
-<img alt="../_images/ce341e7b5e15603176fe4c01cc9731b1255965a6276c12e0db0cf60fa40c380e.png" src="../_images/ce341e7b5e15603176fe4c01cc9731b1255965a6276c12e0db0cf60fa40c380e.png" />
-</div>
-</div>
-<div class="docutils container" id="id3">
-<div role="list" class="citation-list">
-<div class="citation" id="id23" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">RDLSS23</a><span class="fn-bracket">]</span></span>
-<p>Jakob Robnik, G Bruno De Luca, Eva Silverstein, and Uroš Seljak. Microcanonical hamiltonian monte carlo. <em>Journal of Machine Learning Research</em>, 24:1–34, 2023.</p>
-</div>
-<div class="citation" id="id24" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">RS23</a><span class="fn-bracket">]</span></span>
-<p>Jakob Robnik and Uroš Seljak. Microcanonical langevin monte carlo. <em>arXiv preprint arXiv:2303.18221</em>, 2023.</p>
-</div>
-</div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-```{code-cell}
-
-</pre></div>
 </div>
 </section>
 </section>
