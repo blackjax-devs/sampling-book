@@ -469,7 +469,7 @@
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/fa97a3df3acdf2be30124c4c8391fb08183e1cffa2881be8b0cec259886842f8.png" src="../_images/fa97a3df3acdf2be30124c4c8391fb08183e1cffa2881be8b0cec259886842f8.png" />
+<img alt="../_images/b4924b84fa468dbd916be37b423ec07471d2ba6842298d42a3d709d2002fe602.png" src="../_images/b4924b84fa468dbd916be37b423ec07471d2ba6842298d42a3d709d2002fe602.png" />
 </div>
 </div>
 </section>
@@ -539,20 +539,6 @@ The optimizer is the limited memory BFGS algorithm.</p>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: jaxopt.ZoomLineSearch: Linesearch failed, no stepsize satisfying sufficient decrease found.
-INFO: jaxopt.ZoomLineSearch: Iter: 1000, Stepsize: 0.0, Decrease error: inf, Curvature error: inf
-WARNING: jaxopt.ZoomLineSearch: The linesearch failed because the provided direction is not a descent direction. The slope (=nan) at stepsize=0 should be negative
-WARNING: jaxopt.ZoomLineSearch: Cannot even make a step without getting Inf or Nan. The linesearch won&#39;t make a step and the optimizer is stuck.
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: jaxopt.ZoomLineSearch: Linesearch failed, no stepsize satisfying sufficient decrease found.
-INFO: jaxopt.ZoomLineSearch: Iter: 1000, Stepsize: 0.0, Decrease error: inf, Curvature error: inf
-WARNING: jaxopt.ZoomLineSearch: The linesearch failed because the provided direction is not a descent direction. The slope (=nan) at stepsize=0 should be negative
-WARNING: jaxopt.ZoomLineSearch: Cannot even make a step without getting Inf or Nan. The linesearch won&#39;t make a step and the optimizer is stuck.
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell tag_hide-input docutils container">
 <details class="hide above-input">
@@ -614,7 +600,11 @@ WARNING: jaxopt.ZoomLineSearch: Cannot even make a step without getting Inf or N
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/214e34de2ffda65ca1735137487a8e0bca1a679ab5e3751612b3451a3acb57fe.png" src="../_images/214e34de2ffda65ca1735137487a8e0bca1a679ab5e3751612b3451a3acb57fe.png" />
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_2889/2037720512.py:35: DeprecationWarning: jax.tree_map is deprecated: use jax.tree.map (jax v0.4.25 or newer) or jax.tree_util.tree_map (any JAX version).
+  state = jax.tree_map(lambda x: x[i], path)
+</pre></div>
+</div>
+<img alt="../_images/ef10b06e44ebaf4390dd0dada391a2684032b4995cc0038e5674a51366f7628a.png" src="../_images/ef10b06e44ebaf4390dd0dada391a2684032b4995cc0038e5674a51366f7628a.png" />
 </div>
 </div>
 </section>
@@ -657,7 +647,7 @@ WARNING: jaxopt.ZoomLineSearch: Cannot even make a step without getting Inf or N
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/396a8e0089684feafd7cb7c5ffd5a8f8161a73b330ec6abfa4fb244fbc6816fa.png" src="../_images/396a8e0089684feafd7cb7c5ffd5a8f8161a73b330ec6abfa4fb244fbc6816fa.png" />
+<img alt="../_images/9c82dbc1016803a24bbc0796ece617c815ce45b5a943d06992cbb951d3f8e704.png" src="../_images/9c82dbc1016803a24bbc0796ece617c815ce45b5a943d06992cbb951d3f8e704.png" />
 </div>
 </div>
 <p>Please note that pathfinder is implemented as follows:</p>
@@ -676,8 +666,8 @@ WARNING: jaxopt.ZoomLineSearch: Cannot even make a step without getting Inf or N
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3.12 s, sys: 23.5 ms, total: 3.14 s
-Wall time: 3.1 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3 s, sys: 54.8 ms, total: 3.05 s
+Wall time: 1.38 s
 </pre></div>
 </div>
 </div>
@@ -727,7 +717,7 @@ Wall time: 3.1 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/1c9dfd20b0cd9ba9f4b028ecd398c3db448dbc70277a86d78cfa8d6a7504faa8.png" src="../_images/1c9dfd20b0cd9ba9f4b028ecd398c3db448dbc70277a86d78cfa8d6a7504faa8.png" />
+<img alt="../_images/721fb370fb56571510b86a42799467725d2b4d7483b79778703fa76850446123.png" src="../_images/721fb370fb56571510b86a42799467725d2b4d7483b79778703fa76850446123.png" />
 </div>
 </div>
 <section id="pathfinder-as-an-initialization-tool-for-mcmc-kernels">
@@ -746,8 +736,8 @@ Wall time: 3.1 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([[ 0.1482668 , -0.0374889 ],
-       [-0.03748889,  0.20744953]], dtype=float32)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([[ 0.23901838, -0.08030263],
+       [-0.08030259,  0.23023751]], dtype=float32)
 </pre></div>
 </div>
 </div>
@@ -791,7 +781,7 @@ Wall time: 3.1 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/5a899f787e12356bb1e0497803991e1b2ec65f5c80fc3a10bb53dbba8eb5c124.png" src="../_images/5a899f787e12356bb1e0497803991e1b2ec65f5c80fc3a10bb53dbba8eb5c124.png" />
+<img alt="../_images/cb9cfd69210b13a091d2f3c6768e970b4932281ad4fe3190e6821d56d644fa0e.png" src="../_images/cb9cfd69210b13a091d2f3c6768e970b4932281ad4fe3190e6821d56d644fa0e.png" />
 </div>
 </div>
 </section>

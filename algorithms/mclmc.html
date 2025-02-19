@@ -559,7 +559,7 @@ u \\
       <progress value='10000' class='' max='10000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [10000/10000 00:00&lt;?]
     </div>
-    </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(0.00647164, dtype=float32)
+    </div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(-0.00095896, dtype=float32)
 </pre></div>
 </div>
 </div>
@@ -576,7 +576,7 @@ u \\
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Scatter Plot of Samples&#39;)
 </pre></div>
 </div>
-<img alt="../_images/b0795c1e5c62b5d303e92a745fd7e410dc086fc008d26ed059a58ced21ba049e.png" src="../_images/b0795c1e5c62b5d303e92a745fd7e410dc086fc008d26ed059a58ced21ba049e.png" />
+<img alt="../_images/e05d315cacbf5fee794a240e7e49e1cf634791f1d1aa5193825d849b9fd53861.png" src="../_images/e05d315cacbf5fee794a240e7e49e1cf634791f1d1aa5193825d849b9fd53861.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -601,7 +601,7 @@ u \\
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f6395a165c10e9ef66c3374f5129d21b0d024b2e44683f62516203c90feff88b.png" src="../_images/f6395a165c10e9ef66c3374f5129d21b0d024b2e44683f62516203c90feff88b.png" />
+<img alt="../_images/b3770709ae8c895d80ab796efba58c6aa0e2fed972295a40abb86d28abe337f5.png" src="../_images/b3770709ae8c895d80ab796efba58c6aa0e2fed972295a40abb86d28abe337f5.png" />
 </div>
 </div>
 </section>
@@ -664,7 +664,7 @@ u \\
       <progress value='20000' class='' max='20000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [20000/20000 00:00&lt;?]
     </div>
-    </div><img alt="../_images/c3513102181065ab9366b2f8b754adffe2ea0975b960397cbd0a8e10ff841fa6.png" src="../_images/c3513102181065ab9366b2f8b754adffe2ea0975b960397cbd0a8e10ff841fa6.png" />
+    </div><img alt="../_images/5f1560193bad33e8a5b6184f24bdaf0087e2547890801de70e7af418c8caf442.png" src="../_images/5f1560193bad33e8a5b6184f24bdaf0087e2547890801de70e7af418c8caf442.png" />
 </div>
 </div>
 <p>So here the change has little effect in this case.</p>
@@ -673,8 +673,8 @@ u \\
 <h2>A more complex example<a class="headerlink" href="#a-more-complex-example" title="Link to this heading">#</a></h2>
 <p>We now consider a more complex model, of stock volatility.</p>
 <p>The returns <span class="math notranslate nohighlight">\(r_n\)</span> are modeled by a Student’s-t distribution whose scale (volatility) <span class="math notranslate nohighlight">\(R_n\)</span> is time varying and unknown. The prior for <span class="math notranslate nohighlight">\(\log R_n\)</span> is a Gaussian random walk, with an exponential distribution of the random walk step-size <span class="math notranslate nohighlight">\(\sigma\)</span>. An exponential prior is also taken for the Student’s-t degrees of freedom <span class="math notranslate nohighlight">\(\nu\)</span>. The generative process of the data is:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-8fdfc74f-ae6b-4344-ace5-3dc65325ddcb">
-<span class="eqno">(1)<a class="headerlink" href="#equation-8fdfc74f-ae6b-4344-ace5-3dc65325ddcb" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-3e2a07ad-8c9d-4880-92bc-4522e6a11ad2">
+<span class="eqno">(1)<a class="headerlink" href="#equation-3e2a07ad-8c9d-4880-92bc-4522e6a11ad2" title="Permalink to this equation">#</a></span>\[\begin{align}
     &amp;r_n / R_n \sim \text{Student's-t}(\nu) \qquad
     &amp;&amp;\nu \sim \text{Exp}(\lambda = 1/10) \\ \nonumber
     &amp;\log R_n \sim \mathcal{N}(\log R_{n-1}, \sigma) \qquad
@@ -808,7 +808,7 @@ Download complete.
       <progress value='20000' class='' max='20000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [20000/20000 00:00&lt;?]
     </div>
-    </div><img alt="../_images/e65056c032889afafca5131f16573468646636c9210f15600b2d862e82d8d68c.png" src="../_images/e65056c032889afafca5131f16573468646636c9210f15600b2d862e82d8d68c.png" />
+    </div><img alt="../_images/293756abcc399785fe148a687e7f518ac73e22607a8c69d82d632bafdd0eda40.png" src="../_images/293756abcc399785fe148a687e7f518ac73e22607a8c69d82d632bafdd0eda40.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -870,7 +870,7 @@ Download complete.
       <progress value='40000' class='' max='40000' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [40000/40000 00:00&lt;?]
     </div>
-    </div><img alt="../_images/c6a90582a9a27d7128f975ac19c959f21230fec73babe41ba6df83ebd2c11a4b.png" src="../_images/c6a90582a9a27d7128f975ac19c959f21230fec73babe41ba6df83ebd2c11a4b.png" />
+    </div><img alt="../_images/2df14b5ac282d02100f25c36ad312b71b1e2babe915653b1abdec3e8bf10f17c.png" src="../_images/2df14b5ac282d02100f25c36ad312b71b1e2babe915653b1abdec3e8bf10f17c.png" />
 </div>
 </div>
 <p>Here, we have again inspected the effect of halving <span class="math notranslate nohighlight">\(\epsilon\)</span>. This looks OK, but suppose we are interested in the hierarchial parameters in particular, which tend to be harder to infer. We now inspect the marginal of a hierarchical parameter:</p>
@@ -895,7 +895,7 @@ Download complete.
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/dcf4d29f58c5d692e01fa9c4ce964d2c3c74c98f070b7908c1287dd257369dd9.png" src="../_images/dcf4d29f58c5d692e01fa9c4ce964d2c3c74c98f070b7908c1287dd257369dd9.png" />
+<img alt="../_images/1be69405944991938c40328f619e1b1df5b317307b082dd7891c1711159fa4ff.png" src="../_images/1be69405944991938c40328f619e1b1df5b317307b082dd7891c1711159fa4ff.png" />
 </div>
 </div>
 <p>If we care about this parameter in particular, we should reduce step size further, until the difference disappears.</p>

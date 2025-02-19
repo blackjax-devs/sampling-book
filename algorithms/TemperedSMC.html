@@ -515,7 +515,7 @@ V(x) = (x^2 - 1)^2
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/2c049cea509eba34b71265727458ecabf80269e64cc5226198aa6717c077c123.png" src="../_images/2c049cea509eba34b71265727458ecabf80269e64cc5226198aa6717c077c123.png" />
+<img alt="../_images/6f61dfea1bb9001169d1079d093ea7623aa4d83ad27d205585fbf1ca5727c21c.png" src="../_images/6f61dfea1bb9001169d1079d093ea7623aa4d83ad27d205585fbf1ca5727c21c.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -563,8 +563,8 @@ V(x) = (x^2 - 1)^2
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.13 s, sys: 101 ms, total: 1.24 s
-Wall time: 1.23 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 2.26 s, sys: 73.9 ms, total: 2.34 s
+Wall time: 2.02 s
 </pre></div>
 </div>
 </div>
@@ -584,7 +584,7 @@ Wall time: 1.23 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/2758bf489c3a55debcbcc62ddbf827f5594c86670e7f490f71f1c81e9423a723.png" src="../_images/2758bf489c3a55debcbcc62ddbf827f5594c86670e7f490f71f1c81e9423a723.png" />
+<img alt="../_images/b9552dea7645ae53f7a488dedb2b04fdf2bcd36c4d06df6981529b40580f8a4d.png" src="../_images/b9552dea7645ae53f7a488dedb2b04fdf2bcd36c4d06df6981529b40580f8a4d.png" />
 </div>
 </div>
 </section>
@@ -606,8 +606,8 @@ Wall time: 1.23 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 5.01 s, sys: 58.7 ms, total: 5.06 s
-Wall time: 5.05 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 45.3 s, sys: 134 ms, total: 45.4 s
+Wall time: 44.7 s
 </pre></div>
 </div>
 </div>
@@ -627,7 +627,7 @@ Wall time: 5.05 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/d7afee25587435a2537cb76f8d79294930be231fa6bfd962c47617a5fafcd892.png" src="../_images/d7afee25587435a2537cb76f8d79294930be231fa6bfd962c47617a5fafcd892.png" />
+<img alt="../_images/81cb3ddf7f15c70d4b3133b025fe7ec52abaa4d5ae64581c1ea79be2ce340a46.png" src="../_images/81cb3ddf7f15c70d4b3133b025fe7ec52abaa4d5ae64581c1ea79be2ce340a46.png" />
 </div>
 </div>
 </section>
@@ -697,9 +697,11 @@ Wall time: 5.05 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of steps in the adaptive algorithm:  11
-CPU times: user 2.57 s, sys: 433 ms, total: 3 s
-Wall time: 2.64 s
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">File</span> <span class="o">&lt;</span><span class="n">timed</span> <span class="n">exec</span><span class="o">&gt;</span><span class="p">:</span><span class="mi">12</span>
+
+<span class="ne">TypeError</span>: extend_params() takes 1 positional argument but 2 were given
 </pre></div>
 </div>
 </div>
@@ -719,7 +721,16 @@ Wall time: 2.64 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/339ee114f11bbf6861a3218da4230f196175677a54fd1d337711b21a90f1a1ac.png" src="../_images/339ee114f11bbf6861a3218da4230f196175677a54fd1d337711b21a90f1a1ac.png" />
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">13</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">smc_samples</span><span class="o">.</span><span class="n">particles</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">linspace</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">density</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="ne">NameError</span>: name &#39;smc_samples&#39; is not defined
+</pre></div>
+</div>
 </div>
 </div>
 </section>
@@ -765,12 +776,6 @@ Wall time: 2.64 s
 </div>
 </div>
 </details>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f14007be810&gt;
-</pre></div>
-</div>
-<img alt="../_images/b2a0f58d4e01305aba052cf37d3a6091c86ab3e5dd523d62005846b85f823cf7.png" src="../_images/b2a0f58d4e01305aba052cf37d3a6091c86ab3e5dd523d62005846b85f823cf7.png" />
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -813,12 +818,6 @@ Wall time: 2.64 s
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 564 ms, sys: 35.4 ms, total: 599 ms
-Wall time: 592 ms
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell tag_hide-input docutils container">
 <details class="hide above-input">
@@ -835,9 +834,6 @@ Wall time: 592 ms
 </div>
 </div>
 </details>
-<div class="cell_output docutils container">
-<img alt="../_images/050d52c074b03ce18b18dc5f9af439ee1bc1b827eff4df2eaea3de7e61563de9.png" src="../_images/050d52c074b03ce18b18dc5f9af439ee1bc1b827eff4df2eaea3de7e61563de9.png" />
-</div>
 </div>
 </section>
 <section id="nuts-sampler">
@@ -857,12 +853,6 @@ Wall time: 592 ms
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 887 ms, sys: 48 ms, total: 935 ms
-Wall time: 923 ms
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell tag_hide-input docutils container">
 <details class="hide above-input">
@@ -879,9 +869,6 @@ Wall time: 923 ms
 </div>
 </div>
 </details>
-<div class="cell_output docutils container">
-<img alt="../_images/133a5fc8824868e2fefd6b34a6e813c0696318b4b366d8dcdc45e0e3adbf770b.png" src="../_images/133a5fc8824868e2fefd6b34a6e813c0696318b4b366d8dcdc45e0e3adbf770b.png" />
-</div>
 </div>
 </section>
 <section id="id2">
@@ -920,13 +907,6 @@ We correct the bias introduced by the (arbitrary) prior.</p>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of steps in the adaptive algorithm:  9
-CPU times: user 1.93 s, sys: 114 ms, total: 2.04 s
-Wall time: 2.02 s
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell tag_hide-input docutils container">
 <details class="hide above-input">
@@ -943,9 +923,6 @@ Wall time: 2.02 s
 </div>
 </div>
 </details>
-<div class="cell_output docutils container">
-<img alt="../_images/daca3ab1f4fb020e635da73f9785e7a3e245389198bd5c457714f7d919aebb4a.png" src="../_images/daca3ab1f4fb020e635da73f9785e7a3e245389198bd5c457714f7d919aebb4a.png" />
-</div>
 </div>
 <p>The tempered SMC algorithm with the HMC kernel clearly outperfoms the HMC and NUTS kernels alone.</p>
 </section>

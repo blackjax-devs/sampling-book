@@ -582,7 +582,7 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f865e40e6cc8b82610467a177d86befe339b7ce2bfac68b00facd493c6eb5f0a.png" src="../_images/f865e40e6cc8b82610467a177d86befe339b7ce2bfac68b00facd493c6eb5f0a.png" />
+<img alt="../_images/69f7ee0017f38bf65cc85e096841bb7c701d85ef5c4af39f16f61ca1b70a9e76.png" src="../_images/69f7ee0017f38bf65cc85e096841bb7c701d85ef5c4af39f16f61ca1b70a9e76.png" />
 </div>
 </div>
 </section>
@@ -683,6 +683,20 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Running window adaptation
 </pre></div>
 </div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># INFERENCE LOOP</span>
+<span class="n">rng_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
+<span class="n">nuts_kernel</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">(</span><span class="n">log_M</span><span class="p">,</span> <span class="o">**</span><span class="n">tuned_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">step</span>
+<span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span>
+    <span class="n">sample_key</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="n">nuts_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">150</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
 <div class="output text_html">
 <style>
     /* Turns off some styling */
@@ -704,22 +718,7 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
       <progress value='200' class='' max='200' style='width:300px; height:20px; vertical-align: middle;'></progress>
       100.00% [200/200 00:00&lt;?]
     </div>
-    </div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># INFERENCE LOOP</span>
-<span class="n">rng_key</span><span class="p">,</span> <span class="n">sample_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
-<span class="n">nuts_kernel</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">(</span><span class="n">log_M</span><span class="p">,</span> <span class="o">**</span><span class="n">tuned_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">step</span>
-<span class="n">states</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span>
-    <span class="n">sample_key</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="n">nuts_kernel</span><span class="p">,</span> <span class="n">initial_state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">150</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
+    </div></div>
 </div>
 </section>
 <section id="visualisation">
@@ -757,7 +756,7 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/d6a0aecffd4a88353daef4c5b68f80eb3a1de05e4ff24f89445dd208c1f7964e.png" src="../_images/d6a0aecffd4a88353daef4c5b68f80eb3a1de05e4ff24f89445dd208c1f7964e.png" />
+<img alt="../_images/3c69568c9b78b2cf521c8d7f2d726d96fc8c3aadcd0e26f16688a69b82edfbe2.png" src="../_images/3c69568c9b78b2cf521c8d7f2d726d96fc8c3aadcd0e26f16688a69b82edfbe2.png" />
 </div>
 </div>
 <p>The samples cover a perhaps surprisingly large range of potential initial conditions, but lead to the “correct” data.</p>
@@ -774,7 +773,7 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/2de1ea0b1dd8e284500689a3fe4a2a607b1cbe54447f9c41a91272f450e112d1.png" src="../_images/2de1ea0b1dd8e284500689a3fe4a2a607b1cbe54447f9c41a91272f450e112d1.png" />
+<img alt="../_images/dd0323626d3db26a3ba32a2beaf6b19724b493d14f8236d5e6b37ae13b199a81.png" src="../_images/dd0323626d3db26a3ba32a2beaf6b19724b493d14f8236d5e6b37ae13b199a81.png" />
 </div>
 </div>
 <p>Let’s add the value of <span class="math notranslate nohighlight">\(M\)</span> to the plot to see whether the sampler covers the entire region of interest.</p>
@@ -817,7 +816,7 @@ Non-probabilistic solvers would also fail if the observations were noise-free (i
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f1da04b97fa2930bdbf6a0e91e79071819b6f38619b52599a7dc3bca91f4329e.png" src="../_images/f1da04b97fa2930bdbf6a0e91e79071819b6f38619b52599a7dc3bca91f4329e.png" />
+<img alt="../_images/18ec95e16bf21963a4bae5356058342f479d92ed42fbf894ef04b0ab492d357c.png" src="../_images/18ec95e16bf21963a4bae5356058342f479d92ed42fbf894ef04b0ab492d357c.png" />
 </div>
 </div>
 <p>Looks great!</p>

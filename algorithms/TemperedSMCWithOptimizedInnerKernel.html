@@ -615,6 +615,22 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ImportError</span><span class="g g-Whitespace">                               </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.smc.inner_kernel_tuning</span><span class="w"> </span><span class="kn">import</span> <span class="n">inner_kernel_tuning</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.smc.tuning.from_particles</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span>     <span class="n">particles_covariance_matrix</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span>     <span class="n">particles_stds</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="n">particles_means</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="k">def</span><span class="w"> </span><span class="nf">tuned_irmh_loop</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">):</span>
+
+<span class="ne">ImportError</span>: cannot import name &#39;inner_kernel_tuning&#39; from &#39;blackjax.smc.inner_kernel_tuning&#39; (/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/blackjax/smc/inner_kernel_tuning.py)
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="irmh-tuning-the-covariance-matrix">
@@ -762,9 +778,6 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/a5885f5def5c340562692ce5876e541615a1a42342fa8a51c46f2dab398c5700.png" src="../_images/a5885f5def5c340562692ce5876e541615a1a42342fa8a51c46f2dab398c5700.png" />
 </div>
 </div>
 <p>As seen in the previous figure, as dimensions increase, performance degrades. More tuning, less performance degradation.</p>

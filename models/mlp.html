@@ -618,7 +618,7 @@
 </div><div class="output text_html">
     <div>
       <progress value='2340' class='' max='2340' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [2340/2340 00:36&lt;00:00 | error:  4.5]
+      100.00% [2340/2340 00:23&lt;00:00 | error:  4.9]
     </div>
     </div></div>
 </div>
@@ -643,7 +643,7 @@
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/22d44808cfe1a9e018d1e725f3d298def4f81256deb2e4153cca1811b909669a.png" src="../_images/22d44808cfe1a9e018d1e725f3d298def4f81256deb2e4153cca1811b909669a.png" />
+<img alt="../_images/a36456219ed068b93db516fc18ab5d9f906e7a39b9928c50539f8156b027a1be.png" src="../_images/a36456219ed068b93db516fc18ab5d9f906e7a39b9928c50539f8156b027a1be.png" />
 </div>
 </div>
 <p>It looks like the point-wise accuracy, while still increasing, has reached a plateau. We will now sample from the posterior distribution. Instead of accumulating the network weights, which would require a subtantial amounf of memory, we will update the average of the quantity that we are interested in, the predictive probabilities over the test set.</p>
@@ -717,7 +717,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div><div class="output text_html">
     <div>
       <progress value='1000' class='' max='1000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [1000/1000 00:49&lt;00:00 | avg error:  3.6]
+      100.00% [1000/1000 01:00&lt;00:00 | avg error:  4.0]
     </div>
     </div></div>
 </div>
@@ -740,7 +740,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/d40c9465fc6a617eecbe3040b3cc8d412ca5df62b268dcb4a1ffcc07ab570ad4.png" src="../_images/d40c9465fc6a617eecbe3040b3cc8d412ca5df62b268dcb4a1ffcc07ab570ad4.png" />
+<img alt="../_images/852fab5717e63366dc7674c22d0f9800025e8212f9920855cd0e7b2ff5ea2c35.png" src="../_images/852fab5717e63366dc7674c22d0f9800025e8212f9920855cd0e7b2ff5ea2c35.png" />
 </div>
 </div>
 <p>It is not clear from the figure above whether the increase of the accuracy is due to an increase in the pointwise accuracy, or an effect of averaging over the posterior distribution. To see this, let us compare the last value to the pointwise accuracy computed on the chain’s last state:</p>
@@ -753,8 +753,8 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9643 0.95669997
-0.0076000094
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.96029997 0.9525
+0.007799983
 </pre></div>
 </div>
 </div>
@@ -813,7 +813,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div><div class="output text_html">
     <div>
       <progress value='2340' class='' max='2340' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [2340/2340 04:24&lt;00:00 | error:  75.2]
+      100.00% [2340/2340 02:45&lt;00:00 | error:  82.2]
     </div>
     </div></div>
 </div>
@@ -837,7 +837,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/94668d470ac24a199e94669e4146ff6a20a49bf3588f75add86f6afd65e87e18.png" src="../_images/94668d470ac24a199e94669e4146ff6a20a49bf3588f75add86f6afd65e87e18.png" />
+<img alt="../_images/b1b16fe4aa44aab09284e5681c765ebcf1456fdbeda8f23423c924f20b4f200d.png" src="../_images/b1b16fe4aa44aab09284e5681c765ebcf1456fdbeda8f23423c924f20b4f200d.png" />
 </div>
 </div>
 <p>We now sample and compute the accuracy by averaging over the posterior samples:</p>
@@ -877,7 +877,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div><div class="output text_html">
     <div>
       <progress value='1000' class='' max='1000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [1000/1000 00:49&lt;00:00 | avg error:  5.2]
+      100.00% [1000/1000 01:00&lt;00:00 | avg error:  4.9]
     </div>
     </div></div>
 </div>
@@ -899,7 +899,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/a36af60276ad10a8851d9bf6ede1070f7881ad565024dd5b2954ef6fee8e7412.png" src="../_images/a36af60276ad10a8851d9bf6ede1070f7881ad565024dd5b2954ef6fee8e7412.png" />
+<img alt="../_images/1eca0f3116a444cc982c433e24b231d1a92536fa3e2755e40194861833198bdc.png" src="../_images/1eca0f3116a444cc982c433e24b231d1a92536fa3e2755e40194861833198bdc.png" />
 </div>
 </div>
 </section>
@@ -927,7 +927,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/4ff3eb5a07496e2352983dd2f044c0865b080be62f61bdea7711e3b0d43b069a.png" src="../_images/4ff3eb5a07496e2352983dd2f044c0865b080be62f61bdea7711e3b0d43b069a.png" />
+<img alt="../_images/6d744f7b80d69b320c3d4e6dd55218360f00a7671c0266f27619e9c298562a59.png" src="../_images/6d744f7b80d69b320c3d4e6dd55218360f00a7671c0266f27619e9c298562a59.png" />
 </div>
 </div>
 <p>SGHMC gives a slightly better accuracy than SGLD. However, plotting this in terms of the number of steps is slightly misleading: SGHMC evaluates the gradient 10 times for each step while SGLD only once.</p>
@@ -952,7 +952,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Our model is certain of its classification for 
-    53.4% 
+    53.5% 
     of the test set examples.
 </pre></div>
 </div>
@@ -975,11 +975,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.9.18/x64/lib/python3.9/site-packages/jax/_src/numpy/lax_numpy.py:3795: UserWarning: &#39;kind&#39; argument to argsort is ignored; only &#39;stable&#39; sorts are supported.
-  warnings.warn(&quot;&#39;kind&#39; argument to argsort is ignored; only &#39;stable&#39; sorts &quot;
-</pre></div>
-</div>
-<img alt="../_images/3a10697c64978dd2eb9a711c11fbf5ced6f3d384dfa329d16af7da869f49e20d.png" src="../_images/3a10697c64978dd2eb9a711c11fbf5ced6f3d384dfa329d16af7da869f49e20d.png" />
+<img alt="../_images/6801aaa648c3180085551a47a66123b307b3712a821bf8ad85e55adb1028f0df.png" src="../_images/6801aaa648c3180085551a47a66123b307b3712a821bf8ad85e55adb1028f0df.png" />
 </div>
 </div>
 <p>Are there digits that our model is more uncertain about? We plot the histogram of the number of times the model was unsure about each digit:</p>
@@ -1003,7 +999,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/257a829b2660d6675ddac52fd863e3132271f4e2df702ece513065f16d51acfc.png" src="../_images/257a829b2660d6675ddac52fd863e3132271f4e2df702ece513065f16d51acfc.png" />
+<img alt="../_images/bc45f25dccc968878bf2db698a538140cf57844fe05b9e7ce705496581fb4219.png" src="../_images/bc45f25dccc968878bf2db698a538140cf57844fe05b9e7ce705496581fb4219.png" />
 </div>
 </div>
 <p>Perhaps unsurprisingly, the digit 8 is overrepresented in the set of examples <span class="math notranslate nohighlight">\(i\)</span> for which <span class="math notranslate nohighlight">\(\max_d P(y_i=d|x_i) &lt; 0.95\)</span>. As a purely academic exercise and sanity test of sort, let us now re-compute the point-wise accuracy ignoring the digits for which the model is uncertain, varying the threshold above which we consider the model to be certain:</p>
@@ -1048,7 +1044,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f947a572ead01f73db9c4e6e157a23597f1e1ca5a4b5ed14e6b84b4998530541.png" src="../_images/f947a572ead01f73db9c4e6e157a23597f1e1ca5a4b5ed14e6b84b4998530541.png" />
+<img alt="../_images/bc6b22236d5c5c9aed45ec55555bac8d38637e3d9c5312ae76d3724bbf98ccf2.png" src="../_images/bc6b22236d5c5c9aed45ec55555bac8d38637e3d9c5312ae76d3724bbf98ccf2.png" />
 </div>
 </div>
 <p>Not bad at all, by dropping less than 2% of the samples we reach .99 accuracy, not too bad for such a simple model!</p>
