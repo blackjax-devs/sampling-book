@@ -56,7 +56,7 @@ info, grads_per_step, _acc_prob, final_state = emaus(
 samples = final_state.position
 ```
 
-The above code runs EMAUS with 4096 chains, on a banana shaped density function, and returns only the final step of each chain. Plotting gives the expected distribution:
+The above code runs EMAUS with 512 chains, on a banana shaped density function, and returns only the final state of each chain. These can be plotted:
 
 ```{code-cell} ipython3
 import seaborn as sns
