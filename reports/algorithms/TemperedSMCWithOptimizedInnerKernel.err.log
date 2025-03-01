@@ -84,16 +84,16 @@ def tuned_irmh_experiment(dimensions, target_ess, num_mcmc_steps):
 ------------------
 
 
-[0;31m---------------------------------------------------------------------------[0m
-[0;31mImportError[0m                               Traceback (most recent call last)
-Cell [0;32mIn[6], line 1[0m
-[0;32m----> 1[0m [38;5;28;01mfrom[39;00m[38;5;250m [39m[38;5;21;01mblackjax[39;00m[38;5;21;01m.[39;00m[38;5;21;01msmc[39;00m[38;5;21;01m.[39;00m[38;5;21;01minner_kernel_tuning[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m inner_kernel_tuning
-[1;32m      2[0m [38;5;28;01mfrom[39;00m[38;5;250m [39m[38;5;21;01mblackjax[39;00m[38;5;21;01m.[39;00m[38;5;21;01msmc[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtuning[39;00m[38;5;21;01m.[39;00m[38;5;21;01mfrom_particles[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m (
-[1;32m      3[0m     particles_covariance_matrix,
-[1;32m      4[0m     particles_stds,
-[1;32m      5[0m     particles_means,
-[1;32m      6[0m )
-[1;32m      9[0m [38;5;28;01mdef[39;00m[38;5;250m [39m[38;5;21mtuned_irmh_loop[39m(kernel, rng_key, initial_state):
+[31m---------------------------------------------------------------------------[39m
+[31mImportError[39m                               Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[6][39m[32m, line 1[39m
+[32m----> [39m[32m1[39m [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01mblackjax[39;00m[34;01m.[39;00m[34;01msmc[39;00m[34;01m.[39;00m[34;01minner_kernel_tuning[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m inner_kernel_tuning
+[32m      2[39m [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01mblackjax[39;00m[34;01m.[39;00m[34;01msmc[39;00m[34;01m.[39;00m[34;01mtuning[39;00m[34;01m.[39;00m[34;01mfrom_particles[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m (
+[32m      3[39m     particles_covariance_matrix,
+[32m      4[39m     particles_stds,
+[32m      5[39m     particles_means,
+[32m      6[39m )
+[32m      9[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mtuned_irmh_loop[39m(kernel, rng_key, initial_state):
 
-[0;31mImportError[0m: cannot import name 'inner_kernel_tuning' from 'blackjax.smc.inner_kernel_tuning' (/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/blackjax/smc/inner_kernel_tuning.py)
+[31mImportError[39m: cannot import name 'inner_kernel_tuning' from 'blackjax.smc.inner_kernel_tuning' (/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/blackjax/smc/inner_kernel_tuning.py)
 
