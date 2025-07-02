@@ -25,18 +25,69 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-samples = np.array(smc_samples.particles[:, 0])
-_ = plt.hist(samples, bins=100, density=True)
-_ = plt.plot(linspace.squeeze(), density[-1])
+%%time
+
+loglikelihood = lambda x: -V(x)
+
+hmc_parameters = dict(
+    step_size=1e-4, inverse_mass_matrix=inv_mass_matrix, num_integration_steps=1
+)
+
+tempered = blackjax.adaptive_tempered_smc(
+    prior_log_prob,
+    loglikelihood,
+    blackjax.hmc.build_kernel(),
+    blackjax.hmc.init,
+    extend_params(n_samples, hmc_parameters),
+    resampling.systematic,
+    0.5,
+    num_mcmc_steps=1,
+)
+
+rng_key, init_key, sample_key = jax.random.split(rng_key, 3)
+initial_smc_state = jax.random.multivariate_normal(
+    init_key, jnp.zeros([1]), jnp.eye(1), (n_samples,)
+)
+initial_smc_state = tempered.init(initial_smc_state)
+
+n_iter, smc_samples = smc_inference_loop(sample_key, tempered.step, initial_smc_state)
+print("Number of steps in the adaptive algorithm: ", n_iter.item())
 ------------------
 
+----- stdout -----
+CPU times: user 19 μs, sys: 1e+03 ns, total: 20 μs
+Wall time: 24.8 μs
+------------------
 
 [31m---------------------------------------------------------------------------[39m
-[31mNameError[39m                                 Traceback (most recent call last)
-[36mCell[39m[36m [39m[32mIn[13][39m[32m, line 1[39m
-[32m----> [39m[32m1[39m samples = np.array([43msmc_samples[49m.particles[:, [32m0[39m])
-[32m      2[39m _ = plt.hist(samples, bins=[32m100[39m, density=[38;5;28;01mTrue[39;00m)
-[32m      3[39m _ = plt.plot(linspace.squeeze(), density[-[32m1[39m])
+[31mTypeError[39m                                 Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[12][39m[32m, line 1[39m
+[32m----> [39m[32m1[39m [43mget_ipython[49m[43m([49m[43m)[49m[43m.[49m[43mrun_cell_magic[49m[43m([49m[33;43m'[39;49m[33;43mtime[39;49m[33;43m'[39;49m[43m,[49m[43m [49m[33;43m'[39;49m[33;43m'[39;49m[43m,[49m[43m [49m[33;43m'[39;49m[38;5;130;43;01m\n[39;49;00m[33;43mloglikelihood = lambda x: -V(x)[39;49m[38;5;130;43;01m\n[39;49;00m[38;5;130;43;01m\n[39;49;00m[33;43mhmc_parameters = dict([39;49m[38;5;130;43;01m\n[39;49;00m[33;43m    step_size=1e-4, inverse_mass_matrix=inv_mass_matrix, num_integration_steps=1[39;49m[38;5;130;43;01m\n[39;49;00m[33;43m)[39;49m[38;5;130;43;01m\n[39;49;00m[38;5;130;43;01m\n[39;49;00m[33;43mtempered = blackjax.adaptive_tempered_smc([39;49m[38;5;130;43;01m\n[39;49;00m[33;43m    prior_log_prob,[39;49m[38;5;130;43;01m\n[39;49;00m[33;43m    loglikelihood,[39;49m[38;5;130;43;01m\n[39;49;00m[33;43m    blackjax.hmc.build_kernel(),[39;49m[38;5;130;43;01m\n[39;49;00m[33;43m    blackjax.hmc.init,[39;49m[38;5;130;43;01m\n[39;49;00m[33;43m    extend_params(n_samples, hmc_parameters),[39;49m[38;5;130;43;01m\n[39;49;00m[33;43m    resampling.systematic,[39;49m[38;5;130;43;01m\n[39;49;00m[33;43m    0.5,[39;49m[38;5;130;43;01m\n[39;49;00m[33;43m    num_mcmc_steps=1,[39;49m[38;5;130;43;01m\n[39;49;00m[33;43m)[39;49m[38;5;130;43;01m\n[39;49;00m[38;5;130;43;01m\n[39;49;00m[33;43mrng_key, init_key, sample_key = jax.random.split(rng_key, 3)[39;49m[38;5;130;43;01m\n[39;49;00m[33;43minitial_smc_state = jax.random.multivariate_normal([39;49m[38;5;130;43;01m\n[39;49;00m[33;43m    init_key, jnp.zeros([1]), jnp.eye(1), (n_samples,)[39;49m[38;5;130;43;01m\n[39;49;00m[33;43m)[39;49m[38;5;130;43;01m\n[39;49;00m[33;43minitial_smc_state = tempered.init(initial_smc_state)[39;49m[38;5;130;43;01m\n[39;49;00m[38;5;130;43;01m\n[39;49;00m[33;43mn_iter, smc_samples = smc_inference_loop(sample_key, tempered.step, initial_smc_state)[39;49m[38;5;130;43;01m\n[39;49;00m[33;43mprint([39;49m[33;43m"[39;49m[33;43mNumber of steps in the adaptive algorithm: [39;49m[33;43m"[39;49m[33;43m, n_iter.item())[39;49m[38;5;130;43;01m\n[39;49;00m[33;43m'[39;49m[43m)[49m
 
-[31mNameError[39m: name 'smc_samples' is not defined
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/IPython/core/interactiveshell.py:2565[39m, in [36mInteractiveShell.run_cell_magic[39m[34m(self, magic_name, line, cell)[39m
+[32m   2563[39m [38;5;28;01mwith[39;00m [38;5;28mself[39m.builtin_trap:
+[32m   2564[39m     args = (magic_arg_s, cell)
+[32m-> [39m[32m2565[39m     result = [43mfn[49m[43m([49m[43m*[49m[43margs[49m[43m,[49m[43m [49m[43m*[49m[43m*[49m[43mkwargs[49m[43m)[49m
+[32m   2567[39m [38;5;66;03m# The code below prevents the output from being displayed[39;00m
+[32m   2568[39m [38;5;66;03m# when using magics with decorator @output_can_be_silenced[39;00m
+[32m   2569[39m [38;5;66;03m# when the last Python token in the expression is a ';'.[39;00m
+[32m   2570[39m [38;5;28;01mif[39;00m [38;5;28mgetattr[39m(fn, magic.MAGIC_OUTPUT_CAN_BE_SILENCED, [38;5;28;01mFalse[39;00m):
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/IPython/core/magics/execution.py:1470[39m, in [36mExecutionMagics.time[39m[34m(self, line, cell, local_ns)[39m
+[32m   1468[39m [38;5;28;01mif[39;00m interrupt_occured:
+[32m   1469[39m     [38;5;28;01mif[39;00m exit_on_interrupt [38;5;129;01mand[39;00m captured_exception:
+[32m-> [39m[32m1470[39m         [38;5;28;01mraise[39;00m captured_exception
+[32m   1471[39m     [38;5;28;01mreturn[39;00m
+[32m   1472[39m [38;5;28;01mreturn[39;00m out
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/IPython/core/magics/execution.py:1434[39m, in [36mExecutionMagics.time[39m[34m(self, line, cell, local_ns)[39m
+[32m   1432[39m st = clock2()
+[32m   1433[39m [38;5;28;01mtry[39;00m:
+[32m-> [39m[32m1434[39m     [43mexec[49m[43m([49m[43mcode[49m[43m,[49m[43m [49m[43mglob[49m[43m,[49m[43m [49m[43mlocal_ns[49m[43m)[49m
+[32m   1435[39m     out = [38;5;28;01mNone[39;00m
+[32m   1436[39m     [38;5;66;03m# multi-line %%time case[39;00m
+
+[36mFile [39m[32m<timed exec>:12[39m
+
+[31mTypeError[39m: extend_params() takes 1 positional argument but 2 were given
 
