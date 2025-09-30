@@ -55,8 +55,8 @@ print("Number of steps in the adaptive algorithm: ", n_iter.item())
 ------------------
 
 ----- stdout -----
-CPU times: user 20 μs, sys: 1 μs, total: 21 μs
-Wall time: 25.7 μs
+CPU times: user 56 μs, sys: 5 μs, total: 61 μs
+Wall time: 24.6 μs
 ------------------
 
 [31m---------------------------------------------------------------------------[39m
@@ -73,19 +73,19 @@ Wall time: 25.7 μs
 [32m   2569[39m [38;5;66;03m# when the last Python token in the expression is a ';'.[39;00m
 [32m   2570[39m [38;5;28;01mif[39;00m [38;5;28mgetattr[39m(fn, magic.MAGIC_OUTPUT_CAN_BE_SILENCED, [38;5;28;01mFalse[39;00m):
 
-[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/IPython/core/magics/execution.py:1470[39m, in [36mExecutionMagics.time[39m[34m(self, line, cell, local_ns)[39m
-[32m   1468[39m [38;5;28;01mif[39;00m interrupt_occured:
-[32m   1469[39m     [38;5;28;01mif[39;00m exit_on_interrupt [38;5;129;01mand[39;00m captured_exception:
-[32m-> [39m[32m1470[39m         [38;5;28;01mraise[39;00m captured_exception
-[32m   1471[39m     [38;5;28;01mreturn[39;00m
-[32m   1472[39m [38;5;28;01mreturn[39;00m out
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/IPython/core/magics/execution.py:1452[39m, in [36mExecutionMagics.time[39m[34m(self, line, cell, local_ns)[39m
+[32m   1450[39m [38;5;28;01mif[39;00m interrupt_occured:
+[32m   1451[39m     [38;5;28;01mif[39;00m exit_on_interrupt [38;5;129;01mand[39;00m captured_exception:
+[32m-> [39m[32m1452[39m         [38;5;28;01mraise[39;00m captured_exception
+[32m   1453[39m     [38;5;28;01mreturn[39;00m
+[32m   1454[39m [38;5;28;01mreturn[39;00m out
 
-[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/IPython/core/magics/execution.py:1434[39m, in [36mExecutionMagics.time[39m[34m(self, line, cell, local_ns)[39m
-[32m   1432[39m st = clock2()
-[32m   1433[39m [38;5;28;01mtry[39;00m:
-[32m-> [39m[32m1434[39m     [43mexec[49m[43m([49m[43mcode[49m[43m,[49m[43m [49m[43mglob[49m[43m,[49m[43m [49m[43mlocal_ns[49m[43m)[49m
-[32m   1435[39m     out = [38;5;28;01mNone[39;00m
-[32m   1436[39m     [38;5;66;03m# multi-line %%time case[39;00m
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/IPython/core/magics/execution.py:1416[39m, in [36mExecutionMagics.time[39m[34m(self, line, cell, local_ns)[39m
+[32m   1414[39m st = clock2()
+[32m   1415[39m [38;5;28;01mtry[39;00m:
+[32m-> [39m[32m1416[39m     [43mexec[49m[43m([49m[43mcode[49m[43m,[49m[43m [49m[43mglob[49m[43m,[49m[43m [49m[43mlocal_ns[49m[43m)[49m
+[32m   1417[39m     out = [38;5;28;01mNone[39;00m
+[32m   1418[39m     [38;5;66;03m# multi-line %%time case[39;00m
 
 [36mFile [39m[32m<timed exec>:12[39m
 
