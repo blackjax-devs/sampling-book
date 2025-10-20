@@ -14,7 +14,7 @@ kernelspec:
 # Change of Variable in HMC
 
 
-**Rat tumor problem:** We have J certain kinds of rat tumor diseases. For each kind of tumor, we test $N_{j}$ people/animals and among those $y_{j}$ tested positive. Here we assume that $y_{j}$ is distrubuted with **Binom**($N_{i}$, $\theta_{i}$). Our objective is to approximate $\theta_{j}$ for each type of tumor.
+**Rat tumor problem:** We have J certain kinds of rat tumor diseases. For each kind of tumor, we test $N_{j}$ people/animals and among those $y_{j}$ tested positive. Here we assume that $y_{j}$ is distrubuted with **Binom**($N_{j}$, $\theta_{j}$). Our objective is to approximate $\theta_{j}$ for each type of tumor.
 
 In particular we use following binomial hierarchical model where $y_{j}$ and $N_{j}$ are observed variables.
 
