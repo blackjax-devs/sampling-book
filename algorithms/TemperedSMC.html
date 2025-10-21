@@ -577,8 +577,8 @@ V(x) = (x^2 - 1)^2
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 2.22 s, sys: 109 ms, total: 2.33 s
-Wall time: 1.5 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 2.22 s, sys: 106 ms, total: 2.32 s
+Wall time: 1.49 s
 </pre></div>
 </div>
 </div>
@@ -598,7 +598,7 @@ Wall time: 1.5 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/15f3a1a7ef7117ebd217676a454a9c63d78e431374d14598baf70369d21881a8.png" src="../_images/15f3a1a7ef7117ebd217676a454a9c63d78e431374d14598baf70369d21881a8.png" />
+<img alt="../_images/7d925674b1d4b10bfd4793d1dfb4757d61e8ec900f60a225cd1a0a3bd31092cb.png" src="../_images/7d925674b1d4b10bfd4793d1dfb4757d61e8ec900f60a225cd1a0a3bd31092cb.png" />
 </div>
 </div>
 </section>
@@ -620,8 +620,8 @@ Wall time: 1.5 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 18.1 s, sys: 198 ms, total: 18.3 s
-Wall time: 17.1 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 17.9 s, sys: 180 ms, total: 18.1 s
+Wall time: 16.9 s
 </pre></div>
 </div>
 </div>
@@ -641,7 +641,7 @@ Wall time: 17.1 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/3f71ee1d4b7859d73e8efd4a33ba297b43f736fcf9f6db408e4dc21e1f211aec.png" src="../_images/3f71ee1d4b7859d73e8efd4a33ba297b43f736fcf9f6db408e4dc21e1f211aec.png" />
+<img alt="../_images/7176a30e7ccd062762a75151a952265f05a8fd13252afc5e75571084f0b2d2e0.png" src="../_images/7176a30e7ccd062762a75151a952265f05a8fd13252afc5e75571084f0b2d2e0.png" />
 </div>
 </div>
 </section>
@@ -711,7 +711,7 @@ Wall time: 17.1 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 54 μs, sys: 4 μs, total: 58 μs
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 19 μs, sys: 1e+03 ns, total: 20 μs
 Wall time: 24.1 μs
 </pre></div>
 </div>
@@ -720,7 +720,7 @@ Wall time: 24.1 μs
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">12</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="nn">----&gt; 1 get_ipython().run_cell_magic(&#39;time&#39;, &#39;&#39;, &#39;\nloglikelihood = lambda x: -V(x)\n\nhmc_parameters = dict(\n    step_size=1e-4, inverse_mass_matrix=inv_mass_matrix, num_integration_steps=1\n)\n\ntempered = blackjax.adaptive_tempered_smc(\n    prior_log_prob,\n    loglikelihood,\n    blackjax.hmc.build_kernel(),\n    blackjax.hmc.init,\n    extend_params(n_samples, hmc_parameters),\n    resampling.systematic,\n    0.5,\n    num_mcmc_steps=1,\n)\n\nrng_key, init_key, sample_key = jax.random.split(rng_key, 3)\ninitial_smc_state = jax.random.multivariate_normal(\n    init_key, jnp.zeros([1]), jnp.eye(1), (n_samples,)\n)\ninitial_smc_state = tempered.init(initial_smc_state)\n\nn_iter, smc_samples = smc_inference_loop(sample_key, tempered.step, initial_smc_state)\nprint(&quot;Number of steps</span> in <span class="ni">the adaptive algorithm: &quot;, n_iter.item</span><span class="nt">())\n&#39;)</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages/IPython/core/interactiveshell.py:2565,</span> in <span class="ni">InteractiveShell.run_cell_magic</span><span class="nt">(self, magic_name, line, cell)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/IPython/core/interactiveshell.py:2565,</span> in <span class="ni">InteractiveShell.run_cell_magic</span><span class="nt">(self, magic_name, line, cell)</span>
 <span class="g g-Whitespace">   </span><span class="mi">2563</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">builtin_trap</span><span class="p">:</span>
 <span class="g g-Whitespace">   </span><span class="mi">2564</span>     <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">magic_arg_s</span><span class="p">,</span> <span class="n">cell</span><span class="p">)</span>
 <span class="ne">-&gt; </span><span class="mi">2565</span>     <span class="n">result</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -729,14 +729,14 @@ Wall time: 24.1 μs
 <span class="g g-Whitespace">   </span><span class="mi">2569</span> <span class="c1"># when the last Python token in the expression is a &#39;;&#39;.</span>
 <span class="g g-Whitespace">   </span><span class="mi">2570</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">magic</span><span class="o">.</span><span class="n">MAGIC_OUTPUT_CAN_BE_SILENCED</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages/IPython/core/magics/execution.py:1452,</span> in <span class="ni">ExecutionMagics.time</span><span class="nt">(self, line, cell, local_ns)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/IPython/core/magics/execution.py:1452,</span> in <span class="ni">ExecutionMagics.time</span><span class="nt">(self, line, cell, local_ns)</span>
 <span class="g g-Whitespace">   </span><span class="mi">1450</span> <span class="k">if</span> <span class="n">interrupt_occured</span><span class="p">:</span>
 <span class="g g-Whitespace">   </span><span class="mi">1451</span>     <span class="k">if</span> <span class="n">exit_on_interrupt</span> <span class="ow">and</span> <span class="n">captured_exception</span><span class="p">:</span>
 <span class="ne">-&gt; </span><span class="mi">1452</span>         <span class="k">raise</span> <span class="n">captured_exception</span>
 <span class="g g-Whitespace">   </span><span class="mi">1453</span>     <span class="k">return</span>
 <span class="g g-Whitespace">   </span><span class="mi">1454</span> <span class="k">return</span> <span class="n">out</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages/IPython/core/magics/execution.py:1416,</span> in <span class="ni">ExecutionMagics.time</span><span class="nt">(self, line, cell, local_ns)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/IPython/core/magics/execution.py:1416,</span> in <span class="ni">ExecutionMagics.time</span><span class="nt">(self, line, cell, local_ns)</span>
 <span class="g g-Whitespace">   </span><span class="mi">1414</span> <span class="n">st</span> <span class="o">=</span> <span class="n">clock2</span><span class="p">()</span>
 <span class="g g-Whitespace">   </span><span class="mi">1415</span> <span class="k">try</span><span class="p">:</span>
 <span class="ne">-&gt; </span><span class="mi">1416</span>     <span class="n">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">glob</span><span class="p">,</span> <span class="n">local_ns</span><span class="p">)</span>
