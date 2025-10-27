@@ -417,7 +417,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="microcanonical-langevin-monte-carlo">
 <h1>Microcanonical Langevin Monte Carlo<a class="headerlink" href="#microcanonical-langevin-monte-carlo" title="Link to this heading">#</a></h1>
-<p>This is an algorithm based on https://arxiv.org/abs/2212.08549 (<span id="id1">[]</span>, <span id="id2">[]</span>). A website with detailed information can be found <a class="reference external" href="https://microcanonical-monte-carlo.netlify.app/">here</a>.</p>
+<p>This is an algorithm based on <a class="reference external" href="https://www.jmlr.org/papers/volume24/22-1450/22-1450.pdf">MCHMC</a> and <a class="reference external" href="https://proceedings.mlr.press/v253/robnik24a.html">MCLMC</a> papers. A website with detailed information can be found <a class="reference external" href="https://microcanonical-monte-carlo.netlify.app/">here</a>.</p>
 <!-- The algorithm is provided in both adjusted (i.e. with an Metropolis-Hastings step) and unadjusted versions; by default we use "MCLMC" to refer to the unadjusted version. -->
 <p>The idea is that we have a distribution <span class="math notranslate nohighlight">\(p(x)\)</span> from which we want to sample. We numerically integrate the following SDE; the samples we obtain converge (in the limit of many steps and small step size) to samples from the target distribution.</p>
 <div class="math notranslate nohighlight">
@@ -618,6 +618,7 @@ u \\
 <img alt="../_images/b3770709ae8c895d80ab796efba58c6aa0e2fed972295a40abb86d28abe337f5.png" src="../_images/b3770709ae8c895d80ab796efba58c6aa0e2fed972295a40abb86d28abe337f5.png" />
 </div>
 </div>
+<p>Note that the number of samples is relatively large compared to the number of samples typically used by say NUTS. This is because for MCLMC each sample corresponds to one integration step, while for NUTS each sample corresponds to multiple integration steps (typically to up to 1024). What determines the runtime is the number of integration steps, not the number of samples.</p>
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="how-to-analyze-the-results-of-your-mclmc-run">
@@ -687,8 +688,8 @@ u \\
 <h2>A more complex example<a class="headerlink" href="#a-more-complex-example" title="Link to this heading">#</a></h2>
 <p>We now consider a more complex model, of stock volatility.</p>
 <p>The returns <span class="math notranslate nohighlight">\(r_n\)</span> are modeled by a Student’s-t distribution whose scale (volatility) <span class="math notranslate nohighlight">\(R_n\)</span> is time varying and unknown. The prior for <span class="math notranslate nohighlight">\(\log R_n\)</span> is a Gaussian random walk, with an exponential distribution of the random walk step-size <span class="math notranslate nohighlight">\(\sigma\)</span>. An exponential prior is also taken for the Student’s-t degrees of freedom <span class="math notranslate nohighlight">\(\nu\)</span>. The generative process of the data is:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-b8072ad3-003f-4569-817f-7295350ee20d">
-<span class="eqno">(1)<a class="headerlink" href="#equation-b8072ad3-003f-4569-817f-7295350ee20d" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-3771182c-5ed3-4186-b526-c443d316cbc5">
+<span class="eqno">(1)<a class="headerlink" href="#equation-3771182c-5ed3-4186-b526-c443d316cbc5" title="Permalink to this equation">#</a></span>\[\begin{align}
     &amp;r_n / R_n \sim \text{Student's-t}(\nu) \qquad
     &amp;&amp;\nu \sim \text{Exp}(\lambda = 1/10) \\ \nonumber
     &amp;\log R_n \sim \mathcal{N}(\log R_{n-1}, \sigma) \qquad
@@ -916,7 +917,7 @@ Download complete.
 </section>
 <section id="adjusted-mclmc">
 <h2>Adjusted MCLMC<a class="headerlink" href="#adjusted-mclmc" title="Link to this heading">#</a></h2>
-<p>Blackjax also provides an adjusted version of the algorithm. This also has two hyperparameters, <code class="docutils literal notranslate"><span class="pre">step_size</span></code> and <code class="docutils literal notranslate"><span class="pre">L</span></code>. <code class="docutils literal notranslate"><span class="pre">L</span></code> is related to the <code class="docutils literal notranslate"><span class="pre">L</span></code> parameter of the unadjusted version, but not identical (It determines the length of a proposal, and since momentum is resampled after a proposal, length of proposal determines the momentum decoherence rate). It is also possible to have Langevin noise during the trajectory, although we don’t see improvements here.</p>
+<p>Blackjax also provides an adjusted version of the algorithm, based on <a class="reference external" href="https://neurips.cc/virtual/2025/poster/117452">this</a> paper. This also has two hyperparameters, <code class="docutils literal notranslate"><span class="pre">step_size</span></code> and <code class="docutils literal notranslate"><span class="pre">L</span></code>. <code class="docutils literal notranslate"><span class="pre">L</span></code> is related to the <code class="docutils literal notranslate"><span class="pre">L</span></code> parameter of the unadjusted version, but not identical (It determines the length of a proposal, and since momentum is resampled after a proposal, length of proposal determines the momentum decoherence rate). It is also possible to have Langevin noise during the trajectory, although we don’t see improvements here.</p>
 <p>The tuning algorithm is also similar, but uses a dual averaging scheme to tune the step size. We find in practice that a target MH acceptance rate of 0.9 is a good choice.</p>
 <p><strong>Our recommendation is to use the unadjusted version when possible</strong>, but if you really believe you need the algorithm to be asymptotically unbiased (it’s not obvious why you would), you should use the adjusted version, with mass matrix preconditioning, randomized trajectory length and no in-proposal Langevin noise. We encapsulate these best practices in <code class="docutils literal notranslate"><span class="pre">run_adjusted_mcmc</span></code> below:</p>
 <div class="cell docutils container">
