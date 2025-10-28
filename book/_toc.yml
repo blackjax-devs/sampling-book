@@ -9,6 +9,7 @@ parts:
   - file: algorithms/PeriodicOrbitalMCMC.md
   - file: algorithms/TemperedSMC.md
   - file: algorithms/TemperedSMCWithOptimizedInnerKernel.md
+  - file: algorithms/SMCvsPersistentSampling.md
   - file: algorithms/mclmc.md
 - caption: Models
   chapters:
