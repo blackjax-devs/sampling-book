@@ -129,7 +129,7 @@ def irmh_experiment(dimensions, target_ess, num_mcmc_steps):
     def inference_loop(kernel, rng_key, initial_state):
         def cond(carry):
             _, state, *_ = carry
-            return state.lmbda < 1
+            return state.tempering_param < 1
 
         def body(carry):
             i, state, op_key, curr_loglikelihood = carry
@@ -169,7 +169,7 @@ from blackjax.smc.tuning.from_particles import (
 def tuned_irmh_loop(kernel, rng_key, initial_state):
     def cond(carry):
         _, state, *_ = carry
-        return state.sampler_state.lmbda < 1
+        return state.sampler_state.tempering_param < 1
 
     def body(carry):
         i, state, op_key = carry
