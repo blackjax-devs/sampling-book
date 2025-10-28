@@ -190,7 +190,7 @@ def smc_inference_loop(rng_key, smc_kernel, initial_state):
 
     def cond(carry):
         i, state, _k = carry
-        return state.lmbda < 1
+        return state.tempering_param < 1
 
     def one_step(carry):
         i, state, k = carry

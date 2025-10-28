@@ -532,7 +532,7 @@ This notebook illustrates such tuning using IRMH (Independent Rosenbluth Metropo
     <span class="k">def</span><span class="w"> </span><span class="nf">inference_loop</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">cond</span><span class="p">(</span><span class="n">carry</span><span class="p">):</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">carry</span>
-            <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">lmbda</span> <span class="o">&lt;</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">tempering_param</span> <span class="o">&lt;</span> <span class="mi">1</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">body</span><span class="p">(</span><span class="n">carry</span><span class="p">):</span>
             <span class="n">i</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">op_key</span><span class="p">,</span> <span class="n">curr_loglikelihood</span> <span class="o">=</span> <span class="n">carry</span>
@@ -574,7 +574,7 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
 <span class="k">def</span><span class="w"> </span><span class="nf">tuned_irmh_loop</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cond</span><span class="p">(</span><span class="n">carry</span><span class="p">):</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">carry</span>
-        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">sampler_state</span><span class="o">.</span><span class="n">lmbda</span> <span class="o">&lt;</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">sampler_state</span><span class="o">.</span><span class="n">tempering_param</span> <span class="o">&lt;</span> <span class="mi">1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">body</span><span class="p">(</span><span class="n">carry</span><span class="p">):</span>
         <span class="n">i</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">op_key</span> <span class="o">=</span> <span class="n">carry</span>
