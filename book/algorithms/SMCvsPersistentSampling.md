@@ -280,7 +280,7 @@ adaptive_smc_sampler = blackjax.adaptive_tempered_smc(
 def smc_cond(carry):
     """Returns True while lambda < 1.0 and iteration < max_iterations."""
     i, state, _ = carry
-    return (state.lmbda < 1.0) & (i < max_iterations)
+    return (state.tempering_param < 1.0) & (i < max_iterations)
 
 # Run Adaptive SMC
 key, adaptive_smc_key = jax.random.split(key)
@@ -338,7 +338,7 @@ def ps_cond(carry):
     i, state, _ = carry
     ess = blackjax.persistent_sampling.compute_persistent_ess(jnp.log(state.persistent_weights), normalize_weights=True,)
     return jnp.logical_and(
-        jnp.logical_or(state.lmbda < 1.0, ess < target_ess*num_particles),
+        jnp.logical_or(state.tempering_param < 1.0, ess < target_ess*num_particles),
         i < max_iterations,
     )
 
