@@ -1,0 +1,15 @@
+# See docs at: https://mystmd.org/guide/frontmatter
+version: 1
+project:
+  id: 89d92e9e-c1de-4cb7-bc33-e9649a9ed259
+  # title:
+  # description:
+  # keywords: []
+  # authors: []
+  github: https://github.com/blackjax-devs/sampling-book
+  # To autogenerate a Table of Contents, run "jupyter book init --write-toc"
+site:
+  template: book-theme
+  # options:
+  #   favicon: favicon.ico
+  #   logo: site_logo.png
