@@ -1,0 +1,41 @@
+version: 1
+project:
+  title: The Sampling Book Project
+  authors:
+    - name: The Blackjax Team
+  exclude:
+    - README.md
+  github: blackjax-devs/sampling-book
+  bibliography:
+    - references.bib
+  exports:
+    - format: pdf
+      template: plain_latex_book
+      output: exports/book.pdf
+  toc:
+    - file: index.md
+    - title: Algorithms
+      children:
+        - file: algorithms/contour_sgld.md
+        - file: algorithms/cyclical_sgld.md
+        - file: algorithms/pathfinder.md
+        - file: algorithms/PeriodicOrbitalMCMC.md
+        - file: algorithms/TemperedSMC.md
+        - file: algorithms/TemperedSMCWithOptimizedInnerKernel.md
+        - file: algorithms/mclmc.md
+    - title: Models
+      children:
+        - file: models/change_of_variable_hmc.md
+        - file: models/GP_EllipticalSliceSampler.md
+        - file: models/GP_Marginal.md
+        - file: models/sparse_regression.md
+        - file: models/logistic_regression.md
+        - file: models/LogisticRegressionWithLatentGaussianSampler.md
+        - file: models/mlp.md
+        - file: models/hierarchical_bnn.md
+        - file: models/RegimeSwitchingModel.md
+        - file: models/probabilistic_ode_solver_parameter_estimation.md
+site:
+  options:
+    folders: true
+  template: book-theme
