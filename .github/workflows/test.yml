@@ -31,4 +31,7 @@ jobs:
           pip install -r requirements.txt
       - name: Build the book
         run: |
+          mkdir -p ./jupyter_cache
+          ls ./jupyter_cache
           jupyter book build --html
+          ls ./jupyter_cache
