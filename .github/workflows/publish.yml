@@ -38,8 +38,10 @@ jobs:
 
       - name: Build the book
         run: |
-          mkdir -p ./jupyter_cache  
+          mkdir -p ./jupyter_cache
+          cd book
           jupyter book build --html
+          cd ..
 
       - name: Publish to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
