@@ -33,8 +33,5 @@ jobs:
         run: |
           mkdir -p ./jupyter_cache
           ls ./jupyter_cache
-          cd book
           jupyter book build --html
-          cd ..
-          ls
           ls ./jupyter_cache
