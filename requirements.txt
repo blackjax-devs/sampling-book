@@ -5,7 +5,7 @@
 # Build the book
 ipython
 jupyter-cache
-jupyter-book
+jupyter-book<2.0
 jupytext
 
 # Dependencies for the notebooks
