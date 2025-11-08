@@ -4,9 +4,9 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.2
+    jupytext_version: 1.18.1
 kernelspec:
-  display_name: Python 3 (ipykernel)
+  display_name: blackjax
   language: python
   name: python3
 ---
@@ -42,6 +42,7 @@ plt.rcParams["axes.spines.top"] = False
 import jax
 
 from datetime import date
+
 rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
 ```
 
@@ -101,7 +102,7 @@ density /= normalizing_factor
 
 fig, ax = plt.subplots(figsize=(12, 8))
 ax.plot(linspace.squeeze(), density.T)
-ax.legend(list(lambdas));
+ax.legend(list(lambdas))
 ```
 
 ```{code-cell} ipython3
@@ -219,7 +220,7 @@ tempered = blackjax.adaptive_tempered_smc(
     loglikelihood,
     blackjax.hmc.build_kernel(),
     blackjax.hmc.init,
-    extend_params(n_samples, hmc_parameters),
+    extend_params(hmc_parameters),
     resampling.systematic,
     0.5,
     num_mcmc_steps=1,
@@ -367,7 +368,7 @@ tempered = blackjax.adaptive_tempered_smc(
     loglikelihood,
     blackjax.hmc.build_kernel(),
     blackjax.hmc.init,
-    extend_params(n_samples, hmc_parameters),
+    extend_params(hmc_parameters),
     resampling.systematic,
     0.75,
     num_mcmc_steps=1,
