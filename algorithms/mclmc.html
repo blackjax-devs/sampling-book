@@ -63,7 +63,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Change of Variable in HMC" href="../models/change_of_variable_hmc.html" />
-    <link rel="prev" title="Tuning inner kernel parameters of SMC" href="TemperedSMCWithOptimizedInnerKernel.html" />
+    <link rel="prev" title="Comparing SMC and Persistent Sampling" href="SMCvsPersistentSampling.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -183,6 +183,7 @@
 <li class="toctree-l1"><a class="reference internal" href="PeriodicOrbitalMCMC.html">Periodic Orbital MCMC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TemperedSMC.html">Use Tempered SMC to Improve Exploration of MCMC Methods.</a></li>
 <li class="toctree-l1"><a class="reference internal" href="TemperedSMCWithOptimizedInnerKernel.html">Tuning inner kernel parameters of SMC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SMCvsPersistentSampling.html">Comparing SMC and Persistent Sampling</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Microcanonical Langevin Monte Carlo</a></li>
 
 </ul>
@@ -688,8 +689,8 @@ u \\
 <h2>A more complex example<a class="headerlink" href="#a-more-complex-example" title="Link to this heading">#</a></h2>
 <p>We now consider a more complex model, of stock volatility.</p>
 <p>The returns <span class="math notranslate nohighlight">\(r_n\)</span> are modeled by a Student’s-t distribution whose scale (volatility) <span class="math notranslate nohighlight">\(R_n\)</span> is time varying and unknown. The prior for <span class="math notranslate nohighlight">\(\log R_n\)</span> is a Gaussian random walk, with an exponential distribution of the random walk step-size <span class="math notranslate nohighlight">\(\sigma\)</span>. An exponential prior is also taken for the Student’s-t degrees of freedom <span class="math notranslate nohighlight">\(\nu\)</span>. The generative process of the data is:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-bc2d4703-c1f7-48c1-9f15-9875bcd7a74b">
-<span class="eqno">(1)<a class="headerlink" href="#equation-bc2d4703-c1f7-48c1-9f15-9875bcd7a74b" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-1f1a43a1-f21c-4336-9818-56c0384f3e3f">
+<span class="eqno">(1)<a class="headerlink" href="#equation-1f1a43a1-f21c-4336-9818-56c0384f3e3f" title="Permalink to this equation">#</a></span>\[\begin{align}
     &amp;r_n / R_n \sim \text{Student's-t}(\nu) \qquad
     &amp;&amp;\nu \sim \text{Exp}(\lambda = 1/10) \\ \nonumber
     &amp;\log R_n \sim \mathcal{N}(\log R_{n-1}, \sigma) \qquad
@@ -1087,12 +1088,12 @@ Download complete.
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="TemperedSMCWithOptimizedInnerKernel.html"
+       href="SMCvsPersistentSampling.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Tuning inner kernel parameters of SMC</p>
+        <p class="prev-next-title">Comparing SMC and Persistent Sampling</p>
       </div>
     </a>
     <a class="right-next"
