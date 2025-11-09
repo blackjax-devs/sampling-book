@@ -564,7 +564,7 @@ This notebook illustrates such tuning using IRMH (Independent Rosenbluth Metropo
 the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)</span> step, in order to mutate them in the step <span class="math notranslate nohighlight">\(i+1\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.smc.inner_kernel_tuning</span><span class="w"> </span><span class="kn">import</span> <span class="n">inner_kernel_tuning</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.smc.inner_kernel_tuning</span><span class="w"> </span><span class="kn">import</span> <span class="n">as_top_level_api</span> <span class="k">as</span> <span class="n">inner_kernel_tuning</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.smc.tuning.from_particles</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">particles_covariance_matrix</span><span class="p">,</span>
     <span class="n">particles_stds</span><span class="p">,</span>
@@ -618,31 +618,15 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
         <span class="n">mcmc_init_fn</span><span class="o">=</span><span class="n">irmh</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
         <span class="n">resampling_fn</span><span class="o">=</span><span class="n">resampling</span><span class="o">.</span><span class="n">systematic</span><span class="p">,</span>
         <span class="n">smc_algorithm</span><span class="o">=</span><span class="n">adaptive_tempered_smc</span><span class="p">,</span>
-        <span class="n">mcmc_parameter_update_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">state</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">extend_params</span><span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> 
-                                                                                <span class="p">{</span><span class="s2">&quot;means&quot;</span><span class="p">:</span><span class="n">particles_means</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">),</span>
-                                                                                 <span class="s2">&quot;stds&quot;</span><span class="p">:</span><span class="n">particles_stds</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">)}),</span>
-        <span class="n">initial_parameter_value</span><span class="o">=</span><span class="n">extend_params</span><span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;means&quot;</span><span class="p">:</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dimensions</span><span class="p">),</span> <span class="s2">&quot;stds&quot;</span><span class="p">:</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">}),</span>
+        <span class="n">mcmc_parameter_update_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">extend_params</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;means&quot;</span><span class="p">:</span><span class="n">particles_means</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">),</span> <span class="s2">&quot;stds&quot;</span><span class="p">:</span><span class="n">particles_stds</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">)}),</span>
+        <span class="n">initial_parameter_value</span><span class="o">=</span><span class="n">extend_params</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;means&quot;</span><span class="p">:</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dimensions</span><span class="p">),</span> <span class="s2">&quot;stds&quot;</span><span class="p">:</span><span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">}),</span>
         <span class="n">target_ess</span><span class="o">=</span><span class="n">target_ess</span><span class="p">,</span>
         <span class="n">num_mcmc_steps</span><span class="o">=</span><span class="n">num_mcmc_steps</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">kernel_tuned_proposal</span><span class="p">,</span> <span class="n">tuned_irmh_loop</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ImportError</span><span class="g g-Whitespace">                               </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.smc.inner_kernel_tuning</span><span class="w"> </span><span class="kn">import</span> <span class="n">inner_kernel_tuning</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.smc.tuning.from_particles</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span>     <span class="n">particles_covariance_matrix</span><span class="p">,</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span>     <span class="n">particles_stds</span><span class="p">,</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="n">particles_means</span><span class="p">,</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="k">def</span><span class="w"> </span><span class="nf">tuned_irmh_loop</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">):</span>
-
-<span class="ne">ImportError</span>: cannot import name &#39;inner_kernel_tuning&#39; from &#39;blackjax.smc.inner_kernel_tuning&#39; (/opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages/blackjax/smc/inner_kernel_tuning.py)
 </pre></div>
 </div>
 </div>
@@ -671,9 +655,9 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
         <span class="k">return</span> <span class="n">kernel</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">logdensity</span><span class="p">,</span> <span class="n">proposal_distribution</span><span class="p">,</span> <span class="n">proposal_logdensity_fn</span><span class="p">)</span>
             
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">mcmc_parameter_update_fn</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mcmc_parameter_update_fn</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
         <span class="n">covariance</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">particles_covariance_matrix</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">extend_params</span><span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;means&quot;</span><span class="p">:</span><span class="n">particles_means</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">),</span> <span class="s2">&quot;cov&quot;</span><span class="p">:</span><span class="n">covariance</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">extend_params</span><span class="p">({</span><span class="s2">&quot;means&quot;</span><span class="p">:</span><span class="n">particles_means</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">particles</span><span class="p">),</span> <span class="s2">&quot;cov&quot;</span><span class="p">:</span><span class="n">covariance</span><span class="p">})</span>
 
     <span class="n">kernel_tuned_proposal</span> <span class="o">=</span> <span class="n">inner_kernel_tuning</span><span class="p">(</span>
         <span class="n">logprior_fn</span><span class="o">=</span><span class="n">prior_log_prob</span><span class="p">,</span>
@@ -683,7 +667,7 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
         <span class="n">resampling_fn</span><span class="o">=</span><span class="n">resampling</span><span class="o">.</span><span class="n">systematic</span><span class="p">,</span>
         <span class="n">smc_algorithm</span><span class="o">=</span><span class="n">adaptive_tempered_smc</span><span class="p">,</span>
         <span class="n">mcmc_parameter_update_fn</span><span class="o">=</span><span class="n">mcmc_parameter_update_fn</span><span class="p">,</span>
-        <span class="n">initial_parameter_value</span><span class="o">=</span><span class="n">extend_params</span><span class="p">(</span><span class="n">n_particles</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;means&quot;</span><span class="p">:</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dimensions</span><span class="p">),</span> <span class="s2">&quot;cov&quot;</span><span class="p">:</span><span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">}),</span>
+        <span class="n">initial_parameter_value</span><span class="o">=</span><span class="n">extend_params</span><span class="p">({</span><span class="s2">&quot;means&quot;</span><span class="p">:</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dimensions</span><span class="p">),</span> <span class="s2">&quot;cov&quot;</span><span class="p">:</span><span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dimensions</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">}),</span>
         <span class="n">target_ess</span><span class="o">=</span><span class="n">target_ess</span><span class="p">,</span>
         <span class="n">num_mcmc_steps</span><span class="o">=</span><span class="n">num_mcmc_steps</span><span class="p">,</span>
     <span class="p">)</span>
@@ -793,6 +777,9 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/438f74019827dfef225420892eacd62b820c36c225da4d605ba4eadaa697754a.png" src="../_images/438f74019827dfef225420892eacd62b820c36c225da4d605ba4eadaa697754a.png" />
 </div>
 </div>
 <p>As seen in the previous figure, as dimensions increase, performance degrades. More tuning, less performance degradation.</p>
