@@ -689,8 +689,8 @@ u \\
 <h2>A more complex example<a class="headerlink" href="#a-more-complex-example" title="Link to this heading">#</a></h2>
 <p>We now consider a more complex model, of stock volatility.</p>
 <p>The returns <span class="math notranslate nohighlight">\(r_n\)</span> are modeled by a Student’s-t distribution whose scale (volatility) <span class="math notranslate nohighlight">\(R_n\)</span> is time varying and unknown. The prior for <span class="math notranslate nohighlight">\(\log R_n\)</span> is a Gaussian random walk, with an exponential distribution of the random walk step-size <span class="math notranslate nohighlight">\(\sigma\)</span>. An exponential prior is also taken for the Student’s-t degrees of freedom <span class="math notranslate nohighlight">\(\nu\)</span>. The generative process of the data is:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-a2f8e5cc-e869-48a7-a464-3e1c9bb089f2">
-<span class="eqno">(1)<a class="headerlink" href="#equation-a2f8e5cc-e869-48a7-a464-3e1c9bb089f2" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-954e47d6-e825-4ed5-9e81-02bc07a1ecd1">
+<span class="eqno">(1)<a class="headerlink" href="#equation-954e47d6-e825-4ed5-9e81-02bc07a1ecd1" title="Permalink to this equation">#</a></span>\[\begin{align}
     &amp;r_n / R_n \sim \text{Student's-t}(\nu) \qquad
     &amp;&amp;\nu \sim \text{Exp}(\lambda = 1/10) \\ \nonumber
     &amp;\log R_n \sim \mathcal{N}(\log R_{n-1}, \sigma) \qquad
