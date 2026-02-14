@@ -1,0 +1,664 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>The Late Adjusted Parallel Sampler (LAPS) &#8212; The Sampling Book Project</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'algorithms/laps';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">The Sampling Book Project</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    The Sampling Book Project
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="contour_sgld.html">Contour stochastic gradient Langevin dynamics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cyclical_sgld.html">Cyclical SGLD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pathfinder.html">Pathfinder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PeriodicOrbitalMCMC.html">Periodic Orbital MCMC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TemperedSMC.html">Use Tempered SMC to Improve Exploration of MCMC Methods.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TemperedSMCWithOptimizedInnerKernel.html">Tuning inner kernel parameters of SMC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SMCvsPersistentSampling.html">Comparing SMC and Persistent Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mclmc.html">Microcanonical Langevin Monte Carlo</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Models</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../models/change_of_variable_hmc.html">Change of Variable in HMC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/GP_EllipticalSliceSampler.html">Gaussian Regression with the Elliptical Slice Sampler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/GP_Marginal.html">Bayesian Regression With Latent Gaussian Sampler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/sparse_regression.html">Sparse regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/logistic_regression.html">Bayesian Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/LogisticRegressionWithLatentGaussianSampler.html">Bayesian Logistic Regression With Latent Gaussian Sampler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/mlp.html">MLP classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/hierarchical_bnn.html">Hierarchical Bayesian Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/RegimeSwitchingModel.html">Regime switching Hidden Markov model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/probabilistic_ode_solver_parameter_estimation.html">Parameter estimation in ODE models with a probabilistic ODE solver</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/blackjax-devs/sampling-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/blackjax-devs/sampling-book/issues/new?title=Issue%20on%20page%20%2Falgorithms/laps.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/algorithms/laps.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>The Late Adjusted Parallel Sampler (LAPS)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">The Late Adjusted Parallel Sampler (LAPS)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parallelism-in-mcmc">Parallelism in MCMC</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-core-idea-of-laps">The core idea of LAPS</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-sampling">Run sampling:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-the-posterior-samples">Visualize the posterior samples:</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-speed-up">What is the speed-up?</a></li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="the-late-adjusted-parallel-sampler-laps">
+<h1>The Late Adjusted Parallel Sampler (LAPS)<a class="headerlink" href="#the-late-adjusted-parallel-sampler-laps" title="Link to this heading">#</a></h1>
+<p>If you are able to run many chains in parallel (e.g. around as many chains as the number of independent samples you would like  to take), and you have a problem with a differentiable density, <a class="reference internal" href="#"><span class="xref myst">LAPS</span></a> is a much faster alternative to sequential methods such as HMC.</p>
+<section id="parallelism-in-mcmc">
+<h2>Parallelism in MCMC<a class="headerlink" href="#parallelism-in-mcmc" title="Link to this heading">#</a></h2>
+<p>The initial state <span class="math notranslate nohighlight">\(x_i\)</span> of an MCMC chain is not typically distributed according to the target distribution <span class="math notranslate nohighlight">\(p(x)\)</span>, and a “burn in” or “equilibration” phase of the chain is required. Running many MCMC chains in parallel doesn’t decrease the wallclock time of this phase.</p>
+<p>Once chains are equilibrated, parallelism is helpful: if you have <span class="math notranslate nohighlight">\(100\)</span> chains with state <span class="math notranslate nohighlight">\(\{x_i^n\}_{n=1}^{100}\)</span>, you can  evolve all of them in parallel until each generates a new effectively independent sample. This is roughly 100 times faster (in wallclock time) than collecting 100 samples from a single chain.</p>
+</section>
+<section id="the-core-idea-of-laps">
+<h2>The core idea of LAPS<a class="headerlink" href="#the-core-idea-of-laps" title="Link to this heading">#</a></h2>
+<p>It has been observed that among gradient-based MCMC methods, unadjusted kernels (i.e. kernels without Metropolis-Hastings) converge to the target distribution faster than adjusted ones. The idea of LAPS is simply to use an unadjusted kernel until this point, and then switch to an adjusted kernel to remove remaining bias.</p>
+<p>The details involve determining when this switching point should take place, and tuning the hyperparameters of the kernels.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="n">jax</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s2">&quot;jax_enable_x64&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="n">num_cores</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">local_device_count</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">num_cores</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">blackjax</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">blackjax.adaptation.laps</span><span class="w"> </span><span class="kn">import</span> <span class="n">laps</span> <span class="k">as</span> <span class="n">run_laps</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">laps</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">ndims</span><span class="p">,</span> 
+         <span class="n">sample_init</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">,</span> 
+         <span class="n">num_steps1</span><span class="p">,</span> <span class="n">num_steps2</span><span class="p">,</span> 
+         <span class="n">num_chains</span><span class="p">,</span> <span class="n">mesh</span><span class="p">):</span>
+
+    <span class="n">info</span><span class="p">,</span> <span class="n">grads_per_step</span><span class="p">,</span> <span class="n">_acc_prob</span><span class="p">,</span> <span class="n">final_state</span> <span class="o">=</span> <span class="n">run_laps</span><span class="p">(</span>    
+        <span class="n">logdensity_fn</span><span class="o">=</span><span class="n">logdensity_fn</span><span class="p">,</span> 
+        <span class="n">sample_init</span><span class="o">=</span> <span class="n">sample_init</span><span class="p">,</span>
+        <span class="n">ndims</span><span class="o">=</span> <span class="n">ndims</span><span class="p">,</span> 
+        <span class="n">num_steps1</span><span class="o">=</span><span class="n">num_steps1</span><span class="p">,</span> 
+        <span class="n">num_steps2</span><span class="o">=</span><span class="n">num_steps2</span><span class="p">,</span> 
+        <span class="n">num_chains</span><span class="o">=</span><span class="n">num_chains</span><span class="p">,</span> 
+        <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span> 
+        <span class="n">rng_key</span><span class="o">=</span> <span class="n">rng_key</span><span class="p">,</span> 
+        <span class="n">early_stop</span><span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">diagonal_preconditioning</span><span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+        <span class="n">steps_per_sample</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+        <span class="n">r_end</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">diagnostics</span><span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">superchain_size</span><span class="o">=</span> <span class="mi">1</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">final_state</span><span class="o">.</span><span class="n">position</span>
+
+</pre></div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="example">
+<h1>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h1>
+<p>Use LAPS as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">ndims</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">logdensity_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">mu2</span> <span class="o">=</span> <span class="mf">0.03</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">10.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">mu2</span><span class="p">))</span>
+
+
+<span class="n">rng_key_sampling</span><span class="p">,</span> <span class="n">rng_key_init</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">42</span><span class="p">))</span>
+
+<span class="c1"># Function that takes a random seed and produces a vector of parameters. Each chain will be initialized by calling this function with a different random seed.</span>
+<span class="n">sample_init</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span> <span class="n">ndims</span><span class="p">)</span> 
+</pre></div>
+</div>
+<section id="run-sampling">
+<h2>Run sampling:<a class="headerlink" href="#run-sampling" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">num_chains</span> <span class="o">=</span> <span class="mi">256</span>
+<span class="n">num_steps1</span><span class="p">,</span> <span class="n">num_steps2</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span>
+
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">sharding</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">devices</span><span class="p">()[:</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;chains&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of devices: &#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">devices</span><span class="p">()))</span>
+
+<span class="n">info</span><span class="p">,</span> <span class="n">grads_per_step</span><span class="p">,</span> <span class="n">_acc_prob</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">run_laps</span><span class="p">(</span>
+    <span class="n">logdensity_fn</span><span class="o">=</span><span class="n">logdensity_fn</span><span class="p">,</span>
+    <span class="n">sample_init</span><span class="o">=</span> <span class="n">sample_init</span><span class="p">,</span>
+    <span class="n">ndims</span><span class="o">=</span> <span class="n">ndims</span><span class="p">,</span> 
+    <span class="n">num_steps1</span><span class="o">=</span><span class="n">num_steps1</span><span class="p">,</span> 
+    <span class="n">num_steps2</span><span class="o">=</span><span class="n">num_steps2</span><span class="p">,</span> 
+    <span class="n">num_chains</span><span class="o">=</span><span class="n">num_chains</span><span class="p">,</span> 
+    <span class="n">mesh</span><span class="o">=</span><span class="n">mesh</span><span class="p">,</span> 
+    <span class="n">rng_key</span><span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> 
+    <span class="n">early_stop</span><span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">diagonal_preconditioning</span><span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+    <span class="n">steps_per_sample</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+    <span class="n">r_end</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">diagnostics</span><span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">superchain_size</span><span class="o">=</span> <span class="mi">1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="visualize-the-posterior-samples">
+<h2>Visualize the posterior samples:<a class="headerlink" href="#visualize-the-posterior-samples" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">x1</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">35</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">x2</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">35</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="p">))(</span><span class="n">X</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">position</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">samples</span><span class="o">.</span><span class="n">position</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;teal&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;Greys&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+</pre></div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="what-is-the-speed-up">
+<h1>What is the speed-up?<a class="headerlink" href="#what-is-the-speed-up" title="Link to this heading">#</a></h1>
+<p>The above example runs 256 chains <em>in parallel</em>, each for 200 steps. So, apart from parallelism overhead, this should take about the same as running 1 chain for 200 steps.</p>
+<p>To see how many independent samples we get, we can use the fact that we know (or rather, have an accurate estimate of) the true second moments of the 2D Banana, so we can report the difference between the true second moments and the estimate (we normalize by the second moment standard deviations):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ground_truth_second_moment_mean</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">19.0</span><span class="p">])</span>
+<span class="n">ground_truth_second_moment_standard_deviation</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">20000.0</span><span class="p">,</span> <span class="mf">4600.898</span><span class="p">]))</span>
+
+<span class="n">estimated_second_moment_mean</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">position</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">error</span> <span class="o">=</span> <span class="p">(</span><span class="n">estimated_second_moment_mean</span> <span class="o">-</span> <span class="n">ground_truth_second_moment_mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">ground_truth_second_moment_standard_deviation</span>
+
+<span class="n">error</span>
+</pre></div>
+</div>
+<p>This is the error one would obtain from 100 exact independent samples, so we can say that LAPS has given us an effective sample size of 100. To get the same from a sequential method would take a chain at least 10 times longer, so LAPS gives a wallclock speed-up here of at least an order of magnitude (and often quite a bit more - see the paper).</p>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./algorithms"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">The Late Adjusted Parallel Sampler (LAPS)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parallelism-in-mcmc">Parallelism in MCMC</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-core-idea-of-laps">The core idea of LAPS</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-sampling">Run sampling:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-the-posterior-samples">Visualize the posterior samples:</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-speed-up">What is the speed-up?</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Blackjax Team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
