@@ -62,7 +62,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'algorithms/mclmc';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Change of Variable in HMC" href="../models/change_of_variable_hmc.html" />
+    <link rel="next" title="The Late Adjusted Parallel Sampler (LAPS)" href="laps.html" />
     <link rel="prev" title="Comparing SMC and Persistent Sampling" href="SMCvsPersistentSampling.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -185,6 +185,9 @@
 <li class="toctree-l1"><a class="reference internal" href="TemperedSMCWithOptimizedInnerKernel.html">Tuning inner kernel parameters of SMC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SMCvsPersistentSampling.html">Comparing SMC and Persistent Sampling</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Microcanonical Langevin Monte Carlo</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="laps.html">The Late Adjusted Parallel Sampler (LAPS)</a></li>
+
 
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Models</span></p>
@@ -689,8 +692,8 @@ u \\
 <h2>A more complex example<a class="headerlink" href="#a-more-complex-example" title="Link to this heading">#</a></h2>
 <p>We now consider a more complex model, of stock volatility.</p>
 <p>The returns <span class="math notranslate nohighlight">\(r_n\)</span> are modeled by a Student’s-t distribution whose scale (volatility) <span class="math notranslate nohighlight">\(R_n\)</span> is time varying and unknown. The prior for <span class="math notranslate nohighlight">\(\log R_n\)</span> is a Gaussian random walk, with an exponential distribution of the random walk step-size <span class="math notranslate nohighlight">\(\sigma\)</span>. An exponential prior is also taken for the Student’s-t degrees of freedom <span class="math notranslate nohighlight">\(\nu\)</span>. The generative process of the data is:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-6bec5253-40bc-450d-9336-c94b8014bea9">
-<span class="eqno">(1)<a class="headerlink" href="#equation-6bec5253-40bc-450d-9336-c94b8014bea9" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-e1e0ea8b-c28f-4835-bbd1-944d1fe413f3">
+<span class="eqno">(1)<a class="headerlink" href="#equation-e1e0ea8b-c28f-4835-bbd1-944d1fe413f3" title="Permalink to this equation">#</a></span>\[\begin{align}
     &amp;r_n / R_n \sim \text{Student's-t}(\nu) \qquad
     &amp;&amp;\nu \sim \text{Exp}(\lambda = 1/10) \\ \nonumber
     &amp;\log R_n \sim \mathcal{N}(\log R_{n-1}, \sigma) \qquad
@@ -1097,11 +1100,11 @@ Download complete.
       </div>
     </a>
     <a class="right-next"
-       href="../models/change_of_variable_hmc.html"
+       href="laps.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Change of Variable in HMC</p>
+        <p class="prev-next-title">The Late Adjusted Parallel Sampler (LAPS)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

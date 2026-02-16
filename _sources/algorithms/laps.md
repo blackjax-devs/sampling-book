@@ -14,7 +14,7 @@ jupyter:
 
 # The Late Adjusted Parallel Sampler (LAPS)
 
-If you are able to run many chains in parallel (e.g. around as many chains as the number of independent samples you would like  to take), and you have a problem with a differentiable density, [LAPS]() is a much faster alternative to sequential methods such as HMC.
+If you are able to run many chains in parallel (e.g. around as many chains as the number of independent samples you would like  to take), and you have a problem with a differentiable density, [LAPS](https://arxiv.org/pdf/2601.16696) is a much faster alternative to sequential methods such as HMC.
 
 ## Parallelism in MCMC
 
@@ -149,7 +149,7 @@ error = (estimated_second_moment_mean - ground_truth_second_moment_mean) / groun
 error
 ```
 
-This is the error one would obtain from 100 exact independent samples, so we can say that LAPS has given us an effective sample size of 100. To get the same from a sequential method would take a chain at least 10 times longer, so LAPS gives a wallclock speed-up here of at least an order of magnitude (and often quite a bit more - see the paper).
+This is the error one would obtain from 100 exact independent samples, so we can say that LAPS has given us an effective sample size of 100. To get the same from a sequential method would take a chain at least 10 times longer, so LAPS gives a wallclock speed-up here of at least an order of magnitude (and often quite a bit more - see the [paper](https://arxiv.org/pdf/2601.16696)).
 
 
 

@@ -62,6 +62,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'algorithms/laps';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Change of Variable in HMC" href="../models/change_of_variable_hmc.html" />
+    <link rel="prev" title="Microcanonical Langevin Monte Carlo" href="mclmc.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -124,8 +126,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -176,7 +176,7 @@
             </li>
         </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Algorithms</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="contour_sgld.html">Contour stochastic gradient Langevin dynamics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cyclical_sgld.html">Cyclical SGLD</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pathfinder.html">Pathfinder</a></li>
@@ -185,6 +185,9 @@
 <li class="toctree-l1"><a class="reference internal" href="TemperedSMCWithOptimizedInnerKernel.html">Tuning inner kernel parameters of SMC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SMCvsPersistentSampling.html">Comparing SMC and Persistent Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mclmc.html">Microcanonical Langevin Monte Carlo</a></li>
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">The Late Adjusted Parallel Sampler (LAPS)</a></li>
+
 
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Models</span></p>
@@ -419,7 +422,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="the-late-adjusted-parallel-sampler-laps">
 <h1>The Late Adjusted Parallel Sampler (LAPS)<a class="headerlink" href="#the-late-adjusted-parallel-sampler-laps" title="Link to this heading">#</a></h1>
-<p>If you are able to run many chains in parallel (e.g. around as many chains as the number of independent samples you would like  to take), and you have a problem with a differentiable density, <a class="reference internal" href="#"><span class="xref myst">LAPS</span></a> is a much faster alternative to sequential methods such as HMC.</p>
+<p>If you are able to run many chains in parallel (e.g. around as many chains as the number of independent samples you would like  to take), and you have a problem with a differentiable density, <a class="reference external" href="https://arxiv.org/pdf/2601.16696">LAPS</a> is a much faster alternative to sequential methods such as HMC.</p>
 <section id="parallelism-in-mcmc">
 <h2>Parallelism in MCMC<a class="headerlink" href="#parallelism-in-mcmc" title="Link to this heading">#</a></h2>
 <p>The initial state <span class="math notranslate nohighlight">\(x_i\)</span> of an MCMC chain is not typically distributed according to the target distribution <span class="math notranslate nohighlight">\(p(x)\)</span>, and a “burn in” or “equilibration” phase of the chain is required. Running many MCMC chains in parallel doesn’t decrease the wallclock time of this phase.</p>
@@ -546,7 +549,7 @@ document.write(`
 <span class="n">error</span>
 </pre></div>
 </div>
-<p>This is the error one would obtain from 100 exact independent samples, so we can say that LAPS has given us an effective sample size of 100. To get the same from a sequential method would take a chain at least 10 times longer, so LAPS gives a wallclock speed-up here of at least an order of magnitude (and often quite a bit more - see the paper).</p>
+<p>This is the error one would obtain from 100 exact independent samples, so we can say that LAPS has given us an effective sample size of 100. To get the same from a sequential method would take a chain at least 10 times longer, so LAPS gives a wallclock speed-up here of at least an order of magnitude (and often quite a bit more - see the <a class="reference external" href="https://arxiv.org/pdf/2601.16696">paper</a>).</p>
 </section>
 
     <script type="text/x-thebe-config">
@@ -579,6 +582,24 @@ document.write(`
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="mclmc.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Microcanonical Langevin Monte Carlo</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../models/change_of_variable_hmc.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Change of Variable in HMC</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
