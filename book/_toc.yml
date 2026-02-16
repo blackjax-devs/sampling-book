@@ -11,6 +11,7 @@ parts:
   - file: algorithms/TemperedSMCWithOptimizedInnerKernel.md
   - file: algorithms/SMCvsPersistentSampling.md
   - file: algorithms/mclmc.md
+  - file: algorithms/laps.md
 - caption: Models
   chapters:
   - file: models/change_of_variable_hmc.md
