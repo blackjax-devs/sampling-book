@@ -118,9 +118,13 @@ rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
 import functools
 
 import blackjax
-import jax.experimental.ode
+import jax
 import jax.numpy as jnp
 from diffeqzoo import backend, ivps
+
+# probdiffeq 0.1.x uses the removed jax.tree_map shorthand; restore it.
+if not hasattr(jax, "tree_map"):
+    jax.tree_map = jax.tree.map
 
 from probdiffeq import solution_routines, solvers
 from probdiffeq.implementations import recipes
