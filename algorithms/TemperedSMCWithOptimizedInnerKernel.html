@@ -769,33 +769,7 @@ the particles outcome of the <span class="math notranslate nohighlight">\(i-th\)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">13</span><span class="p">],</span> <span class="n">line</span> <span class="mi">23</span>
-<span class="g g-Whitespace">     </span><span class="mi">15</span>     <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">dimension</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dimensions_to_try</span><span class="p">):</span>
-<span class="g g-Whitespace">     </span><span class="mi">16</span>         <span class="n">particles</span> <span class="o">=</span> <span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span>             <span class="n">results</span><span class="p">[</span>
-<span class="g g-Whitespace">     </span><span class="mi">18</span>                 <span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">experiment</span> <span class="o">==</span> <span class="n">experiment</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">dimensions</span> <span class="o">==</span> <span class="n">dimension</span><span class="p">)</span>
-   <span class="p">(</span><span class="o">...</span><span class="p">)</span>     <span class="mi">21</span>             <span class="o">.</span><span class="n">particles</span>
-<span class="g g-Whitespace">     </span><span class="mi">22</span>         <span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">23</span>         <span class="n">plot</span><span class="p">(</span><span class="n">particles</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">dimension</span><span class="p">,</span> <span class="n">axs</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">])</span>
-<span class="g g-Whitespace">     </span><span class="mi">25</span> <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">26</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">27</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Sampler comparison for increasing number of posterior dimensions.</span>
-<span class="g g-Whitespace">     </span><span class="mi">28</span><span class="sd"> Each plot displays all dimensions from the posterior, overlayed. The red curve is the actual marginal distribution.&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">29</span> <span class="p">)</span>
-
-<span class="nn">Cell In[12], line 8,</span> in <span class="ni">plot</span><span class="nt">(post, sampler, dimensions, ax)</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">dimensions</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dimensions</span><span class="p">):</span>
-<span class="ne">----&gt; </span><span class="mi">8</span>     <span class="n">x_kde</span><span class="p">,</span> <span class="n">y_kde</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">kde</span><span class="p">(</span><span class="n">post</span><span class="p">[:,</span> <span class="n">dim</span><span class="p">])</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span>     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_kde</span><span class="p">,</span> <span class="n">y_kde</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span>     <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">linspace</span><span class="p">,</span> <span class="n">density</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-
-<span class="ne">ValueError</span>: not enough values to unpack (expected 3, got 2)
-</pre></div>
-</div>
-<img alt="../_images/488017b3e604260796180e8aaa57651f4d5e4959af9aa6c15150bc49e7e310c5.png" src="../_images/488017b3e604260796180e8aaa57651f4d5e4959af9aa6c15150bc49e7e310c5.png" />
+<img alt="../_images/1ea779c8164a064ecb1298469c624cf10618c1b53f69bb710208c77db540cac9.png" src="../_images/1ea779c8164a064ecb1298469c624cf10618c1b53f69bb710208c77db540cac9.png" />
 </div>
 </div>
 <p>As seen in the previous figure, as dimensions increase, performance degrades. More tuning, less performance degradation.</p>
