@@ -121,14 +121,7 @@ import blackjax
 import jax
 import jax.numpy as jnp
 from diffeqzoo import backend, ivps
-
-# probdiffeq 0.1.x uses the removed jax.tree_map shorthand; restore it.
-if not hasattr(jax, "tree_map"):
-    jax.tree_map = jax.tree.map
-
-from probdiffeq import solution_routines, solvers
-from probdiffeq.implementations import recipes
-from probdiffeq.strategies import filters
+from probdiffeq import ivpsolve, ivpsolvers, stats, taylor
 
 # IVP examples in JAX
 if not backend.has_been_selected:
@@ -145,32 +138,55 @@ f, u0, (t0, t1), f_args = ivps.lotka_volterra()
 
 @jax.jit
 def vf(y, *, t, p=()):
+    # diffeqzoo Lotka-Volterra signature: f(y, a, b, c, d) — no explicit t
     return f(y, *f_args)
 
 
 theta_true = u0 + 0.5 * jnp.flip(u0)
 theta_guess = u0  # initial guess
 
-# Create a probabilistic solver
-strategy = filters.Filter(
-    recipes.IsoTS0.from_params(num_derivatives=2),
+
+# Build the SSM once (shape determined by theta; values don't matter).
+_ref_tcoeffs = taylor.odejet_padded_scan(
+    lambda y: vf(y, t=t0, p=()), (theta_guess,), num=2
 )
-solver = solvers.CalibrationFreeSolver(strategy, output_scale_sqrtm=10.0)
+_, _ref_ibm, ssm = ivpsolvers.prior_wiener_integrated(
+    _ref_tcoeffs, ssm_fact="dense", output_scale=10.0
+)
+
+
+def _make_solver(theta, *, strategy_fn):
+    """Build a probdiffeq solver initialised at *theta*, reusing the shared SSM."""
+    tcoeffs = taylor.odejet_padded_scan(
+        lambda y: vf(y, t=t0, p=()), (theta,), num=2
+    )
+    init_cond, ibm, _ = ivpsolvers.prior_wiener_integrated(
+        tcoeffs, ssm_fact="dense", output_scale=10.0
+    )
+    ts0 = ivpsolvers.correction_ts0(vf, ssm=ssm)
+    strategy = strategy_fn(ssm=ssm)
+    solver = ivpsolvers.solver(strategy, correction=ts0, prior=ibm, ssm=ssm)
+    return init_cond, solver
 ```
 
 ```{code-cell} ipython3
 def plot_solution(sol, *, ax, marker=".", **plotting_kwargs):
+    # sol.u is a list of Taylor-coefficient arrays; sol.u[0] holds the trajectory.
+    traj = sol.u[0]  # shape (n_times, 2)
     for d in [0, 1]:
-        ax.plot(sol.t, sol.u[:, d], marker="None", **plotting_kwargs)
-        ax.plot(sol.t[0], sol.u[0, d], marker=marker, **plotting_kwargs)
-        ax.plot(sol.t[-1], sol.u[-1, d], marker=marker, **plotting_kwargs)
+        ax.plot(sol.t, traj[:, d], marker="None", **plotting_kwargs)
+        ax.plot(sol.t[0], traj[0, d], marker=marker, **plotting_kwargs)
+        ax.plot(sol.t[-1], traj[-1, d], marker=marker, **plotting_kwargs)
     return ax
 
 
 @jax.jit
 def solve_adaptive(theta, *, save_at):
-    return solution_routines.solve_and_save_at(
-        vf, initial_values=(theta,), save_at=save_at, solver=solver
+    # Use a filter strategy for visualisation (smoother is not compatible with save_at)
+    init_cond, solver = _make_solver(theta, strategy_fn=ivpsolvers.strategy_filter)
+    adaptive_solver = ivpsolvers.adaptive(solver, ssm=ssm)
+    return ivpsolve.solve_adaptive_save_at(
+        init_cond, save_at=save_at, adaptive_solver=adaptive_solver, dt0=0.1, ssm=ssm
     )
 
 
@@ -203,33 +219,29 @@ Set up a log-posterior density function that we can plug into BlackJAX. Choose a
 mean = theta_guess
 cov = jnp.eye(2) * 30  # fairly uninformed prior
 
-
+# Fixed-grid solve for reverse-mode differentiability.
+# Uses a smoother strategy, required by log_marginal_likelihood_terminal_values.
 @jax.jit
-def logposterior_fn(theta, *, data, ts, solver, obs_stdev=0.1):
-    y_T = solve_fixed(theta, ts=ts, solver=solver)
-    marginals, _ = y_T.posterior.condition_on_qoi_observation(
-        data, observation_std=obs_stdev
-    )
-    return marginals.logpdf(data) + jax.scipy.stats.multivariate_normal.logpdf(
-        theta, mean=mean, cov=cov
-    )
-
-
-# Fixed steps for reverse-mode differentiability:
+def solve_fixed(theta, *, ts):
+    init_cond, solver = _make_solver(theta, strategy_fn=ivpsolvers.strategy_smoother)
+    return ivpsolve.solve_fixed_grid(init_cond, grid=ts, solver=solver, ssm=ssm)
 
 
 @jax.jit
-def solve_fixed(theta, *, ts, solver):
-    sol = solution_routines.solve_fixed_grid(
-        vf, initial_values=(theta,), grid=ts, solver=solver
+def logposterior_fn(theta, *, data, ts, obs_stdev=0.1):
+    sol = solve_fixed(theta, ts=ts)
+    terminal = stats.markov_select_terminal(sol.posterior)
+    log_lik = stats.log_marginal_likelihood_terminal_values(
+        data, standard_deviation=obs_stdev, posterior=terminal, ssm=ssm
     )
-    return sol[-1]
+    log_prior = jax.scipy.stats.multivariate_normal.logpdf(theta, mean=mean, cov=cov)
+    return log_lik + log_prior
 
 
 ts = jnp.linspace(t0, t1, endpoint=True, num=100)
-data = solve_fixed(theta_true, ts=ts, solver=solver).u
+data = solve_fixed(theta_true, ts=ts).u[0][-1]  # terminal state, shape (2,)
 
-log_M = functools.partial(logposterior_fn, data=data, ts=ts, solver=solver)
+log_M = functools.partial(logposterior_fn, data=data, ts=ts)
 ```
 
 ```{code-cell} ipython3
@@ -292,13 +304,15 @@ solution_samples = jax.vmap(solve_save_at)(states.position)
 
 ```{code-cell} ipython3
 # Visualise the initial guess and the data
+# vmap returns a single batched IVPSolution; iterate by index.
 
 fig, ax = plt.subplots()
 
 sample_kwargs = {"color": "C0"}
 ax.annotate("Samples", (2.75, 31.0), **sample_kwargs)
-for sol in solution_samples:
-    ax = plot_solution(sol, ax=ax, linewidth=0.1, alpha=0.75, **sample_kwargs)
+for i in range(solution_samples.u[0].shape[0]):
+    sol_i = jax.tree.map(lambda x: x[i], solution_samples)
+    ax = plot_solution(sol_i, ax=ax, linewidth=0.1, alpha=0.75, **sample_kwargs)
 
 data_kwargs = {"color": "gray"}
 ax.annotate("Data", (18.25, 40.0), **data_kwargs)
