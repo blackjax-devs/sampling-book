@@ -492,7 +492,7 @@
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/39440df025033613a62a41018428e50db4a515378dc5b875fd4cc55cf88aed55.png" src="../_images/39440df025033613a62a41018428e50db4a515378dc5b875fd4cc55cf88aed55.png" />
+<img alt="../_images/8b81764ce1650e2701a72f4f64e646b279a37fc9dfa14449125422ebe5015cc8.png" src="../_images/8b81764ce1650e2701a72f4f64e646b279a37fc9dfa14449125422ebe5015cc8.png" />
 </div>
 </div>
 </section>
@@ -546,26 +546,28 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    progress:not([value]), progress:not([value])::-webkit-progress-bar {
-        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
+    progress { appearance: none; border: none; border-radius: 4px; width: 300px;
+        height: 20px; vertical-align: middle; background: #e0e0e0; }
+
+    progress::-webkit-progress-bar { background: #e0e0e0; border-radius: 4px; }
+    progress::-webkit-progress-value { background: #2196F3; border-radius: 4px; }
+    progress::-moz-progress-bar { background: #2196F3; border-radius: 4px; }
+
+    progress:not([value]) {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px); }
+
+    progress.progress-bar-interrupted::-webkit-progress-value { background: #F44336; }
+    progress.progress-bar-interrupted::-moz-progress-value { background: #F44336; }
+    progress.progress-bar-interrupted::-webkit-progress-bar { background: #F44336; }
+    progress.progress-bar-interrupted::-moz-progress-bar { background: #F44336; }
+    progress.progress-bar-interrupted { background: #F44336; }    
+
+    table.fastprogress { border-collapse: collapse; margin: 1em 0; font-size: 0.9em; }
+    table.fastprogress th, table.fastprogress td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; }
+    table.fastprogress thead tr { background: #f8f9fa; font-weight: bold; }
+    table.fastprogress tbody tr:nth-of-type(even) { background: #f8f9fa; }
 </style>
-</div><div class="output text_html">
-    <div>
-      <progress value='10000' class='' max='10000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [10000/10000 00:18&lt;00:00 | position:  23.53]
-    </div>
-    </div></div>
+</div><div class="output text_html"><div><progress max="10000" value="10000"></progress> 100.00% [10000/10000 00:37&lt;00:00... | position: -5.97]</div></div></div>
 </div>
 <div class="cell tag_hide-input docutils container">
 <details class="admonition hide above-input">
@@ -599,7 +601,7 @@
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/7d34c41cdea77ef6c5644316c5151b2a69ef36c47bc328285055434c9ec65cf6.png" src="../_images/7d34c41cdea77ef6c5644316c5151b2a69ef36c47bc328285055434c9ec65cf6.png" />
+<img alt="../_images/18d379bded8858b264c7a68c0fff23a0d81fbda0b6a6f5de61b73414f6e51517.png" src="../_images/18d379bded8858b264c7a68c0fff23a0d81fbda0b6a6f5de61b73414f6e51517.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -656,28 +658,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">
-<style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    progress:not([value]), progress:not([value])::-webkit-progress-bar {
-        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
-</style>
-</div><div class="output text_html">
-    <div>
-      <progress value='10000' class='' max='10000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [10000/10000 00:18&lt;00:00 | position -4.79]
-    </div>
-    </div></div>
+<div class="output text_html"><div><progress max="10000" value="10000"></progress> 100.00% [10000/10000 00:40&lt;00:00... | position  27.53]</div></div></div>
 </div>
 <p>Contour SGLD is a meta-algorithm, based on Stochastic Gradient Langevin Dynamics. It takes inspiration from the Wang-Landau algorithm to learn the density of states of the model at each energy level, and uses this information to “flatten” the target density so the sampler can explore it more easily.</p>
 <p>As a result, the samples returned by contour SGLD are not from the target density directly, and we need to resample them using the density of state as importance weights to get samples from the target distribution.</p>
@@ -736,7 +717,7 @@
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/2f03f738600ed01f6394a6877640b4001f5bfc4f67147674f849e687cd570b6c.png" src="../_images/2f03f738600ed01f6394a6877640b4001f5bfc4f67147674f849e687cd570b6c.png" />
+<img alt="../_images/db465b3b68feb54336f37c1e5e5227fa7aded70f352ded1c68eed2bbb582a34f.png" src="../_images/db465b3b68feb54336f37c1e5e5227fa7aded70f352ded1c68eed2bbb582a34f.png" />
 </div>
 </div>
 </section>
@@ -766,7 +747,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/03cff34e736b11bb061582d3618cdf971e1a94b7a390a2dde21aaacc0a8bf971.png" src="../_images/03cff34e736b11bb061582d3618cdf971e1a94b7a390a2dde21aaacc0a8bf971.png" />
+<img alt="../_images/2f5a9051530ea4374cf67530201cc1a792986009cf4aefe46a01ffa958ba6c52.png" src="../_images/2f5a9051530ea4374cf67530201cc1a792986009cf4aefe46a01ffa958ba6c52.png" />
 </div>
 </div>
 <p>From the figure above, we see that low-energy regions usually lead to much higher probability mass. Moreover, the slope is negative with a higher scale in low energy regions. In view of Eq.(8) in <a class="reference external" href="https://proceedings.neurips.cc/paper/2020/file/b5b8c484824d8a06f4f3d570bc420313-Paper.pdf">the paper</a>, we can expect a <strong>negative learning rate</strong> to help the particle escape the local trap. Eventually, a particle is able to bounce out of the deep local traps freely instead of being absorbed into it.</p>

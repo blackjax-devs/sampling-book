@@ -626,7 +626,7 @@
     table.fastprogress thead tr { background: #f8f9fa; font-weight: bold; }
     table.fastprogress tbody tr:nth-of-type(even) { background: #f8f9fa; }
 </style>
-</div><div class="output text_html"><div><progress max="2340" value="2340"></progress> 100.00% [2340/2340 00:21&lt;00:00... | error:  4.7]</div></div></div>
+</div><div class="output text_html"><div><progress max="2340" value="2340"></progress> 100.00% [2340/2340 00:23&lt;00:00... | error:  5.3]</div></div></div>
 </div>
 <p>Let us plot the point-wise accuracy at different points in the sampling process:</p>
 <div class="cell tag_hide-input docutils container">
@@ -649,7 +649,7 @@
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/90c1a798c86158e8da4a01ad90d4075de26e54e72305b52e6d8c6cdffe3d4312.png" src="../_images/90c1a798c86158e8da4a01ad90d4075de26e54e72305b52e6d8c6cdffe3d4312.png" />
+<img alt="../_images/87235f13a0a39eae8399d992032137a154f99f2ce1dc56d0e3e61a83d56acc16.png" src="../_images/87235f13a0a39eae8399d992032137a154f99f2ce1dc56d0e3e61a83d56acc16.png" />
 </div>
 </div>
 <p>It looks like the point-wise accuracy, while still increasing, has reached a plateau. We will now sample from the posterior distribution. Instead of accumulating the network weights, which would require a subtantial amounf of memory, we will update the average of the quantity that we are interested in, the predictive probabilities over the test set.</p>
@@ -704,7 +704,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><div><progress max="1000" value="1000"></progress> 100.00% [1000/1000 00:58&lt;00:00... | avg error:  3.9]</div></div></div>
+<div class="output text_html"><div><progress max="1000" value="1000"></progress> 100.00% [1000/1000 01:06&lt;00:00... | avg error:  4.3]</div></div></div>
 </div>
 <p>Let us plot the accuracy as a function of the number of samples:</p>
 <div class="cell tag_hide-input docutils container">
@@ -725,7 +725,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/2cd588c460125aae77224166334778f22f9d0c3cb4520dfc6ef0a44304df7ee1.png" src="../_images/2cd588c460125aae77224166334778f22f9d0c3cb4520dfc6ef0a44304df7ee1.png" />
+<img alt="../_images/fa70e2586d21f7ad90a8e1c3e67b70f0e4a05987696ba6929b6b0b131799a937.png" src="../_images/fa70e2586d21f7ad90a8e1c3e67b70f0e4a05987696ba6929b6b0b131799a937.png" />
 </div>
 </div>
 <p>It is not clear from the figure above whether the increase of the accuracy is due to an increase in the pointwise accuracy, or an effect of averaging over the posterior distribution. To see this, let us compare the last value to the pointwise accuracy computed on the chain’s last state:</p>
@@ -738,8 +738,8 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9614 0.9536
-0.007799983
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9575 0.94759995
+0.0099000335
 </pre></div>
 </div>
 </div>
@@ -779,7 +779,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><div><progress max="2340" value="2340"></progress> 100.00% [2340/2340 03:01&lt;00:00... | error:  77.1]</div></div></div>
+<div class="output text_html"><div><progress max="2340" value="2340"></progress> 100.00% [2340/2340 03:22&lt;00:00... | error:  77.1]</div></div></div>
 </div>
 <div class="cell tag_hide-input docutils container">
 <details class="admonition hide above-input">
@@ -822,7 +822,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><div><progress max="1000" value="1000"></progress> 100.00% [1000/1000 00:57&lt;00:00... | avg error:  5.1]</div></div></div>
+<div class="output text_html"><div><progress max="1000" value="1000"></progress> 100.00% [1000/1000 01:04&lt;00:00... | avg error:  5.1]</div></div></div>
 </div>
 <div class="cell tag_hide-input docutils container">
 <details class="admonition hide above-input">
@@ -842,7 +842,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/c9f31f6e55ff33923402f43d181c55c9e8b8e55581966cddbbe2f00239a2a305.png" src="../_images/c9f31f6e55ff33923402f43d181c55c9e8b8e55581966cddbbe2f00239a2a305.png" />
+<img alt="../_images/e2980bd5d05b992d1fd5da7794ea75597dca0f3fe30552958358c90119ba547b.png" src="../_images/e2980bd5d05b992d1fd5da7794ea75597dca0f3fe30552958358c90119ba547b.png" />
 </div>
 </div>
 </section>
@@ -870,7 +870,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/302eca7afe0dc3272fa5ba9cafe2a84ddd9aa1e6ab9e7e2ef0125ae1cde3b069.png" src="../_images/302eca7afe0dc3272fa5ba9cafe2a84ddd9aa1e6ab9e7e2ef0125ae1cde3b069.png" />
+<img alt="../_images/775df596d56faa5a0e5d7ab2c03e87b532905c84fa7483930e3b794e9b8247b1.png" src="../_images/775df596d56faa5a0e5d7ab2c03e87b532905c84fa7483930e3b794e9b8247b1.png" />
 </div>
 </div>
 <p>SGHMC gives a slightly better accuracy than SGLD. However, plotting this in terms of the number of steps is slightly misleading: SGHMC evaluates the gradient 10 times for each step while SGLD only once.</p>
@@ -987,7 +987,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/87be351102a2f1792da8b1ca1062b48c687a186312bb329b4117620193387de8.png" src="../_images/87be351102a2f1792da8b1ca1062b48c687a186312bb329b4117620193387de8.png" />
+<img alt="../_images/7f9b40ed87b520ff79137db36651a8f59c2347be119fb9b7945eacd3873effdf.png" src="../_images/7f9b40ed87b520ff79137db36651a8f59c2347be119fb9b7945eacd3873effdf.png" />
 </div>
 </div>
 <p>Not bad at all, by dropping less than 2% of the samples we reach .99 accuracy, not too bad for such a simple model!</p>
