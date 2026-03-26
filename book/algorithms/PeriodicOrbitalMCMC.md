@@ -256,14 +256,14 @@ def elliptical_bijection(potential_fn, kinetic_energy_fn):
     ) -> integrators.IntegratorState:
         _position, _momentum, _, grad = state
 
-        position = jax.tree_util.tree_map(
+        position = jax.tree.map(
             lambda position, momentum: position * jnp.cos(step_size)
             + momentum * jnp.sin(step_size),
             _position,
             _momentum,
         )
 
-        momentum = jax.tree_util.tree_map(
+        momentum = jax.tree.map(
             lambda position, momentum: momentum * jnp.cos(step_size)
             - position * jnp.sin(step_size),
             _position,

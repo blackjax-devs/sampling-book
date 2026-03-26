@@ -119,7 +119,8 @@ The optimizer is the limited memory BFGS algorithm.
 To help understand the approximations that pathfinder evaluates during its run, here we plot for each step of the L-BFGS optimizer the approximation of the posterior distribution of the model derived by pathfinder and its ELBO:
 
 ```{code-cell} ipython3
-# jaxopt lbfgs could fail, hack to keep trying util it works
+# L-BFGS can occasionally fail to converge from a bad initialization;
+# retry until the ELBO path is finite.
 stop = 0
 while stop == 0:
     rng_key, init_key, infer_key = jax.random.split(rng_key, 3)
@@ -166,7 +167,7 @@ fig, axs = plt.subplots(rows, 3, figsize=(15, 5 * rows), sharex=True, sharey=Tru
 for i, ax in zip(range(steps), axs.flatten()):
 
     ax.contour(x_, y_, logp_, levels=levels_)
-    state = jax.tree_map(lambda x: x[i], path)
+    state = jax.tree.map(lambda x: x[i], path)
     sample_state, _ = blackjax.vi.pathfinder.sample(rng_key, state, 10_000)
     position_path = path.position[: i + 1]
     ax.plot(

@@ -184,7 +184,7 @@ kernel = blackjax.ghmc(logdensity_fn, **parameters).step
 
 # Choose the last state of the first k chains as a starting point for the sampler
 n_parallel_chains = 4
-init_states = jax.tree_util.tree_map(lambda x: x[:n_parallel_chains], state)
+init_states = jax.tree.map(lambda x: x[:n_parallel_chains], state)
 keys = jax.random.split(key_sample, n_parallel_chains)
 samples, info = jax.vmap(inference_loop, in_axes=(0, 0, None, None))(
     keys, init_states, kernel, num_samples
