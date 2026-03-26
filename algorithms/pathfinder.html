@@ -473,7 +473,7 @@
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/b4924b84fa468dbd916be37b423ec07471d2ba6842298d42a3d709d2002fe602.png" src="../_images/b4924b84fa468dbd916be37b423ec07471d2ba6842298d42a3d709d2002fe602.png" />
+<img alt="../_images/6dc4494364fa66613f04c58c9b6eab2cd8fe5d5554a2da9758f1e1d4c17fbad4.png" src="../_images/6dc4494364fa66613f04c58c9b6eab2cd8fe5d5554a2da9758f1e1d4c17fbad4.png" />
 </div>
 </div>
 </section>
@@ -532,7 +532,8 @@ The optimizer is the limited memory BFGS algorithm.</p>
 <p>To help understand the approximations that pathfinder evaluates during its run, here we plot for each step of the L-BFGS optimizer the approximation of the posterior distribution of the model derived by pathfinder and its ELBO:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># jaxopt lbfgs could fail, hack to keep trying util it works</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># L-BFGS can occasionally fail to converge from a bad initialization;</span>
+<span class="c1"># retry until the ELBO path is finite.</span>
 <span class="n">stop</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">while</span> <span class="n">stop</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
     <span class="n">rng_key</span><span class="p">,</span> <span class="n">init_key</span><span class="p">,</span> <span class="n">infer_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
@@ -585,7 +586,7 @@ The optimizer is the limited memory BFGS algorithm.</p>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">),</span> <span class="n">axs</span><span class="o">.</span><span class="n">flatten</span><span class="p">()):</span>
 
     <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x_</span><span class="p">,</span> <span class="n">y_</span><span class="p">,</span> <span class="n">logp_</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="n">levels_</span><span class="p">)</span>
-    <span class="n">state</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">path</span><span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">path</span><span class="p">)</span>
     <span class="n">sample_state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">vi</span><span class="o">.</span><span class="n">pathfinder</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="mi">10_000</span><span class="p">)</span>
     <span class="n">position_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">position</span><span class="p">[:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
@@ -604,22 +605,18 @@ The optimizer is the limited memory BFGS algorithm.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_2889/2037720512.py:35: DeprecationWarning: jax.tree_map is deprecated: use jax.tree.map (jax v0.4.25 or newer) or jax.tree_util.tree_map (any JAX version).
-  state = jax.tree_map(lambda x: x[i], path)
-</pre></div>
-</div>
-<img alt="../_images/ef10b06e44ebaf4390dd0dada391a2684032b4995cc0038e5674a51366f7628a.png" src="../_images/ef10b06e44ebaf4390dd0dada391a2684032b4995cc0038e5674a51366f7628a.png" />
+<img alt="../_images/f07ca269b969ac5bc9c091fbfda345a08b576adf364b472d06bbb6f5f6a2af84.png" src="../_images/f07ca269b969ac5bc9c091fbfda345a08b576adf364b472d06bbb6f5f6a2af84.png" />
 </div>
 </div>
 </section>
 <section id="pathfinder-as-a-variational-inference-method">
 <h2>Pathfinder as a Variational Inference Method<a class="headerlink" href="#pathfinder-as-a-variational-inference-method" title="Link to this heading">#</a></h2>
-<p>Pathfinder can be used as a variational inference method. We first create a pathfinder object <code class="docutils literal notranslate"><span class="pre">pf</span></code> which contains two functions <code class="docutils literal notranslate"><span class="pre">approximate</span></code> and <code class="docutils literal notranslate"><span class="pre">sample</span></code>:</p>
+<p>Pathfinder can be used as a variational inference method. We first create a pathfinder object <code class="docutils literal notranslate"><span class="pre">pf</span></code> which contains two functions <code class="docutils literal notranslate"><span class="pre">init</span></code> and <code class="docutils literal notranslate"><span class="pre">sample</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pf</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">pathfinder</span><span class="p">(</span><span class="n">logdensity_fn</span><span class="p">)</span>
 <span class="n">rng_key</span><span class="p">,</span> <span class="n">approx_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">)</span>
-<span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">approximate</span><span class="p">(</span><span class="n">approx_key</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">ftol</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+<span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">approx_key</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">ftol</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -651,7 +648,7 @@ The optimizer is the limited memory BFGS algorithm.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/9c82dbc1016803a24bbc0796ece617c815ce45b5a943d06992cbb951d3f8e704.png" src="../_images/9c82dbc1016803a24bbc0796ece617c815ce45b5a943d06992cbb951d3f8e704.png" />
+<img alt="../_images/2a93c79591eb5e1ab887dec5761dc8d20fe52e1679d1f2e74bd7c0621d31b3bd.png" src="../_images/2a93c79591eb5e1ab887dec5761dc8d20fe52e1679d1f2e74bd7c0621d31b3bd.png" />
 </div>
 </div>
 <p>Please note that pathfinder is implemented as follows:</p>
@@ -664,14 +661,14 @@ The optimizer is the limited memory BFGS algorithm.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
 
-<span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">approximate</span><span class="p">)(</span><span class="n">approx_key</span><span class="p">,</span> <span class="n">w0</span><span class="p">)</span>
+<span class="n">state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">init</span><span class="p">)(</span><span class="n">approx_key</span><span class="p">,</span> <span class="n">w0</span><span class="p">)</span>
 <span class="n">samples</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">sample_key</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="mi">5_000</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3 s, sys: 54.8 ms, total: 3.05 s
-Wall time: 1.38 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 5.41 s, sys: 125 ms, total: 5.53 s
+Wall time: 2.02 s
 </pre></div>
 </div>
 </div>
@@ -721,7 +718,7 @@ Wall time: 1.38 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/721fb370fb56571510b86a42799467725d2b4d7483b79778703fa76850446123.png" src="../_images/721fb370fb56571510b86a42799467725d2b4d7483b79778703fa76850446123.png" />
+<img alt="../_images/95cec4f1d22cba38dce9f9a09f21eb6cc8ea7efee6185bf5f8997f93a7919527.png" src="../_images/95cec4f1d22cba38dce9f9a09f21eb6cc8ea7efee6185bf5f8997f93a7919527.png" />
 </div>
 </div>
 <section id="pathfinder-as-an-initialization-tool-for-mcmc-kernels">
@@ -740,8 +737,8 @@ Wall time: 1.38 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([[ 0.23901838, -0.08030263],
-       [-0.08030259,  0.23023751]], dtype=float32)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([[ 0.16490619, -0.01051929],
+       [-0.01051932,  0.1361163 ]], dtype=float32)
 </pre></div>
 </div>
 </div>
@@ -785,7 +782,7 @@ Wall time: 1.38 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/cb9cfd69210b13a091d2f3c6768e970b4932281ad4fe3190e6821d56d644fa0e.png" src="../_images/cb9cfd69210b13a091d2f3c6768e970b4932281ad4fe3190e6821d56d644fa0e.png" />
+<img alt="../_images/0eff6cf63e9626ddd6c7959d220635c09fb95b0919e87ba4a22471865fee61be.png" src="../_images/0eff6cf63e9626ddd6c7959d220635c09fb95b0919e87ba4a22471865fee61be.png" />
 </div>
 </div>
 </section>

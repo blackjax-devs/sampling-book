@@ -528,7 +528,7 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">logprior_fn</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the value of the log-prior density function.&quot;&quot;&quot;</span>
-    <span class="n">leaves</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_flatten</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">leaves</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="n">flat_params</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">jnp</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">leaves</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">flat_params</span><span class="p">))</span>
 
@@ -605,26 +605,28 @@
 <div class="cell_output docutils container">
 <div class="output text_html">
 <style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    progress:not([value]), progress:not([value])::-webkit-progress-bar {
-        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
+    progress { appearance: none; border: none; border-radius: 4px; width: 300px;
+        height: 20px; vertical-align: middle; background: #e0e0e0; }
+
+    progress::-webkit-progress-bar { background: #e0e0e0; border-radius: 4px; }
+    progress::-webkit-progress-value { background: #2196F3; border-radius: 4px; }
+    progress::-moz-progress-bar { background: #2196F3; border-radius: 4px; }
+
+    progress:not([value]) {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px); }
+
+    progress.progress-bar-interrupted::-webkit-progress-value { background: #F44336; }
+    progress.progress-bar-interrupted::-moz-progress-value { background: #F44336; }
+    progress.progress-bar-interrupted::-webkit-progress-bar { background: #F44336; }
+    progress.progress-bar-interrupted::-moz-progress-bar { background: #F44336; }
+    progress.progress-bar-interrupted { background: #F44336; }    
+
+    table.fastprogress { border-collapse: collapse; margin: 1em 0; font-size: 0.9em; }
+    table.fastprogress th, table.fastprogress td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; }
+    table.fastprogress thead tr { background: #f8f9fa; font-weight: bold; }
+    table.fastprogress tbody tr:nth-of-type(even) { background: #f8f9fa; }
 </style>
-</div><div class="output text_html">
-    <div>
-      <progress value='2340' class='' max='2340' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [2340/2340 00:23&lt;00:00 | error:  4.9]
-    </div>
-    </div></div>
+</div><div class="output text_html"><div><progress max="2340" value="2340"></progress> 100.00% [2340/2340 00:21&lt;00:00... | error:  4.7]</div></div></div>
 </div>
 <p>Let us plot the point-wise accuracy at different points in the sampling process:</p>
 <div class="cell tag_hide-input docutils container">
@@ -647,7 +649,7 @@
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/a36456219ed068b93db516fc18ab5d9f906e7a39b9928c50539f8156b027a1be.png" src="../_images/a36456219ed068b93db516fc18ab5d9f906e7a39b9928c50539f8156b027a1be.png" />
+<img alt="../_images/90c1a798c86158e8da4a01ad90d4075de26e54e72305b52e6d8c6cdffe3d4312.png" src="../_images/90c1a798c86158e8da4a01ad90d4075de26e54e72305b52e6d8c6cdffe3d4312.png" />
 </div>
 </div>
 <p>It looks like the point-wise accuracy, while still increasing, has reached a plateau. We will now sample from the posterior distribution. Instead of accumulating the network weights, which would require a subtantial amounf of memory, we will update the average of the quantity that we are interested in, the predictive probabilities over the test set.</p>
@@ -702,28 +704,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">
-<style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    progress:not([value]), progress:not([value])::-webkit-progress-bar {
-        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
-</style>
-</div><div class="output text_html">
-    <div>
-      <progress value='1000' class='' max='1000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [1000/1000 01:00&lt;00:00 | avg error:  4.0]
-    </div>
-    </div></div>
+<div class="output text_html"><div><progress max="1000" value="1000"></progress> 100.00% [1000/1000 00:58&lt;00:00... | avg error:  3.9]</div></div></div>
 </div>
 <p>Let us plot the accuracy as a function of the number of samples:</p>
 <div class="cell tag_hide-input docutils container">
@@ -744,7 +725,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/852fab5717e63366dc7674c22d0f9800025e8212f9920855cd0e7b2ff5ea2c35.png" src="../_images/852fab5717e63366dc7674c22d0f9800025e8212f9920855cd0e7b2ff5ea2c35.png" />
+<img alt="../_images/2cd588c460125aae77224166334778f22f9d0c3cb4520dfc6ef0a44304df7ee1.png" src="../_images/2cd588c460125aae77224166334778f22f9d0c3cb4520dfc6ef0a44304df7ee1.png" />
 </div>
 </div>
 <p>It is not clear from the figure above whether the increase of the accuracy is due to an increase in the pointwise accuracy, or an effect of averaging over the posterior distribution. To see this, let us compare the last value to the pointwise accuracy computed on the chain’s last state:</p>
@@ -757,7 +738,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.96029997 0.9525
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9614 0.9536
 0.007799983
 </pre></div>
 </div>
@@ -798,28 +779,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">
-<style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    progress:not([value]), progress:not([value])::-webkit-progress-bar {
-        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
-</style>
-</div><div class="output text_html">
-    <div>
-      <progress value='2340' class='' max='2340' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [2340/2340 02:45&lt;00:00 | error:  82.2]
-    </div>
-    </div></div>
+<div class="output text_html"><div><progress max="2340" value="2340"></progress> 100.00% [2340/2340 03:01&lt;00:00... | error:  77.1]</div></div></div>
 </div>
 <div class="cell tag_hide-input docutils container">
 <details class="admonition hide above-input">
@@ -841,7 +801,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/b1b16fe4aa44aab09284e5681c765ebcf1456fdbeda8f23423c924f20b4f200d.png" src="../_images/b1b16fe4aa44aab09284e5681c765ebcf1456fdbeda8f23423c924f20b4f200d.png" />
+<img alt="../_images/bd9d90a119b9f52afc2440d112915cc43face2d7b787c67ab5b8d6aeb3a2e175.png" src="../_images/bd9d90a119b9f52afc2440d112915cc43face2d7b787c67ab5b8d6aeb3a2e175.png" />
 </div>
 </div>
 <p>We now sample and compute the accuracy by averaging over the posterior samples:</p>
@@ -862,28 +822,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">
-<style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    progress:not([value]), progress:not([value])::-webkit-progress-bar {
-        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
-</style>
-</div><div class="output text_html">
-    <div>
-      <progress value='1000' class='' max='1000' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      100.00% [1000/1000 01:00&lt;00:00 | avg error:  4.9]
-    </div>
-    </div></div>
+<div class="output text_html"><div><progress max="1000" value="1000"></progress> 100.00% [1000/1000 00:57&lt;00:00... | avg error:  5.1]</div></div></div>
 </div>
 <div class="cell tag_hide-input docutils container">
 <details class="admonition hide above-input">
@@ -903,7 +842,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/1eca0f3116a444cc982c433e24b231d1a92536fa3e2755e40194861833198bdc.png" src="../_images/1eca0f3116a444cc982c433e24b231d1a92536fa3e2755e40194861833198bdc.png" />
+<img alt="../_images/c9f31f6e55ff33923402f43d181c55c9e8b8e55581966cddbbe2f00239a2a305.png" src="../_images/c9f31f6e55ff33923402f43d181c55c9e8b8e55581966cddbbe2f00239a2a305.png" />
 </div>
 </div>
 </section>
@@ -931,7 +870,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/6d744f7b80d69b320c3d4e6dd55218360f00a7671c0266f27619e9c298562a59.png" src="../_images/6d744f7b80d69b320c3d4e6dd55218360f00a7671c0266f27619e9c298562a59.png" />
+<img alt="../_images/302eca7afe0dc3272fa5ba9cafe2a84ddd9aa1e6ab9e7e2ef0125ae1cde3b069.png" src="../_images/302eca7afe0dc3272fa5ba9cafe2a84ddd9aa1e6ab9e7e2ef0125ae1cde3b069.png" />
 </div>
 </div>
 <p>SGHMC gives a slightly better accuracy than SGLD. However, plotting this in terms of the number of steps is slightly misleading: SGHMC evaluates the gradient 10 times for each step while SGLD only once.</p>
@@ -956,7 +895,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Our model is certain of its classification for 
-    53.5% 
+    53.1% 
     of the test set examples.
 </pre></div>
 </div>
@@ -979,7 +918,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/6801aaa648c3180085551a47a66123b307b3712a821bf8ad85e55adb1028f0df.png" src="../_images/6801aaa648c3180085551a47a66123b307b3712a821bf8ad85e55adb1028f0df.png" />
+<img alt="../_images/872328b4e7a67f1d1a88a3ff4d8867cd560f5aadc8af477813a44006f2f6e053.png" src="../_images/872328b4e7a67f1d1a88a3ff4d8867cd560f5aadc8af477813a44006f2f6e053.png" />
 </div>
 </div>
 <p>Are there digits that our model is more uncertain about? We plot the histogram of the number of times the model was unsure about each digit:</p>
@@ -1003,7 +942,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/bc45f25dccc968878bf2db698a538140cf57844fe05b9e7ce705496581fb4219.png" src="../_images/bc45f25dccc968878bf2db698a538140cf57844fe05b9e7ce705496581fb4219.png" />
+<img alt="../_images/83f27d2c86d918dbd348f00fa017381c8abaee8c3726e05b3aba10b6a7b9be66.png" src="../_images/83f27d2c86d918dbd348f00fa017381c8abaee8c3726e05b3aba10b6a7b9be66.png" />
 </div>
 </div>
 <p>Perhaps unsurprisingly, the digit 8 is overrepresented in the set of examples <span class="math notranslate nohighlight">\(i\)</span> for which <span class="math notranslate nohighlight">\(\max_d P(y_i=d|x_i) &lt; 0.95\)</span>. As a purely academic exercise and sanity test of sort, let us now re-compute the point-wise accuracy ignoring the digits for which the model is uncertain, varying the threshold above which we consider the model to be certain:</p>
@@ -1048,7 +987,7 @@ P(y=i\mid x_*) = \int P(y=i\mid x_*, \theta)P(\theta \mid \mathcal{D})\,\mathrm{
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/bc6b22236d5c5c9aed45ec55555bac8d38637e3d9c5312ae76d3724bbf98ccf2.png" src="../_images/bc6b22236d5c5c9aed45ec55555bac8d38637e3d9c5312ae76d3724bbf98ccf2.png" />
+<img alt="../_images/87be351102a2f1792da8b1ca1062b48c687a186312bb329b4117620193387de8.png" src="../_images/87be351102a2f1792da8b1ca1062b48c687a186312bb329b4117620193387de8.png" />
 </div>
 </div>
 <p>Not bad at all, by dropping less than 2% of the samples we reach .99 accuracy, not too bad for such a simple model!</p>

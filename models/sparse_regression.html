@@ -414,7 +414,7 @@
 p &amp;= \operatorname{sigmoid}\left(- X.\boldsymbol{\beta}\right)\\
 y &amp;\sim \operatorname{Bernoulli}(p)\\
 \end{align*}\]</div>
-<p>The model is run on its <em>non-centered parametrization</em> <span id="id3">[<a class="reference internal" href="#id14" title="Omiros Papaspiliopoulos, Gareth O Roberts, and Martin Sköld. A general framework for the parametrization of hierarchical models. Statistical Science, pages 59–73, 2007.">PRSkold07</a>]</span> with data from the numerical version of the German credit dataset. The target posterior is defined by its likelihood. We implement the model using <a class="reference external" href="https://github.com/aesara-devs/aesara">Aesara</a>:</p>
+<p>The model is run on its <em>non-centered parametrization</em> <span id="id3">[<a class="reference internal" href="#id14" title="Omiros Papaspiliopoulos, Gareth O Roberts, and Martin Sköld. A general framework for the parametrization of hierarchical models. Statistical Science, pages 59–73, 2007.">PRSkold07</a>]</span> with data from the numerical version of the German credit dataset. The target posterior is defined by its likelihood. We implement the model in pure JAX:</p>
 <div class="cell tag_hide-cell docutils container">
 <details class="admonition hide above-input">
 <summary aria-label="Toggle hidden content">
@@ -441,52 +441,6 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aesara.tensor</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">at</span>
-
-<span class="n">X_at</span> <span class="o">=</span> <span class="n">at</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
-
-<span class="n">srng</span> <span class="o">=</span> <span class="n">at</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomStream</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="n">tau_rv</span> <span class="o">=</span> <span class="n">srng</span><span class="o">.</span><span class="n">halfcauchy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">lambda_rv</span> <span class="o">=</span> <span class="n">srng</span><span class="o">.</span><span class="n">halfcauchy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">X_at</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-
-<span class="n">sigma</span> <span class="o">=</span> <span class="n">tau_rv</span> <span class="o">*</span> <span class="n">lambda_rv</span>
-<span class="n">beta_rv</span> <span class="o">=</span> <span class="n">srng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">X_at</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-
-<span class="n">eta</span> <span class="o">=</span> <span class="n">X_at</span> <span class="o">@</span> <span class="n">beta_rv</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">at</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="o">-</span><span class="n">eta</span><span class="p">)</span>
-<span class="n">Y_rv</span> <span class="o">=</span> <span class="n">srng</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/numpy/distutils/system_info.py:2159: UserWarning: 
-    Optimized (vendor) Blas libraries are not found.
-    Falls back to netlib Blas library which has worse performance.
-    A better performance should be easily gained by switching
-    Blas library.
-  if self._calc_info(blas):
-/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/numpy/distutils/system_info.py:2159: UserWarning: 
-    Blas (http://www.netlib.org/blas/) libraries not found.
-    Directories to search for the libraries can be specified in the
-    numpy/distutils/site.cfg file (section [blas]) or by setting
-    the BLAS environment variable.
-  if self._calc_info(blas):
-/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/numpy/distutils/system_info.py:2159: UserWarning: 
-    Blas (http://www.netlib.org/blas/) sources not found.
-    Directories to search for the sources can be specified in the
-    numpy/distutils/site.cfg file (section [blas_src]) or by setting
-    the BLAS_SRC environment variable.
-  if self._calc_info(blas):
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING (aesara.tensor.blas): Using NumPy C-API based implementation for BLAS functions.
-</pre></div>
-</div>
-</div>
-</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The non-centered parametrization is not necessarily adapted to every geometry. One should always check <em>a posteriori</em> the sampler did not encounter any funnel geomtry.</p>
@@ -501,14 +455,8 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span>
   <span class="s2">&quot;https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data-numeric&quot;</span><span class="p">,</span>
   <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-  <span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span>
+  <span class="n">sep</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_4132/3916605363.py:3: FutureWarning: The &#39;delim_whitespace&#39; keyword in pd.read_table is deprecated and will be removed in a future version. Use ``sep=&#39;\s+&#39;`` instead
-  data = pd.read_table(
 </pre></div>
 </div>
 </div>
@@ -554,41 +502,37 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 </section>
 <section id="models">
 <h2>Models<a class="headerlink" href="#models" title="Link to this heading">#</a></h2>
-<p>We generate a function that computes the model’s logdensity using <a class="reference external" href="https://github.com/aesara-devs/aeppl">AePPL</a>. We transform the values of <span class="math notranslate nohighlight">\(\tau\)</span> and <span class="math notranslate nohighlight">\(\lambda\)</span> so the sampler can operate on variables defined on the real line:</p>
+<p>We define the log-density function in pure JAX. We work in log-transformed coordinates
+for <span class="math notranslate nohighlight">\(\tau\)</span> and <span class="math notranslate nohighlight">\(\boldsymbol{\lambda}\)</span> so the sampler can operate on variables defined on
+the real line, and include the corresponding log-Jacobian correction terms:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aesara</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">aeppl</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">aeppl.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransformValuesRewrite</span><span class="p">,</span> <span class="n">LogTransform</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jax.scipy.stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stats</span>
 
-<span class="n">transforms_op</span> <span class="o">=</span> <span class="n">TransformValuesRewrite</span><span class="p">(</span>
-     <span class="p">{</span><span class="n">lambda_rv</span><span class="p">:</span> <span class="n">LogTransform</span><span class="p">(),</span> <span class="n">tau_rv</span><span class="p">:</span> <span class="n">LogTransform</span><span class="p">()}</span>
-<span class="p">)</span>
-
-<span class="n">logdensity</span><span class="p">,</span> <span class="n">value_variables</span> <span class="o">=</span> <span class="n">aeppl</span><span class="o">.</span><span class="n">joint_logprob</span><span class="p">(</span>
-    <span class="n">tau_rv</span><span class="p">,</span>
-    <span class="n">lambda_rv</span><span class="p">,</span>
-    <span class="n">beta_rv</span><span class="p">,</span>
-    <span class="n">realized</span><span class="o">=</span><span class="p">{</span><span class="n">Y_rv</span><span class="p">:</span> <span class="n">at</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">y</span><span class="p">)},</span>
-    <span class="n">extra_rewrites</span><span class="o">=</span><span class="n">transforms_op</span>
-<span class="p">)</span>
-
-
-<span class="n">logdensity_aesara_fn</span> <span class="o">=</span> <span class="n">aesara</span><span class="o">.</span><span class="n">function</span><span class="p">([</span><span class="n">X_at</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">value_variables</span><span class="p">),</span> <span class="n">logdensity</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;JAX&quot;</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">logdensity_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="n">tau</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;log_tau&#39;</span><span class="p">]</span>
-    <span class="n">lmbda</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;log_lmbda&#39;</span><span class="p">]</span>
+    <span class="n">log_tau</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;log_tau&#39;</span><span class="p">]</span>
+    <span class="n">log_lmbda</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;log_lmbda&#39;</span><span class="p">]</span>
     <span class="n">beta</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">logdensity_aesara_fn</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">jit_fn</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">lmbda</span><span class="p">,</span> <span class="n">beta</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/functools.py:909: UserWarning: Skipping `CheckAndRaise` Op (assertion: sigma &gt; 0) as JAX tracing would remove it.
-  return dispatch(args[0].__class__)(*args, **kw)
-/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/functools.py:909: UserWarning: Skipping `CheckAndRaise` Op (assertion: 0 &lt;= p &lt;= 1) as JAX tracing would remove it.
-  return dispatch(args[0].__class__)(*args, **kw)
+
+    <span class="n">tau</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_tau</span><span class="p">)</span>
+    <span class="n">lmbda</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_lmbda</span><span class="p">)</span>
+
+    <span class="c1"># HalfCauchy(0, 1) log-density in log-space (includes log-Jacobian of exp transform)</span>
+    <span class="n">log_p_tau</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">tau</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">log_tau</span>
+    <span class="n">log_p_lmbda</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">lmbda</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">log_lmbda</span><span class="p">)</span>
+
+    <span class="c1"># beta ~ Normal(0, tau * lambda)</span>
+    <span class="n">log_p_beta</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">tau</span> <span class="o">*</span> <span class="n">lmbda</span><span class="p">))</span>
+
+    <span class="c1"># y ~ Bernoulli(sigmoid(-X @ beta))</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">beta</span>
+    <span class="n">log_likelihood</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+        <span class="n">y</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">log_sigmoid</span><span class="p">(</span><span class="o">-</span><span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">log_sigmoid</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">log_p_tau</span> <span class="o">+</span> <span class="n">log_p_lmbda</span> <span class="o">+</span> <span class="n">log_p_beta</span> <span class="o">+</span> <span class="n">log_likelihood</span>
 </pre></div>
 </div>
 </div>
@@ -640,7 +584,7 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 
 <span class="c1"># Choose the last state of the first k chains as a starting point for the sampler</span>
 <span class="n">n_parallel_chains</span> <span class="o">=</span> <span class="mi">4</span>
-<span class="n">init_states</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:</span><span class="n">n_parallel_chains</span><span class="p">],</span> <span class="n">state</span><span class="p">)</span>
+<span class="n">init_states</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[:</span><span class="n">n_parallel_chains</span><span class="p">],</span> <span class="n">state</span><span class="p">)</span>
 <span class="n">keys</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key_sample</span><span class="p">,</span> <span class="n">n_parallel_chains</span><span class="p">)</span>
 <span class="n">samples</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">inference_loop</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))(</span>
     <span class="n">keys</span><span class="p">,</span> <span class="n">init_states</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">num_samples</span>
@@ -659,62 +603,62 @@ y &amp;\sim \operatorname{Bernoulli}(p)\\
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
   from .autonotebook import tqdm as notebook_tqdm
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                   mean       std    median      5.0%     95.0%     n_eff     r_hat
-      beta[0]     -0.23      0.34     -0.12     -0.84      0.21     36.60      1.09
-      beta[1]     -0.86      0.11     -0.86     -1.05     -0.69    162.95      1.04
-      beta[2]      1.22      0.25      1.22      0.85      1.68    100.70      1.04
-      beta[3]     -0.71      0.16     -0.72     -0.98     -0.46    223.66      1.01
-      beta[4]      0.25      0.27      0.21     -0.10      0.67     34.15      1.13
-      beta[5]     -0.39      0.12     -0.39     -0.58     -0.19     42.45      1.09
-      beta[6]     -0.17      0.13     -0.17     -0.39      0.02    131.19      1.03
-      beta[7]     -0.26      0.18     -0.26     -0.56      0.02     50.61      1.06
-      beta[8]     -0.01      0.08     -0.00     -0.13      0.12     72.15      1.07
-      beta[9]      0.17      0.14      0.16     -0.04      0.37     36.32      1.13
-     beta[10]     -0.14      0.18     -0.11     -0.43      0.12     54.46      1.07
-     beta[11]     -0.25      0.11     -0.25     -0.42     -0.07     53.76      1.09
-     beta[12]      0.17      0.21      0.10     -0.08      0.57     33.73      1.09
-     beta[13]      0.02      0.08      0.01     -0.09      0.16    136.13      1.03
-     beta[14]     -0.06      0.07     -0.05     -0.18      0.05    125.27      1.05
-     beta[15]     -0.36      0.28     -0.34     -0.78      0.04     39.99      1.14
-     beta[16]      0.29      0.09      0.28      0.12      0.43    129.33      1.02
-     beta[17]     -0.39      0.17     -0.38     -0.70     -0.15     56.06      1.08
-     beta[18]      0.32      0.22      0.31     -0.02      0.66     15.16      1.16
-     beta[19]      0.42      0.32      0.39     -0.05      0.91     29.03      1.18
-     beta[20]      0.11      0.13      0.11     -0.07      0.34     83.58      1.09
-     beta[21]     -0.09      0.10     -0.08     -0.26      0.05     72.31      1.06
-     beta[22]     -0.01      0.14     -0.00     -0.20      0.23    167.96      1.02
-     beta[23]      0.02      0.09      0.01     -0.15      0.16     31.45      1.08
-     beta[24]      0.02      0.07      0.01     -0.11      0.13     55.26      1.09
- log_lmbda[0]     -0.37      1.29     -0.22     -2.58      1.59     62.03      1.05
- log_lmbda[1]      1.14      0.79      0.98     -0.01      2.48     39.72      1.11
- log_lmbda[2]      1.50      0.87      1.28      0.35      3.16     35.06      1.15
- log_lmbda[3]      1.14      0.87      1.08     -0.18      2.38     64.96      1.10
- log_lmbda[4]      0.05      1.26      0.07     -2.11      2.02     42.12      1.11
- log_lmbda[5]      0.58      0.74      0.62     -0.68      1.67     65.76      1.07
- log_lmbda[6]     -0.16      0.94     -0.13     -1.82      1.27     76.94      1.07
- log_lmbda[7]      0.19      1.01      0.15     -1.41      1.80     58.62      1.05
- log_lmbda[8]     -0.85      1.28     -0.73     -2.89      1.10     59.57      1.05
- log_lmbda[9]     -0.49      1.13     -0.41     -2.78      0.99     46.49      1.13
-log_lmbda[10]     -0.38      1.08     -0.28     -2.21      1.33    111.15      1.03
-log_lmbda[11]      0.20      0.77      0.19     -1.06      1.29     84.11      1.04
-log_lmbda[12]     -0.30      1.04     -0.18     -2.06      1.28     94.75      1.03
-log_lmbda[13]     -1.02      1.13     -0.97     -2.88      0.74    101.24      1.09
-log_lmbda[14]     -0.83      1.09     -0.85     -2.54      1.06    144.03      1.03
-log_lmbda[15]      0.15      1.08      0.28     -1.51      1.99     48.83      1.09
-log_lmbda[16]      0.21      0.71      0.19     -1.00      1.34    122.29      1.04
-log_lmbda[17]      0.32      0.69      0.29     -0.72      1.46    110.28      1.05
-log_lmbda[18]      0.09      1.01      0.13     -1.59      1.82     25.00      1.12
-log_lmbda[19]      0.25      1.12      0.37     -1.66      2.07     34.59      1.14
-log_lmbda[20]     -0.39      0.97     -0.38     -1.92      1.38    154.89      1.03
-log_lmbda[21]     -0.77      1.08     -0.74     -2.62      0.98     94.20      1.05
-log_lmbda[22]     -1.02      1.47     -0.84     -3.72      1.32     33.22      1.17
-log_lmbda[23]     -1.07      1.24     -0.81     -3.14      0.60     61.07      1.08
-log_lmbda[24]     -1.05      1.21     -0.99     -3.14      0.75     78.80      1.05
-      log_tau     -1.25      0.42     -1.22     -1.95     -0.63     29.99      1.18
+      beta[0]     -0.25      0.34     -0.11     -0.81      0.17     63.76      1.07
+      beta[1]     -0.83      0.10     -0.82     -0.99     -0.68     87.27      1.07
+      beta[2]      1.17      0.24      1.15      0.78      1.54    152.95      1.03
+      beta[3]     -0.70      0.15     -0.70     -0.92     -0.44     75.82      1.07
+      beta[4]      0.24      0.26      0.19     -0.10      0.62     58.37      1.07
+      beta[5]     -0.38      0.13     -0.38     -0.57     -0.18     24.84      1.12
+      beta[6]     -0.24      0.14     -0.23     -0.45     -0.01     73.00      1.09
+      beta[7]     -0.24      0.19     -0.23     -0.50      0.04     39.82      1.10
+      beta[8]     -0.02      0.11     -0.01     -0.19      0.15     12.69      1.18
+      beta[9]      0.21      0.16      0.20     -0.03      0.44     12.76      1.14
+     beta[10]     -0.12      0.16     -0.12     -0.37      0.13     43.34      1.11
+     beta[11]     -0.24      0.11     -0.24     -0.40     -0.07     52.31      1.10
+     beta[12]      0.15      0.16      0.13     -0.07      0.41     73.21      1.08
+     beta[13]      0.00      0.07     -0.00     -0.11      0.13    110.21      1.04
+     beta[14]     -0.07      0.09     -0.07     -0.21      0.06     15.41      1.15
+     beta[15]     -0.35      0.27     -0.31     -0.75      0.02     20.87      1.15
+     beta[16]      0.29      0.09      0.28      0.15      0.44    101.22      1.02
+     beta[17]     -0.33      0.17     -0.34     -0.59     -0.08     32.06      1.24
+     beta[18]      0.25      0.19      0.25     -0.03      0.52     84.34      1.06
+     beta[19]      0.35      0.26      0.33     -0.03      0.71     71.26      1.07
+     beta[20]      0.14      0.13      0.14     -0.06      0.36     47.24      1.08
+     beta[21]     -0.08      0.12     -0.07     -0.28      0.14     12.26      1.18
+     beta[22]     -0.05      0.19     -0.01     -0.37      0.23     19.36      1.24
+     beta[23]     -0.00      0.09      0.01     -0.21      0.12     59.77      1.10
+     beta[24]     -0.01      0.07     -0.00     -0.12      0.12     58.72      1.08
+ log_lmbda[0]     -0.43      1.57     -0.04     -2.96      2.44     17.91      1.36
+ log_lmbda[1]      0.97      0.69      0.93     -0.20      1.90     20.58      1.17
+ log_lmbda[2]      1.40      0.79      1.27      0.11      2.62     35.08      1.08
+ log_lmbda[3]      0.85      0.72      0.83     -0.32      1.87     28.55      1.11
+ log_lmbda[4]     -0.01      0.92      0.07     -1.52      1.42     88.13      1.03
+ log_lmbda[5]      0.35      0.74      0.33     -0.78      1.45     15.66      1.13
+ log_lmbda[6]      0.03      0.92     -0.02     -1.25      1.54    105.21      1.01
+ log_lmbda[7]     -0.17      1.22      0.05     -2.28      1.74     44.44      1.07
+ log_lmbda[8]     -0.93      1.32     -0.65     -3.25      0.92     69.18      1.06
+ log_lmbda[9]     -0.16      1.06     -0.10     -1.98      1.27     10.70      1.16
+log_lmbda[10]     -0.30      0.96     -0.21     -1.91      1.30    106.12      1.02
+log_lmbda[11]      0.03      0.78      0.08     -1.19      1.14     29.05      1.12
+log_lmbda[12]     -0.49      1.23     -0.16     -2.43      1.44     24.98      1.17
+log_lmbda[13]     -1.17      1.13     -1.14     -2.97      0.77     90.11      1.07
+log_lmbda[14]     -0.83      1.35     -0.58     -3.79      0.80      8.33      1.33
+log_lmbda[15]      0.09      1.09      0.20     -1.48      1.94     21.59      1.19
+log_lmbda[16]      0.35      0.70      0.41     -0.94      1.36    103.35      1.02
+log_lmbda[17]      0.42      0.97      0.28     -1.11      2.12     55.01      1.10
+log_lmbda[18]     -0.14      0.89     -0.10     -1.52      1.41    104.26      1.03
+log_lmbda[19]      0.21      0.97      0.34     -1.44      1.70     94.36      1.04
+log_lmbda[20]     -0.43      0.99     -0.44     -1.87      1.35     19.49      1.15
+log_lmbda[21]     -0.64      1.00     -0.57     -2.45      0.86     91.47      1.06
+log_lmbda[22]     -0.53      1.15     -0.46     -2.19      1.46     61.41      1.10
+log_lmbda[23]     -0.91      1.18     -0.81     -2.78      1.07    107.63      1.04
+log_lmbda[24]     -1.01      1.09     -0.83     -2.86      0.60     62.15      1.04
+      log_tau     -1.23      0.37     -1.23     -1.79     -0.63     14.68      1.16
 </pre></div>
 </div>
 </div>
@@ -727,7 +671,7 @@ log_lmbda[24]     -1.05      1.21     -0.99     -3.14      0.75     78.80      1
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([ 0,  1,  0, 44], dtype=int64)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([ 1,  0, 90,  0], dtype=int32)
 </pre></div>
 </div>
 </div>
@@ -757,7 +701,7 @@ log_lmbda[24]     -1.05      1.21     -0.99     -3.14      0.75     78.80      1
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/007ad48ad347f215da5b0db99e8c01abe69b4d14541cb5fb4aac22b9a35eabbf.png" src="../_images/007ad48ad347f215da5b0db99e8c01abe69b4d14541cb5fb4aac22b9a35eabbf.png" />
+<img alt="../_images/c909b837ffde55e75a8740c7a8627902d63542f7c0476c41980f16203fedbbf8.png" src="../_images/c909b837ffde55e75a8740c7a8627902d63542f7c0476c41980f16203fedbbf8.png" />
 </div>
 </div>
 <p>While some parameters (for instance the 15th) exhibit no particular correlations, the funnel geometry can still be observed for a few of them (4th, 13th, etc.). Ideally one would adopt a centered parametrization for those parameters to get a better approximation to the true posterior distribution, but here we also assess the ability of the sampler to explore these funnel geometries.</p>
@@ -781,7 +725,7 @@ log_lmbda[24]     -1.05      1.21     -0.99     -3.14      0.75     78.80      1
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/18e407e40fab52ca0a3ece55b476789cb60968e24262fa42b3a17eaa74d17f6a.png" src="../_images/18e407e40fab52ca0a3ece55b476789cb60968e24262fa42b3a17eaa74d17f6a.png" />
+<img alt="../_images/c17c840aee2bbfe11ba2243cc86701864c93850c00338c9f58939686e8b728ff.png" src="../_images/c17c840aee2bbfe11ba2243cc86701864c93850c00338c9f58939686e8b728ff.png" />
 </div>
 </div>
 <p>Indeed, many of the parameters are centered around <span class="math notranslate nohighlight">\(0\)</span>.</p>

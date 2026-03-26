@@ -492,7 +492,7 @@
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/e97db573e2731d717e5587d57a5933c5200086ae20bf07f0aaa90a5d112670c2.png" src="../_images/e97db573e2731d717e5587d57a5933c5200086ae20bf07f0aaa90a5d112670c2.png" />
+<img alt="../_images/b069443d79bbdbae76d433f67b5dbdd762d4c8fc89d077434b230e09c3a86655.png" src="../_images/b069443d79bbdbae76d433f67b5dbdd762d4c8fc89d077434b230e09c3a86655.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -578,7 +578,7 @@
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/644e703c66b39be2bd0d57dfc849520284b18155ca80837a9669fffd379663d4.png" src="../_images/644e703c66b39be2bd0d57dfc849520284b18155ca80837a9669fffd379663d4.png" />
+<img alt="../_images/2e7c75acd78e9fb4073ef6fd8ea2fd37ed488167de548253ade35035908d448e.png" src="../_images/2e7c75acd78e9fb4073ef6fd8ea2fd37ed488167de548253ade35035908d448e.png" />
 </div>
 </div>
 </section>
@@ -718,7 +718,7 @@ and compute the posterior for all the weights.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">logprior_fn</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-    <span class="n">leaves</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_util</span><span class="o">.</span><span class="n">tree_flatten</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">leaves</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="n">flat_params</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">jnp</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">leaves</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">tfd</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">flat_params</span><span class="p">))</span>
 
@@ -769,7 +769,7 @@ and compute the posterior for all the weights.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Train accuracy = 86.89%
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Train accuracy = 87.00%
 </pre></div>
 </div>
 </div>
@@ -837,7 +837,7 @@ and compute the posterior for all the weights.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/9cc87b072afdaf210681c38a0c529cb894dbc1014e31162764a42d6feb329ac3.png" src="../_images/9cc87b072afdaf210681c38a0c529cb894dbc1014e31162764a42d6feb329ac3.png" />
+<img alt="../_images/c61ea6601ea2063861b1060a9ec9ea6420ee4a08349fa5615d63bdfd50b6fca7.png" src="../_images/c61ea6601ea2063861b1060a9ec9ea6420ee4a08349fa5615d63bdfd50b6fca7.png" />
 </div>
 </div>
 <div class="cell tag_hide-input docutils container">
@@ -853,7 +853,7 @@ and compute the posterior for all the weights.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/75c6b7206405deef1703d18cd400c417231f988db570dd15d3421ad3e3042516.png" src="../_images/75c6b7206405deef1703d18cd400c417231f988db570dd15d3421ad3e3042516.png" />
+<img alt="../_images/1a4cea688918bc5ca80e0dec31291f2684150b4562aceb5fcb142b5aae88f8fe.png" src="../_images/1a4cea688918bc5ca80e0dec31291f2684150b4562aceb5fcb142b5aae88f8fe.png" />
 </div>
 </div>
 </section>
@@ -957,8 +957,8 @@ w^t_{ijl} = \mu_{ijl} + \epsilon^t_{ijl} \sigma_l
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1min 5s, sys: 405 ms, total: 1min 5s
-Wall time: 59.1 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 57.8 s, sys: 665 ms, total: 58.4 s
+Wall time: 44.2 s
 </pre></div>
 </div>
 </div>
@@ -1005,7 +1005,7 @@ Wall time: 59.1 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test accuracy = 87.33%
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test accuracy = 87.22%
 </pre></div>
 </div>
 </div>
@@ -1048,7 +1048,7 @@ Wall time: 59.1 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/ac7791b38b4ec7cb49876bc5424a2ce9216192bb924b86619e9ced487bf9f7e9.png" src="../_images/ac7791b38b4ec7cb49876bc5424a2ce9216192bb924b86619e9ced487bf9f7e9.png" />
+<img alt="../_images/1cca063260cb20916b6b3c36a278b0c119798eec93f8f0d940119f06b000c0e5.png" src="../_images/1cca063260cb20916b6b3c36a278b0c119798eec93f8f0d940119f06b000c0e5.png" />
 </div>
 </div>
 <div class="cell tag_hide-input docutils container">
@@ -1064,7 +1064,7 @@ Wall time: 59.1 s
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/dabca6aa3ee9c472541181b57a5261754947021e07d0cd347189c98fda88f65d.png" src="../_images/dabca6aa3ee9c472541181b57a5261754947021e07d0cd347189c98fda88f65d.png" />
+<img alt="../_images/6782a44836c9206801d8176cc2ed1e108d53a9a04ebbe8bffa641ba9867bffb7.png" src="../_images/6782a44836c9206801d8176cc2ed1e108d53a9a04ebbe8bffa641ba9867bffb7.png" />
 </div>
 </div>
 </section>
