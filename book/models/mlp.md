@@ -128,7 +128,7 @@ model = NN()
 
 def logprior_fn(params):
     """Compute the value of the log-prior density function."""
-    leaves, _ = jax.tree_util.tree_flatten(params)
+    leaves, _ = jax.tree.flatten(params)
     flat_params = jnp.concatenate([jnp.ravel(a) for a in leaves])
     return jnp.sum(stats.norm.logpdf(flat_params))
 
