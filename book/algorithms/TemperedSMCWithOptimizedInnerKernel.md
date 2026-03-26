@@ -313,7 +313,8 @@ def plot(post, sampler, dimensions, ax):
     post = np.asarray(post)
     dimensions = post.shape[1]
     for dim in range(dimensions):
-        az.plot_kde(post[:, dim], ax=ax)
+        x_kde, y_kde, _ = az.kde(post[:, dim])
+        ax.plot(x_kde, y_kde)
         _ = ax.plot(linspace, density()[-1], c="red")
 ```
 

@@ -1,15 +1,14 @@
 ---
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.16.0
-  kernelspec:
-    display_name: mclmc
-    language: python
-    name: python3
+jupytext:
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.16.0
+kernelspec:
+  display_name: laps
+  language: python
+  name: python3
 ---
 
 # The Late Adjusted Parallel Sampler (LAPS)
@@ -28,7 +27,17 @@ It has been observed that among gradient-based MCMC methods, unadjusted kernels 
 
 The details involve determining when this switching point should take place, and tuning the hyperparameters of the kernels.
 
-```python
+```{code-cell} ipython3
+:tags: [hide-cell]
+
+import matplotlib.pyplot as plt
+
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["axes.spines.top"] = False
+plt.rcParams["font.size"] = 19
+```
+
+```{code-cell} ipython3
 import jax
 import jax.numpy as jnp
 jax.config.update("jax_enable_x64", True)
@@ -69,7 +78,7 @@ def laps(logdensity_fn, ndims,
 
 Use LAPS as follows:
 
-```python
+```{code-cell} ipython3
 
 ndims = 2
 
@@ -84,9 +93,9 @@ rng_key_sampling, rng_key_init = jax.random.split(jax.random.key(42))
 sample_init = lambda key: jax.random.normal(key, shape= ndims) 
 ```
 
-### Run sampling:
+## Run sampling:
 
-```python
+```{code-cell} ipython3
 
 num_chains = 256
 num_steps1, num_steps2 = 100, 100
@@ -113,9 +122,9 @@ info, grads_per_step, _acc_prob, samples = run_laps(
 )
 ```
 
-### Visualize the posterior samples:
+## Visualize the posterior samples:
 
-```python
+```{code-cell} ipython3
 import matplotlib.pyplot as plt
 
 x1 = jnp.linspace(-35, 35, 500)
@@ -138,7 +147,7 @@ The above example runs 256 chains *in parallel*, each for 200 steps. So, apart f
 To see how many independent samples we get, we can use the fact that we know (or rather, have an accurate estimate of) the true second moments of the 2D Banana, so we can report the difference between the true second moments and the estimate (we normalize by the second moment standard deviations):
 
 
-```python
+```{code-cell} ipython3
 ground_truth_second_moment_mean=jnp.array([100.0, 19.0])
 ground_truth_second_moment_standard_deviation=jnp.sqrt(jnp.array([20000.0, 4600.898]))
 
