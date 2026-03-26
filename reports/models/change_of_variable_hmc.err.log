@@ -1,0 +1,146 @@
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/nbclient/client.py", line 1323, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+az.plot_trace(trace)
+plt.tight_layout();
+------------------
+
+----- stderr -----
+/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/arviz/stats/density_utils.py:488: UserWarning: Your data appears to have a single value or no finite values
+  warnings.warn("Your data appears to have a single value or no finite values")
+------------------
+
+[31m---------------------------------------------------------------------------[39m
+[31mTypeError[39m                                 Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[13][39m[32m, line 1[39m
+[32m----> [39m[32m1[39m [43maz[49m[43m.[49m[43mplot_trace[49m[43m([49m[43mtrace[49m[43m)[49m
+[32m      2[39m plt.tight_layout();
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/arviz/plots/traceplot.py:271[39m, in [36mplot_trace[39m[34m(data, var_names, filter_vars, transform, coords, divergences, kind, figsize, rug, lines, circ_var_names, circ_var_units, compact, compact_prop, combined, chain_prop, legend, plot_kwargs, fill_kwargs, rug_kwargs, hist_kwargs, trace_kwargs, rank_kwargs, labeller, axes, backend, backend_config, backend_kwargs, show)[39m
+[32m    268[39m backend = backend.lower()
+[32m    270[39m plot = get_plotting_function([33m"[39m[33mplot_trace[39m[33m"[39m, [33m"[39m[33mtraceplot[39m[33m"[39m, backend)
+[32m--> [39m[32m271[39m axes = [43mplot[49m[43m([49m[43m*[49m[43m*[49m[43mtrace_plot_args[49m[43m)[49m
+[32m    273[39m [38;5;28;01mreturn[39;00m axes
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/arviz/plots/backends/matplotlib/traceplot.py:252[39m, in [36mplot_trace[39m[34m(data, var_names, divergences, kind, figsize, rug, lines, circ_var_names, circ_var_units, compact, compact_prop, combined, chain_prop, legend, labeller, plot_kwargs, fill_kwargs, rug_kwargs, hist_kwargs, trace_kwargs, rank_kwargs, plotters, divergence_data, axes, backend_kwargs, backend_config, show)[39m
+[32m    249[39m         aux_plot_kwargs = plot_kwargs
+[32m    250[39m         aux_trace_kwargs = trace_kwargs
+[32m--> [39m[32m252[39m     ax = [43m_plot_chains_mpl[49m[43m([49m
+[32m    253[39m [43m        [49m[43max[49m[43m,[49m
+[32m    254[39m [43m        [49m[43midy[49m[43m,[49m
+[32m    255[39m [43m        [49m[43mvalue[49m[43m,[49m
+[32m    256[39m [43m        [49m[43mdata[49m[43m,[49m
+[32m    257[39m [43m        [49m[43mchain_prop[49m[43m,[49m
+[32m    258[39m [43m        [49m[43mcombined[49m[43m,[49m
+[32m    259[39m [43m        [49m[43mxt_labelsize[49m[43m,[49m
+[32m    260[39m [43m        [49m[43mrug[49m[43m,[49m
+[32m    261[39m [43m        [49m[43mkind[49m[43m,[49m
+[32m    262[39m [43m        [49m[43maux_trace_kwargs[49m[43m,[49m
+[32m    263[39m [43m        [49m[43mhist_kwargs[49m[43m,[49m
+[32m    264[39m [43m        [49m[43maux_plot_kwargs[49m[43m,[49m
+[32m    265[39m [43m        [49m[43mfill_kwargs[49m[43m,[49m
+[32m    266[39m [43m        [49m[43mrug_kwargs[49m[43m,[49m
+[32m    267[39m [43m        [49m[43mrank_kwargs[49m[43m,[49m
+[32m    268[39m [43m        [49m[43mcircular[49m[43m,[49m
+[32m    269[39m [43m        [49m[43mcirc_var_units[49m[43m,[49m
+[32m    270[39m [43m        [49m[43mcirc_units_trace[49m[43m,[49m
+[32m    271[39m [43m    [49m[43m)[49m
+[32m    273[39m [38;5;28;01melse[39;00m:
+[32m    274[39m     sub_data = data[var_name].sel(**selection)
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/arviz/plots/backends/matplotlib/traceplot.py:491[39m, in [36m_plot_chains_mpl[39m[34m(axes, idy, value, data, chain_prop, combined, xt_labelsize, rug, kind, trace_kwargs, hist_kwargs, plot_kwargs, fill_kwargs, rug_kwargs, rank_kwargs, circular, circ_var_units, circ_units_trace)[39m
+[32m    489[39m         aux_kwargs = dealiase_sel_kwargs(plot_kwargs, chain_prop, chain_idx)
+[32m    490[39m         [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m idy:
+[32m--> [39m[32m491[39m             axes = [43mplot_dist[49m[43m([49m
+[32m    492[39m [43m                [49m[43mvalues[49m[43m=[49m[43mrow[49m[43m,[49m
+[32m    493[39m [43m                [49m[43mtextsize[49m[43m=[49m[43mxt_labelsize[49m[43m,[49m
+[32m    494[39m [43m                [49m[43mrug[49m[43m=[49m[43mrug[49m[43m,[49m
+[32m    495[39m [43m                [49m[43max[49m[43m=[49m[43maxes[49m[43m,[49m
+[32m    496[39m [43m                [49m[43mhist_kwargs[49m[43m=[49m[43mhist_kwargs[49m[43m,[49m
+[32m    497[39m [43m                [49m[43mplot_kwargs[49m[43m=[49m[43maux_kwargs[49m[43m,[49m
+[32m    498[39m [43m                [49m[43mfill_kwargs[49m[43m=[49m[43mfill_kwargs[49m[43m,[49m
+[32m    499[39m [43m                [49m[43mrug_kwargs[49m[43m=[49m[43mrug_kwargs[49m[43m,[49m
+[32m    500[39m [43m                [49m[43mbackend[49m[43m=[49m[33;43m"[39;49m[33;43mmatplotlib[39;49m[33;43m"[39;49m[43m,[49m
+[32m    501[39m [43m                [49m[43mshow[49m[43m=[49m[38;5;28;43;01mFalse[39;49;00m[43m,[49m
+[32m    502[39m [43m                [49m[43mis_circular[49m[43m=[49m[43mcirc_var_units[49m[43m,[49m
+[32m    503[39m [43m            [49m[43m)[49m
+[32m    505[39m [38;5;28;01mif[39;00m kind == [33m"[39m[33mrank_bars[39m[33m"[39m [38;5;129;01mand[39;00m idy:
+[32m    506[39m     axes = plot_rank(data=value, kind=[33m"[39m[33mbars[39m[33m"[39m, ax=axes, **rank_kwargs)
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/arviz/plots/distplot.py:232[39m, in [36mplot_dist[39m[34m(values, values2, color, kind, cumulative, label, rotated, rug, bw, quantiles, contour, fill_last, figsize, textsize, plot_kwargs, fill_kwargs, rug_kwargs, contour_kwargs, contourf_kwargs, pcolormesh_kwargs, hist_kwargs, is_circular, ax, backend, backend_kwargs, show, **kwargs)[39m
+[32m    229[39m backend = backend.lower()
+[32m    231[39m plot = get_plotting_function([33m"[39m[33mplot_dist[39m[33m"[39m, [33m"[39m[33mdistplot[39m[33m"[39m, backend)
+[32m--> [39m[32m232[39m ax = [43mplot[49m[43m([49m[43m*[49m[43m*[49m[43mdist_plot_args[49m[43m)[49m
+[32m    233[39m [38;5;28;01mreturn[39;00m ax
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/arviz/plots/backends/matplotlib/distplot.py:92[39m, in [36mplot_dist[39m[34m(values, values2, color, kind, cumulative, label, rotated, rug, bw, quantiles, contour, fill_last, figsize, textsize, plot_kwargs, fill_kwargs, rug_kwargs, contour_kwargs, contourf_kwargs, pcolormesh_kwargs, hist_kwargs, is_circular, ax, backend_kwargs, show)[39m
+[32m     89[39m     plot_kwargs.setdefault([33m"[39m[33mcolor[39m[33m"[39m, color)
+[32m     90[39m     legend = label [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m
+[32m---> [39m[32m92[39m     ax = [43mplot_kde[49m[43m([49m
+[32m     93[39m [43m        [49m[43mvalues[49m[43m,[49m
+[32m     94[39m [43m        [49m[43mvalues2[49m[43m,[49m
+[32m     95[39m [43m        [49m[43mcumulative[49m[43m=[49m[43mcumulative[49m[43m,[49m
+[32m     96[39m [43m        [49m[43mrug[49m[43m=[49m[43mrug[49m[43m,[49m
+[32m     97[39m [43m        [49m[43mlabel[49m[43m=[49m[43mlabel[49m[43m,[49m
+[32m     98[39m [43m        [49m[43mbw[49m[43m=[49m[43mbw[49m[43m,[49m
+[32m     99[39m [43m        [49m[43mquantiles[49m[43m=[49m[43mquantiles[49m[43m,[49m
+[32m    100[39m [43m        [49m[43mrotated[49m[43m=[49m[43mrotated[49m[43m,[49m
+[32m    101[39m [43m        [49m[43mcontour[49m[43m=[49m[43mcontour[49m[43m,[49m
+[32m    102[39m [43m        [49m[43mlegend[49m[43m=[49m[43mlegend[49m[43m,[49m
+[32m    103[39m [43m        [49m[43mfill_last[49m[43m=[49m[43mfill_last[49m[43m,[49m
+[32m    104[39m [43m        [49m[43mtextsize[49m[43m=[49m[43mtextsize[49m[43m,[49m
+[32m    105[39m [43m        [49m[43mplot_kwargs[49m[43m=[49m[43mplot_kwargs[49m[43m,[49m
+[32m    106[39m [43m        [49m[43mfill_kwargs[49m[43m=[49m[43mfill_kwargs[49m[43m,[49m
+[32m    107[39m [43m        [49m[43mrug_kwargs[49m[43m=[49m[43mrug_kwargs[49m[43m,[49m
+[32m    108[39m [43m        [49m[43mcontour_kwargs[49m[43m=[49m[43mcontour_kwargs[49m[43m,[49m
+[32m    109[39m [43m        [49m[43mcontourf_kwargs[49m[43m=[49m[43mcontourf_kwargs[49m[43m,[49m
+[32m    110[39m [43m        [49m[43mpcolormesh_kwargs[49m[43m=[49m[43mpcolormesh_kwargs[49m[43m,[49m
+[32m    111[39m [43m        [49m[43max[49m[43m=[49m[43max[49m[43m,[49m
+[32m    112[39m [43m        [49m[43mbackend[49m[43m=[49m[33;43m"[39;49m[33;43mmatplotlib[39;49m[33;43m"[39;49m[43m,[49m
+[32m    113[39m [43m        [49m[43mbackend_kwargs[49m[43m=[49m[43mbackend_kwargs[49m[43m,[49m
+[32m    114[39m [43m        [49m[43mis_circular[49m[43m=[49m[43mis_circular[49m[43m,[49m
+[32m    115[39m [43m        [49m[43mshow[49m[43m=[49m[43mshow[49m[43m,[49m
+[32m    116[39m [43m    [49m[43m)[49m
+[32m    118[39m [38;5;28;01mif[39;00m backend_show(show):
+[32m    119[39m     plt.show()
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/arviz/plots/kdeplot.py:266[39m, in [36mplot_kde[39m[34m(values, values2, cumulative, rug, label, bw, adaptive, quantiles, rotated, contour, hdi_probs, fill_last, figsize, textsize, plot_kwargs, fill_kwargs, rug_kwargs, contour_kwargs, contourf_kwargs, pcolormesh_kwargs, is_circular, ax, legend, backend, backend_kwargs, show, return_glyph, **kwargs)[39m
+[32m    263[39m [38;5;28;01mif[39;00m bw == [33m"[39m[33mdefault[39m[33m"[39m:
+[32m    264[39m     bw = [33m"[39m[33mtaylor[39m[33m"[39m [38;5;28;01mif[39;00m is_circular [38;5;28;01melse[39;00m [33m"[39m[33mexperimental[39m[33m"[39m
+[32m--> [39m[32m266[39m grid, density = [43mkde[49m[43m([49m[43mvalues[49m[43m,[49m[43m [49m[43mis_circular[49m[43m,[49m[43m [49m[43mbw[49m[43m=[49m[43mbw[49m[43m,[49m[43m [49m[43madaptive[49m[43m=[49m[43madaptive[49m[43m,[49m[43m [49m[43mcumulative[49m[43m=[49m[43mcumulative[49m[43m)[49m
+[32m    267[39m lower, upper = grid[[32m0[39m], grid[-[32m1[39m]
+[32m    269[39m density_q = density [38;5;28;01mif[39;00m cumulative [38;5;28;01melse[39;00m density.cumsum() / density.sum()
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/arviz/stats/density_utils.py:499[39m, in [36mkde[39m[34m(x, circular, **kwargs)[39m
+[32m    496[39m [38;5;28;01melse[39;00m:
+[32m    497[39m     kde_fun = _kde_linear
+[32m--> [39m[32m499[39m [38;5;28;01mreturn[39;00m [43mkde_fun[49m[43m([49m[43mx[49m[43m,[49m[43m [49m[43m*[49m[43m*[49m[43mkwargs[49m[43m)[49m
+
+[36mFile [39m[32m/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/arviz/stats/density_utils.py:576[39m, in [36m_kde_linear[39m[34m(x, bw, adaptive, extend, bound_correction, extend_fct, bw_fct, bw_return, custom_lims, cumulative, grid_len, **kwargs)[39m
+[32m    574[39m x_max = x.max()
+[32m    575[39m x_std = np.std(x)
+[32m--> [39m[32m576[39m x_range = [43mx_max[49m[43m [49m[43m-[49m[43m [49m[43mx_min[49m
+[32m    578[39m [38;5;66;03m# Determine grid[39;00m
+[32m    579[39m grid_min, grid_max, grid_len = _get_grid(
+[32m    580[39m     x_min, x_max, x_std, extend_fct, grid_len, custom_lims, extend, bound_correction
+[32m    581[39m )
+
+[31mTypeError[39m: numpy boolean subtract, the `-` operator, is not supported, use the bitwise_xor, the `^` operator, or the logical_xor function instead.
+

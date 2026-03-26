@@ -418,7 +418,7 @@
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.right&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;axes.spines.top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="n">az</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;plot.max_subplots&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">az</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;plot.max_subplots&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span>
 </pre></div>
 </div>
 </div>
@@ -594,7 +594,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Runtime for MEADS 0 days 00:00:21.221712
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Runtime for MEADS 0 days 00:00:23.639460
 </pre></div>
 </div>
 </div>
@@ -611,11 +611,11 @@
   alpha[1]      0.11      1.06      0.11     -1.66      1.68       nan 1246383.25
       p[0]      0.97      1.04      1.01     -0.47      2.80       nan 960787.00
       p[1]      0.87      1.02      0.80     -0.68      2.51       nan 1126165.75
-       rho      0.04      1.07      0.01     -1.77      1.54       nan 7190896.59
+       rho      0.04      1.07      0.01     -1.77      1.54       nan 7190896.50
   sigma[0]      0.87      1.05      0.85     -0.42      3.06       nan 1038846.31
   sigma[1]      0.99      1.01      1.05     -0.78      2.47       nan 981399.00
-      xi_0     -0.08      1.09     -0.15     -1.64      1.88       nan 7210323.84
-       y_0      0.04      0.99      0.05     -1.67      1.47       nan 7626618.49
+      xi_0     -0.08      1.09     -0.15     -1.64      1.88       nan 7210324.00
+       y_0      0.04      0.99      0.05     -1.67      1.47       nan 7626618.50
 </pre></div>
 </div>
 </div>
@@ -623,15 +623,24 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">arviz</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">az</span>
-<span class="n">idata</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">posterior</span><span class="o">=</span><span class="n">samples</span><span class="p">)</span>
-<span class="n">az</span><span class="o">.</span><span class="n">plot_pair</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">,</span> <span class="n">marginals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">textsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-            <span class="n">marginal_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">plot_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lw&quot;</span><span class="p">:</span><span class="mi">5</span><span class="p">}))</span>
+<span class="n">idata</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s2">&quot;posterior&quot;</span><span class="p">:</span> <span class="n">samples</span><span class="p">})</span>
+<span class="n">az</span><span class="o">.</span><span class="n">plot_pair</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span> <span class="n">marginal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">marginal_kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/4a80374ff53dd583d27c8a30bd751975a4580b4ba9cd3777cdba12e170bd1f4d.png" src="../_images/4a80374ff53dd583d27c8a30bd751975a4580b4ba9cd3777cdba12e170bd1f4d.png" />
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span><span class="w"> </span><span class="nn">arviz</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">az</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">idata</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s2">&quot;posterior&quot;</span><span class="p">:</span> <span class="n">samples</span><span class="p">})</span>
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">az</span><span class="o">.</span><span class="n">plot_pair</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span> <span class="n">marginal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">marginal_kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span>
+
+<span class="ne">TypeError</span>: plot_pair() got an unexpected keyword argument &#39;marginal&#39;
+</pre></div>
+</div>
 </div>
 </div>
 </section>
