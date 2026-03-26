@@ -185,12 +185,12 @@ plt.show()
 
 ## Pathfinder as a Variational Inference Method
 
-Pathfinder can be used as a variational inference method. We first create a pathfinder object `pf` which contains two functions `approximate` and `sample`:
+Pathfinder can be used as a variational inference method. We first create a pathfinder object `pf` which contains two functions `init` and `sample`:
 
 ```{code-cell} ipython3
 pf = blackjax.pathfinder(logdensity_fn)
 rng_key, approx_key = jax.random.split(rng_key)
-state, _ = pf.approximate(approx_key, w0, ftol=1e-4)
+state, _ = pf.init(approx_key, w0, ftol=1e-4)
 ```
 
 We can now get samples from the approximation:
@@ -222,7 +222,7 @@ Hence it makes sense to `jit` the `init` function and then use the `sample` help
 ```{code-cell} ipython3
 %%time
 
-state, _ = jax.jit(pf.approximate)(approx_key, w0)
+state, _ = jax.jit(pf.init)(approx_key, w0)
 samples, _ = pf.sample(sample_key, state, 5_000)
 ```
 
