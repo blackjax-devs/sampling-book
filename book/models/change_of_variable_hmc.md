@@ -61,6 +61,8 @@ import tensorflow_probability.substrates.jax as tfp
 
 tfd = tfp.distributions
 tfb = tfp.bijectors
+
+az.rcParams["plot.max_subplots"] = 200
 ```
 
 ```{code-cell} ipython3
@@ -368,11 +370,7 @@ def arviz_trace_from_states(states, info, burn_in=0):
             divergence = info.is_divergent
             samples[param] = position[param]
 
-    trace_posterior = az.convert_to_inference_data(samples)
-    trace_sample_stats = az.convert_to_inference_data(
-        {"diverging": divergence}, group="sample_stats"
-    )
-    trace = az.concat(trace_posterior, trace_sample_stats)
+    trace = az.from_dict({"posterior": samples, "sample_stats": {"diverging": divergence}})
     return trace
 ```
 

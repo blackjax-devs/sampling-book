@@ -49,7 +49,7 @@ import arviz as az
 
 plt.rcParams["axes.spines.right"] = False
 plt.rcParams["axes.spines.top"] = False
-az.rcParams["plot.max_subplots"] = 50
+az.rcParams["plot.max_subplots"] = 200
 ```
 
 ```{code-cell} ipython3
@@ -214,8 +214,7 @@ print_summary(samples)
 
 ```{code-cell} ipython3
 import arviz as az
-idata = az.from_dict(posterior=samples)
-az.plot_pair(idata, kind='kde', marginals=True, textsize=20,
-            marginal_kwargs=dict(plot_kwargs={"lw":5}))
+idata = az.from_dict({"posterior": samples})
+az.plot_pair(idata, marginal=True, marginal_kind='kde')
 plt.tight_layout();
 ```

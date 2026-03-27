@@ -263,7 +263,7 @@ bnn = NN(n_hidden_layers, hidden_layer_width)
 
 ```{code-cell} ipython3
 def logprior_fn(params):
-    leaves, _ = jax.tree_util.tree_flatten(params)
+    leaves, _ = jax.tree.flatten(params)
     flat_params = jnp.concatenate([jnp.ravel(a) for a in leaves])
     return jnp.sum(tfd.Normal(0, 1).log_prob(flat_params))
 

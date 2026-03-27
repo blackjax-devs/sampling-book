@@ -28,7 +28,7 @@ p &= \operatorname{sigmoid}\left(- X.\boldsymbol{\beta}\right)\\
 y &\sim \operatorname{Bernoulli}(p)\\
 \end{align*}
 
-The model is run on its *non-centered parametrization* {cite:p}`papaspiliopoulos2007general` with data from the numerical version of the German credit dataset. The target posterior is defined by its likelihood. We implement the model using [Aesara](https://github.com/aesara-devs/aesara):
+The model is run on its *non-centered parametrization* {cite:p}`papaspiliopoulos2007general` with data from the numerical version of the German credit dataset. The target posterior is defined by its likelihood. We implement the model in pure JAX:
 
 ```{code-cell} ipython3
 :tags: [hide-cell]
@@ -48,24 +48,6 @@ from datetime import date
 rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
 ```
 
-```{code-cell} ipython3
-import aesara.tensor as at
-
-X_at = at.matrix('X')
-
-srng = at.random.RandomStream(0)
-
-tau_rv = srng.halfcauchy(0, 1)
-lambda_rv = srng.halfcauchy(0, 1, size=X_at.shape[-1])
-
-sigma = tau_rv * lambda_rv
-beta_rv = srng.normal(0, sigma, size=X_at.shape[-1])
-
-eta = X_at @ beta_rv
-p = at.sigmoid(-eta)
-Y_rv = srng.bernoulli(p, name="Y")
-```
-
 ```{note}
 The non-centered parametrization is not necessarily adapted to every geometry. One should always check *a posteriori* the sampler did not encounter any funnel geomtry.
 ```
@@ -80,7 +62,7 @@ import pandas as pd
 data = pd.read_table(
   "https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data-numeric",
   header=None,
-  delim_whitespace=True
+  sep=r"\s+",
 )
 ```
 
@@ -112,33 +94,37 @@ X = np.concatenate([np.ones((1000, 1)), X], axis=1)
 
 ## Models
 
-We generate a function that computes the model's logdensity using [AePPL](https://github.com/aesara-devs/aeppl). We transform the values of $\tau$ and $\lambda$ so the sampler can operate on variables defined on the real line:
+We define the log-density function in pure JAX. We work in log-transformed coordinates
+for $\tau$ and $\boldsymbol{\lambda}$ so the sampler can operate on variables defined on
+the real line, and include the corresponding log-Jacobian correction terms:
 
 ```{code-cell} ipython3
-import aesara
-import aeppl
-from aeppl.transforms import TransformValuesRewrite, LogTransform
+import jax.numpy as jnp
+import jax.scipy.stats as stats
 
-transforms_op = TransformValuesRewrite(
-     {lambda_rv: LogTransform(), tau_rv: LogTransform()}
-)
-
-logdensity, value_variables = aeppl.joint_logprob(
-    tau_rv,
-    lambda_rv,
-    beta_rv,
-    realized={Y_rv: at.as_tensor(y)},
-    extra_rewrites=transforms_op
-)
-
-
-logdensity_aesara_fn = aesara.function([X_at] + list(value_variables), logdensity, mode="JAX")
 
 def logdensity_fn(x):
-    tau = x['log_tau']
-    lmbda = x['log_lmbda']
+    log_tau = x['log_tau']
+    log_lmbda = x['log_lmbda']
     beta = x['beta']
-    return logdensity_aesara_fn.vm.jit_fn(X, tau, lmbda, beta)[0]
+
+    tau = jnp.exp(log_tau)
+    lmbda = jnp.exp(log_lmbda)
+
+    # HalfCauchy(0, 1) log-density in log-space (includes log-Jacobian of exp transform)
+    log_p_tau = jnp.log(2.0 / jnp.pi) - jnp.log1p(tau ** 2) + log_tau
+    log_p_lmbda = jnp.sum(jnp.log(2.0 / jnp.pi) - jnp.log1p(lmbda ** 2) + log_lmbda)
+
+    # beta ~ Normal(0, tau * lambda)
+    log_p_beta = jnp.sum(stats.norm.logpdf(beta, loc=0.0, scale=tau * lmbda))
+
+    # y ~ Bernoulli(sigmoid(-X @ beta))
+    eta = X @ beta
+    log_likelihood = jnp.sum(
+        y * jax.nn.log_sigmoid(-eta) + (1 - y) * jax.nn.log_sigmoid(eta)
+    )
+
+    return log_p_tau + log_p_lmbda + log_p_beta + log_likelihood
 ```
 
 Let us now define a utility function that builds a sampling loop:
@@ -184,7 +170,7 @@ kernel = blackjax.ghmc(logdensity_fn, **parameters).step
 
 # Choose the last state of the first k chains as a starting point for the sampler
 n_parallel_chains = 4
-init_states = jax.tree_util.tree_map(lambda x: x[:n_parallel_chains], state)
+init_states = jax.tree.map(lambda x: x[:n_parallel_chains], state)
 keys = jax.random.split(key_sample, n_parallel_chains)
 samples, info = jax.vmap(inference_loop, in_axes=(0, 0, None, None))(
     keys, init_states, kernel, num_samples
