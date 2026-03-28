@@ -23,7 +23,7 @@ Once chains are equilibrated, parallelism is helpful: if you have $100$ chains w
 
 ## The core idea of LAPS
 
-It has been observed that among gradient-based MCMC methods, unadjusted kernels (i.e. kernels without Metropolis-Hastings) converge to the target distribution faster than adjusted ones. The idea of LAPS is simply to use an unadjusted kernel until this point, and then switch to an adjusted kernel to remove remaining bias.
+It has been observed that among gradient-based MCMC methods, unadjusted kernels (i.e. kernels without Metropolis-Hastings) converge from the the typically poor initialization (cold start) to the vicinity of the target distribution (warm start) faster than adjusted ones. The idea of LAPS is simply to use the unadjusted kernel to get the warm start, and then switch to an adjusted kernel for fine convergence.
 
 The details involve determining when this switching point should take place, and tuning the hyperparameters of the kernels.
 
@@ -126,6 +126,7 @@ info, grads_per_step, _acc_prob, samples = run_laps(
 
 ```{code-cell} ipython3
 import matplotlib.pyplot as plt
+
 
 x1 = jnp.linspace(-35, 35, 500)
 x2 = jnp.linspace(-35, 35, 500)
