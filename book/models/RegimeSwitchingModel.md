@@ -30,11 +30,11 @@ where $\eta_{jt} = p_{j,1}$, $\mathcal{N}(r_t;\alpha_1, \sigma_1^2) + p_{j,2}$, 
 
 ```{math}
 \begin{split}
-    \alpha_1, \alpha_2 &\sim \mathcal{N}(0, 1) \\
+    \alpha_1, \alpha_2 &\sim \mathcal{N}(0, 0.1) \\
     \rho &\sim \mathcal{N}^0(1, 0.1) \\
     \sigma_1, \sigma_2 &\sim \mathcal{C}^+(1) \\
     p_{1,1}, p_{2,2} &\sim \mathcal{Beta}(10, 2) \\
-    r_0 &\sim \mathcal{N}(0, 1) \\
+    r_0 &\sim \mathcal{N}(0, 0.1) \\
     \xi_{10} &\sim \mathcal{Beta}(2, 2),
 \end{split}
 ```
@@ -56,6 +56,8 @@ az.rcParams["plot.max_subplots"] = 200
 :tags: [remove-output]
 
 import jax
+
+jax.config.update("jax_enable_x64", True)
 
 from datetime import date
 rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
@@ -102,18 +104,28 @@ class RegimeMixtureDistribution(distrib.Distribution):
 
     def log_prob(self, value):
         def obs_t(carry, y):
-            y_prev, xi_1 = carry
-            eta_1 = norm.pdf(y, loc=self.alpha[0], scale=self.sigma[0])
-            eta_2 = norm.pdf(
+            y_prev, log_xi = carry  # log_xi: [log P(s_{t-1}=1), log P(s_{t-1}=2)]
+            log_eta_1 = norm.logpdf(y, loc=self.alpha[0], scale=self.sigma[0])
+            log_eta_2 = norm.logpdf(
                 y, loc=self.alpha[1] + y_prev * self.rho, scale=self.sigma[1]
             )
-            lik_1 = self.p[0] * eta_1 + (1 - self.p[0]) * eta_2
-            lik_2 = (1 - self.p[1]) * eta_1 + self.p[1] * eta_2
-            lik = xi_1 * lik_1 + (1 - xi_1) * lik_2
-            lik = jnp.clip(lik, a_min=1e-6)
-            return (y, xi_1 * lik_1 / lik), jnp.log(lik)
+            # log P(y_t | s_{t-1} = j) for j in {1, 2}
+            log_lik_1 = jnp.logaddexp(
+                jnp.log(self.p[0]) + log_eta_1,
+                jnp.log1p(-self.p[0]) + log_eta_2,
+            )
+            log_lik_2 = jnp.logaddexp(
+                jnp.log1p(-self.p[1]) + log_eta_1,
+                jnp.log(self.p[1]) + log_eta_2,
+            )
+            log_liks = jnp.array([log_lik_1, log_lik_2])
+            log_xi_unnorm = log_xi + log_liks
+            log_lik_total = jax.nn.logsumexp(log_xi_unnorm)
+            new_log_xi = log_xi_unnorm - log_lik_total
+            return (y, new_log_xi), log_lik_total
 
-        _, log_liks = jax.lax.scan(obs_t, (self.y_0, self.xi_0), value)
+        log_xi_0 = jnp.log(jnp.array([self.xi_0, 1.0 - self.xi_0]))
+        _, log_liks = jax.lax.scan(obs_t, (self.y_0, log_xi_0), value)
         return jnp.sum(log_liks)
 
     def sample(self, key, sample_shape=()):
@@ -131,7 +143,7 @@ class RegimeSwitchHMM:
         sigma = numpyro.sample("sigma", distrib.HalfCauchy(1.0).expand([2]))
         p = numpyro.sample("p", distrib.Beta(10.0, 2.0).expand([2]))
         xi_0 = numpyro.sample("xi_0", distrib.Beta(2.0, 2.0))
-        y_0 = numpyro.sample("y_0", distrib.Normal(0.0, 1.0))
+        y_0 = numpyro.sample("y_0", distrib.Normal(0.0, 0.1))
 
         numpyro.sample(
             "obs",
@@ -140,23 +152,46 @@ class RegimeSwitchHMM:
         )
 
     def initialize_model(self, rng_key, n_chain):
-
         (init_params, *_), self.potential_fn, *_ = initialize_model(
             rng_key,
             self.model,
             model_kwargs={"y": self.y},
             dynamic_args=True,
         )
-        kchain = jax.random.split(rng_key, n_chain)
-        flat, unravel_fn = jax.flatten_util.ravel_pytree(init_params)
-        self.init_params = jax.vmap(
-            lambda k: unravel_fn(jax.random.normal(k, flat.shape))
-        )(kchain)
-        self.init_params = {
-            name: 1.0 + value if name in ["p", "sigma"] else value
-            for name, value in self.init_params.items()
-        }
-        # self.init_params = {name: 3. + value if name in ['sigma'] else value for name, value in self.init_params.items()}
+        # Anchor sigma/rho at an identified basin to avoid regime collapse:
+        # sigma=[3,10] (unconstrained=log) breaks symmetry;
+        # rho=0 (unconstrained = constrained 1) stays at its prior mode.
+        init_params = dict(init_params)
+        init_params["sigma"] = jnp.log(jnp.array([3.0, 10.0]))
+        init_params["rho"] = jnp.zeros(())
+        # Stage 1: NUTS warm-up to reach the posterior and adapt step_size/mass_matrix.
+        k_nuts_warm, k_nuts_run, k_chains = jax.random.split(rng_key, 3)
+        (nuts_state, nuts_params), _ = blackjax.window_adaptation(
+            blackjax.nuts, self.logdensity_fn
+        ).run(k_nuts_warm, init_params, 2000)
+        # Stage 2: Run n_chain short NUTS chains from the warm endpoint to generate
+        # diverse starting positions.  MEADS estimates its step-size from the
+        # inter-chain gradient covariance (λ_max); if all chains start at the same
+        # point the covariance is ~0 and step_size blows up.  Letting each chain
+        # explore 200 NUTS steps first ensures the ensemble spans the true posterior
+        # width, giving MEADS a well-conditioned covariance estimate.
+        nuts_kernel = blackjax.nuts(self.logdensity_fn, **nuts_params).step
+        flat, unravel_fn = jax.flatten_util.ravel_pytree(nuts_state.position)
+
+        def get_meads_init(k):
+            k_noise, k_run = jax.random.split(k)
+            noisy_pos = unravel_fn(flat + 0.01 * jax.random.normal(k_noise, flat.shape))
+            state = blackjax.nuts(self.logdensity_fn, **nuts_params).init(noisy_pos)
+
+            def step(s, key):
+                s, _ = nuts_kernel(key, s)
+                return s, None
+
+            final_state, _ = jax.lax.scan(step, state, jax.random.split(k_run, 200))
+            return final_state.position
+
+        kchains = jax.random.split(k_chains, n_chain)
+        self.init_params = jax.vmap(get_meads_init)(kchains)
 
     def logdensity_fn(self, params):
         return -self.potential_fn(self.y)(params)
@@ -185,8 +220,8 @@ dist = RegimeSwitchHMM(T, y)
 ```
 
 ```{code-cell} ipython3
-n_chain, n_warm, n_iter = 128, 5000, 200
-# rng_key, kinit, ksam = jax.random.split(rng_key, 3)
+# num_chains must be divisible by num_folds (4) for MEADS k-fold adaptation
+n_chain, n_warm, n_iter = 64, 5000, 1000
 ksam, kinit = jax.random.split(jax.random.key(0), 2)
 dist.initialize_model(kinit, n_chain)
 ```
@@ -194,18 +229,25 @@ dist.initialize_model(kinit, n_chain)
 ```{code-cell} ipython3
 tic1 = pd.Timestamp.now()
 k_warm, k_sample = jax.random.split(ksam)
-warmup = blackjax.meads_adaptation(dist.logdensity_fn, n_chain)
+
+# MEADS adaptation with k-fold (Algorithm 3, Hoffman & Sountsov 2022):
+# splits the ensemble into num_folds groups and estimates geometry from
+# the held-out folds, giving a more robust covariance estimate.
+warmup = blackjax.meads_adaptation(dist.logdensity_fn, num_chains=n_chain, num_folds=4)
 (init_state, parameters), _ = warmup.run(k_warm, dist.init_params, n_warm)
+
 kernel = blackjax.ghmc(dist.logdensity_fn, **parameters).step
 
-def one_chain(k_sam, init_state):
-    state, info = inference_loop(k_sam, init_state, kernel, n_iter)
-    return state.position, info
+
+def one_chain(k_sam, state):
+    states, info = inference_loop(k_sam, state, kernel, n_iter)
+    return states.position, info
+
 
 k_sample = jax.random.split(k_sample, n_chain)
 samples, infos = jax.vmap(one_chain)(k_sample, init_state)
 tic2 = pd.Timestamp.now()
-print("Runtime for MEADS", tic2 - tic1)
+print("Runtime for MEADS+GHMC", tic2 - tic1)
 ```
 
 ```{code-cell} ipython3
