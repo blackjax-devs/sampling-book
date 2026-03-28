@@ -398,11 +398,11 @@
 <p>where <span class="math notranslate nohighlight">\(\eta_{jt} = p_{j,1}\)</span>, <span class="math notranslate nohighlight">\(\mathcal{N}(r_t;\alpha_1, \sigma_1^2) + p_{j,2}\)</span>, and <span class="math notranslate nohighlight">\(\mathcal{N}(r_t; \alpha_2 + \rho r_{t-1}, \sigma_2^2)\)</span> for <span class="math notranslate nohighlight">\(j\in\{0, 1\}\)</span>. And the priors of the parameters are:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\begin{split}
-    \alpha_1, \alpha_2 &amp;\sim \mathcal{N}(0, 1) \\
+    \alpha_1, \alpha_2 &amp;\sim \mathcal{N}(0, 0.1) \\
     \rho &amp;\sim \mathcal{N}^0(1, 0.1) \\
     \sigma_1, \sigma_2 &amp;\sim \mathcal{C}^+(1) \\
     p_{1,1}, p_{2,2} &amp;\sim \mathcal{Beta}(10, 2) \\
-    r_0 &amp;\sim \mathcal{N}(0, 1) \\
+    r_0 &amp;\sim \mathcal{N}(0, 0.1) \\
     \xi_{10} &amp;\sim \mathcal{Beta}(2, 2),
 \end{split}\end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathcal{N}^0\)</span> indicates the truncated at 0 Gaussian distribution and <span class="math notranslate nohighlight">\(\mathcal{C}^+\)</span> the half-Cauchy distribution.</p>
@@ -427,6 +427,8 @@
 <div class="cell tag_remove-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+
+<span class="n">jax</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s2">&quot;jax_enable_x64&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
 <span class="n">rng_key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)))</span>
@@ -474,18 +476,28 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">log_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">obs_t</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-            <span class="n">y_prev</span><span class="p">,</span> <span class="n">xi_1</span> <span class="o">=</span> <span class="n">carry</span>
-            <span class="n">eta_1</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">eta_2</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span>
+            <span class="n">y_prev</span><span class="p">,</span> <span class="n">log_xi</span> <span class="o">=</span> <span class="n">carry</span>  <span class="c1"># log_xi: [log P(s_{t-1}=1), log P(s_{t-1}=2)]</span>
+            <span class="n">log_eta_1</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">log_eta_2</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span>
                 <span class="n">y</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_prev</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="p">)</span>
-            <span class="n">lik_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">eta_1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">eta_2</span>
-            <span class="n">lik_2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">eta_1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">eta_2</span>
-            <span class="n">lik</span> <span class="o">=</span> <span class="n">xi_1</span> <span class="o">*</span> <span class="n">lik_1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xi_1</span><span class="p">)</span> <span class="o">*</span> <span class="n">lik_2</span>
-            <span class="n">lik</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lik</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">xi_1</span> <span class="o">*</span> <span class="n">lik_1</span> <span class="o">/</span> <span class="n">lik</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">lik</span><span class="p">)</span>
+            <span class="c1"># log P(y_t | s_{t-1} = j) for j in {1, 2}</span>
+            <span class="n">log_lik_1</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">logaddexp</span><span class="p">(</span>
+                <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">log_eta_1</span><span class="p">,</span>
+                <span class="n">jnp</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">log_eta_2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">log_lik_2</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">logaddexp</span><span class="p">(</span>
+                <span class="n">jnp</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">log_eta_1</span><span class="p">,</span>
+                <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">log_eta_2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">log_liks</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">log_lik_1</span><span class="p">,</span> <span class="n">log_lik_2</span><span class="p">])</span>
+            <span class="n">log_xi_unnorm</span> <span class="o">=</span> <span class="n">log_xi</span> <span class="o">+</span> <span class="n">log_liks</span>
+            <span class="n">log_lik_total</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">logsumexp</span><span class="p">(</span><span class="n">log_xi_unnorm</span><span class="p">)</span>
+            <span class="n">new_log_xi</span> <span class="o">=</span> <span class="n">log_xi_unnorm</span> <span class="o">-</span> <span class="n">log_lik_total</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">new_log_xi</span><span class="p">),</span> <span class="n">log_lik_total</span>
 
-        <span class="n">_</span><span class="p">,</span> <span class="n">log_liks</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">obs_t</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_0</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">log_xi_0</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">xi_0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi_0</span><span class="p">]))</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">log_liks</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">obs_t</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_0</span><span class="p">,</span> <span class="n">log_xi_0</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">log_liks</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">sample_shape</span><span class="o">=</span><span class="p">()):</span>
@@ -503,7 +515,7 @@
         <span class="n">sigma</span> <span class="o">=</span> <span class="n">numpyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="n">distrib</span><span class="o">.</span><span class="n">HalfCauchy</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="mi">2</span><span class="p">]))</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">numpyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="n">distrib</span><span class="o">.</span><span class="n">Beta</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="mi">2</span><span class="p">]))</span>
         <span class="n">xi_0</span> <span class="o">=</span> <span class="n">numpyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;xi_0&quot;</span><span class="p">,</span> <span class="n">distrib</span><span class="o">.</span><span class="n">Beta</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
-        <span class="n">y_0</span> <span class="o">=</span> <span class="n">numpyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y_0&quot;</span><span class="p">,</span> <span class="n">distrib</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+        <span class="n">y_0</span> <span class="o">=</span> <span class="n">numpyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y_0&quot;</span><span class="p">,</span> <span class="n">distrib</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
 
         <span class="n">numpyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
             <span class="s2">&quot;obs&quot;</span><span class="p">,</span>
@@ -512,23 +524,46 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">initialize_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rng_key</span><span class="p">,</span> <span class="n">n_chain</span><span class="p">):</span>
-
         <span class="p">(</span><span class="n">init_params</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">potential_fn</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">initialize_model</span><span class="p">(</span>
             <span class="n">rng_key</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
             <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">},</span>
             <span class="n">dynamic_args</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">kchain</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">n_chain</span><span class="p">)</span>
-        <span class="n">flat</span><span class="p">,</span> <span class="n">unravel_fn</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">flatten_util</span><span class="o">.</span><span class="n">ravel_pytree</span><span class="p">(</span><span class="n">init_params</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">init_params</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">unravel_fn</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">flat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-        <span class="p">)(</span><span class="n">kchain</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">init_params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">name</span><span class="p">:</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">value</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="n">value</span>
-            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="p">}</span>
-        <span class="c1"># self.init_params = {name: 3. + value if name in [&#39;sigma&#39;] else value for name, value in self.init_params.items()}</span>
+        <span class="c1"># Anchor sigma/rho at an identified basin to avoid regime collapse:</span>
+        <span class="c1"># sigma=[3,10] (unconstrained=log) breaks symmetry;</span>
+        <span class="c1"># rho=0 (unconstrained = constrained 1) stays at its prior mode.</span>
+        <span class="n">init_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">init_params</span><span class="p">)</span>
+        <span class="n">init_params</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]))</span>
+        <span class="n">init_params</span><span class="p">[</span><span class="s2">&quot;rho&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(())</span>
+        <span class="c1"># Stage 1: NUTS warm-up to reach the posterior and adapt step_size/mass_matrix.</span>
+        <span class="n">k_nuts_warm</span><span class="p">,</span> <span class="n">k_nuts_run</span><span class="p">,</span> <span class="n">k_chains</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">nuts_state</span><span class="p">,</span> <span class="n">nuts_params</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">window_adaptation</span><span class="p">(</span>
+            <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logdensity_fn</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">k_nuts_warm</span><span class="p">,</span> <span class="n">init_params</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+        <span class="c1"># Stage 2: Run n_chain short NUTS chains from the warm endpoint to generate</span>
+        <span class="c1"># diverse starting positions.  MEADS estimates its step-size from the</span>
+        <span class="c1"># inter-chain gradient covariance (λ_max); if all chains start at the same</span>
+        <span class="c1"># point the covariance is ~0 and step_size blows up.  Letting each chain</span>
+        <span class="c1"># explore 200 NUTS steps first ensures the ensemble spans the true posterior</span>
+        <span class="c1"># width, giving MEADS a well-conditioned covariance estimate.</span>
+        <span class="n">nuts_kernel</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">nuts_params</span><span class="p">)</span><span class="o">.</span><span class="n">step</span>
+        <span class="n">flat</span><span class="p">,</span> <span class="n">unravel_fn</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">flatten_util</span><span class="o">.</span><span class="n">ravel_pytree</span><span class="p">(</span><span class="n">nuts_state</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_meads_init</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="n">k_noise</span><span class="p">,</span> <span class="n">k_run</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">noisy_pos</span> <span class="o">=</span> <span class="n">unravel_fn</span><span class="p">(</span><span class="n">flat</span> <span class="o">+</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">k_noise</span><span class="p">,</span> <span class="n">flat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">nuts_params</span><span class="p">)</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">noisy_pos</span><span class="p">)</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+                <span class="n">s</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">nuts_kernel</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">s</span><span class="p">,</span> <span class="kc">None</span>
+
+            <span class="n">final_state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">k_run</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">final_state</span><span class="o">.</span><span class="n">position</span>
+
+        <span class="n">kchains</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">k_chains</span><span class="p">,</span> <span class="n">n_chain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_params</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">get_meads_init</span><span class="p">)(</span><span class="n">kchains</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">logdensity_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">potential_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)(</span><span class="n">params</span><span class="p">)</span>
@@ -566,8 +601,8 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_chain</span><span class="p">,</span> <span class="n">n_warm</span><span class="p">,</span> <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">200</span>
-<span class="c1"># rng_key, kinit, ksam = jax.random.split(rng_key, 3)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># num_chains must be divisible by num_folds (4) for MEADS k-fold adaptation</span>
+<span class="n">n_chain</span><span class="p">,</span> <span class="n">n_warm</span><span class="p">,</span> <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">1000</span>
 <span class="n">ksam</span><span class="p">,</span> <span class="n">kinit</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
 <span class="n">dist</span><span class="o">.</span><span class="n">initialize_model</span><span class="p">(</span><span class="n">kinit</span><span class="p">,</span> <span class="n">n_chain</span><span class="p">)</span>
 </pre></div>
@@ -578,23 +613,30 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tic1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
 <span class="n">k_warm</span><span class="p">,</span> <span class="n">k_sample</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">ksam</span><span class="p">)</span>
-<span class="n">warmup</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">meads_adaptation</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">n_chain</span><span class="p">)</span>
+
+<span class="c1"># MEADS adaptation with k-fold (Algorithm 3, Hoffman &amp; Sountsov 2022):</span>
+<span class="c1"># splits the ensemble into num_folds groups and estimates geometry from</span>
+<span class="c1"># the held-out folds, giving a more robust covariance estimate.</span>
+<span class="n">warmup</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">meads_adaptation</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">num_chains</span><span class="o">=</span><span class="n">n_chain</span><span class="p">,</span> <span class="n">num_folds</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 <span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">parameters</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">warmup</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">k_warm</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">init_params</span><span class="p">,</span> <span class="n">n_warm</span><span class="p">)</span>
+
 <span class="n">kernel</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">ghmc</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">)</span><span class="o">.</span><span class="n">step</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">one_chain</span><span class="p">(</span><span class="n">k_sam</span><span class="p">,</span> <span class="n">init_state</span><span class="p">):</span>
-    <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">k_sam</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">info</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">one_chain</span><span class="p">(</span><span class="n">k_sam</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="n">states</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">k_sam</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">states</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">info</span>
+
 
 <span class="n">k_sample</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">k_sample</span><span class="p">,</span> <span class="n">n_chain</span><span class="p">)</span>
 <span class="n">samples</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">one_chain</span><span class="p">)(</span><span class="n">k_sample</span><span class="p">,</span> <span class="n">init_state</span><span class="p">)</span>
 <span class="n">tic2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Runtime for MEADS&quot;</span><span class="p">,</span> <span class="n">tic2</span> <span class="o">-</span> <span class="n">tic1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Runtime for MEADS+GHMC&quot;</span><span class="p">,</span> <span class="n">tic2</span> <span class="o">-</span> <span class="n">tic1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Runtime for MEADS 0 days 00:00:23.879441
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Runtime for MEADS+GHMC 0 days 00:00:28.166424
 </pre></div>
 </div>
 </div>
@@ -607,15 +649,15 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                mean       std    median      5.0%     95.0%     n_eff     r_hat
-  alpha[0]      0.00      1.02      0.02     -1.31      1.98       nan 1304670.88
-  alpha[1]      0.11      1.06      0.11     -1.66      1.68       nan 1246383.25
-      p[0]      0.97      1.04      1.01     -0.47      2.80       nan 960787.00
-      p[1]      0.87      1.02      0.80     -0.68      2.51       nan 1126165.75
-       rho      0.04      1.07      0.01     -1.77      1.54       nan 7190896.50
-  sigma[0]      0.87      1.05      0.85     -0.42      3.06       nan 1038846.31
-  sigma[1]      0.99      1.01      1.05     -0.78      2.47       nan 981399.00
-      xi_0     -0.08      1.09     -0.15     -1.64      1.88       nan 7210324.00
-       y_0      0.04      0.99      0.05     -1.67      1.47       nan 7626618.50
+  alpha[0]      0.06      0.08      0.06     -0.07      0.20  10352.96      1.01
+  alpha[1]      0.01      0.10      0.01     -0.16      0.17  11053.39      1.00
+      p[0]      2.72      0.40      2.69      2.06      3.35   6857.63      1.01
+      p[1]      1.83      0.86      1.75      0.41      3.18   9242.78      1.01
+       rho     -0.02      0.10     -0.01     -0.18      0.15  10079.09      1.00
+  sigma[0]      1.04      0.05      1.04      0.97      1.12   8965.75      1.01
+  sigma[1]      2.16      0.19      2.15      1.86      2.46   6357.12      1.01
+      xi_0      0.48      1.02      0.45     -1.20      2.12   9064.37      1.00
+       y_0      0.00      0.10      0.00     -0.17      0.16   7304.04      1.01
 </pre></div>
 </div>
 </div>
@@ -630,7 +672,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/dba2358734462991793194cb4ebfc89b575582e3a2359fc226fad2215e0123ae.png" src="../_images/dba2358734462991793194cb4ebfc89b575582e3a2359fc226fad2215e0123ae.png" />
+<img alt="../_images/7eed41c605303cf810e559d775b6f334893391b9d250cc433c7069871bd2e279.png" src="../_images/7eed41c605303cf810e559d775b6f334893391b9d250cc433c7069871bd2e279.png" />
 </div>
 </div>
 </section>
