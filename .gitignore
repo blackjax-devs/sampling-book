@@ -4,3 +4,4 @@ _build
 /samplingbook.egg-info/
 *_version.py
 /jupyter_cache/
+.DS_Store
