@@ -53,7 +53,7 @@
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
@@ -416,7 +416,7 @@
 </section>
 <section id="the-core-idea-of-laps">
 <h2>The core idea of LAPS<a class="headerlink" href="#the-core-idea-of-laps" title="Link to this heading">#</a></h2>
-<p>It has been observed that among gradient-based MCMC methods, unadjusted kernels (i.e. kernels without Metropolis-Hastings) converge to the target distribution faster than adjusted ones. The idea of LAPS is simply to use an unadjusted kernel until this point, and then switch to an adjusted kernel to remove remaining bias.</p>
+<p>It has been observed that among gradient-based MCMC methods, unadjusted kernels (i.e. kernels without Metropolis-Hastings) converge from the the typically poor initialization (cold start) to the vicinity of the target distribution (warm start) faster than adjusted ones. The idea of LAPS is simply to use the unadjusted kernel to get the warm start, and then switch to an adjusted kernel for fine convergence.</p>
 <p>The details involve determining when this switching point should take place, and tuning the hyperparameters of the kernels.</p>
 <div class="cell tag_hide-cell docutils container">
 <details class="admonition hide above-input">
@@ -543,6 +543,7 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
 
 <span class="n">x1</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">35</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
 <span class="n">x2</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">35</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
