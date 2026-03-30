@@ -158,40 +158,18 @@ class RegimeSwitchHMM:
             model_kwargs={"y": self.y},
             dynamic_args=True,
         )
-        # Anchor sigma/rho at an identified basin to avoid regime collapse:
-        # sigma=[3,10] (unconstrained=log) breaks symmetry;
-        # rho=0 (unconstrained = constrained 1) stays at its prior mode.
+        # Separate the two regimes by anchoring sigma at [3, 10] in constrained
+        # space (numpyro uses log transform, so unconstrained = log(constrained)).
+        # Without this, chains near sigma[0] ≈ sigma[1] can fall into degenerate
+        # modes where one regime becomes inactive.
         init_params = dict(init_params)
         init_params["sigma"] = jnp.log(jnp.array([3.0, 10.0]))
-        init_params["rho"] = jnp.zeros(())
-        # Stage 1: NUTS warm-up to reach the posterior and adapt step_size/mass_matrix.
-        k_nuts_warm, k_nuts_run, k_chains = jax.random.split(rng_key, 3)
-        (nuts_state, nuts_params), _ = blackjax.window_adaptation(
-            blackjax.nuts, self.logdensity_fn
-        ).run(k_nuts_warm, init_params, 2000)
-        # Stage 2: Run n_chain short NUTS chains from the warm endpoint to generate
-        # diverse starting positions.  MEADS estimates its step-size from the
-        # inter-chain gradient covariance (λ_max); if all chains start at the same
-        # point the covariance is ~0 and step_size blows up.  Letting each chain
-        # explore 200 NUTS steps first ensures the ensemble spans the true posterior
-        # width, giving MEADS a well-conditioned covariance estimate.
-        nuts_kernel = blackjax.nuts(self.logdensity_fn, **nuts_params).step
-        flat, unravel_fn = jax.flatten_util.ravel_pytree(nuts_state.position)
-
-        def get_meads_init(k):
-            k_noise, k_run = jax.random.split(k)
-            noisy_pos = unravel_fn(flat + 0.01 * jax.random.normal(k_noise, flat.shape))
-            state = blackjax.nuts(self.logdensity_fn, **nuts_params).init(noisy_pos)
-
-            def step(s, key):
-                s, _ = nuts_kernel(key, s)
-                return s, None
-
-            final_state, _ = jax.lax.scan(step, state, jax.random.split(k_run, 200))
-            return final_state.position
-
-        kchains = jax.random.split(k_chains, n_chain)
-        self.init_params = jax.vmap(get_meads_init)(kchains)
+        init_params["rho"] = jnp.zeros(())  # log(1) = 0, the prior mode
+        flat, unravel_fn = jax.flatten_util.ravel_pytree(init_params)
+        kchain = jax.random.split(rng_key, n_chain)
+        self.init_params = jax.vmap(
+            lambda k: unravel_fn(flat + 0.1 * jax.random.normal(k, flat.shape))
+        )(kchain)
 
     def logdensity_fn(self, params):
         return -self.potential_fn(self.y)(params)
@@ -220,8 +198,7 @@ dist = RegimeSwitchHMM(T, y)
 ```
 
 ```{code-cell} ipython3
-# num_chains must be divisible by num_folds (4) for MEADS k-fold adaptation
-n_chain, n_warm, n_iter = 64, 5000, 1000
+n_chain, n_warm, n_iter = 8, 2000, 2000
 ksam, kinit = jax.random.split(jax.random.key(0), 2)
 dist.initialize_model(kinit, n_chain)
 ```
@@ -230,24 +207,23 @@ dist.initialize_model(kinit, n_chain)
 tic1 = pd.Timestamp.now()
 k_warm, k_sample = jax.random.split(ksam)
 
-# MEADS adaptation with k-fold (Algorithm 3, Hoffman & Sountsov 2022):
-# splits the ensemble into num_folds groups and estimates geometry from
-# the held-out folds, giving a more robust covariance estimate.
-warmup = blackjax.meads_adaptation(dist.logdensity_fn, num_chains=n_chain, num_folds=4)
-(init_state, parameters), _ = warmup.run(k_warm, dist.init_params, n_warm)
+(_, parameters), _ = blackjax.window_adaptation(
+    blackjax.nuts, dist.logdensity_fn
+).run(k_warm, jax.tree.map(lambda x: x[0], dist.init_params), n_warm)
 
-kernel = blackjax.ghmc(dist.logdensity_fn, **parameters).step
+kernel = blackjax.nuts(dist.logdensity_fn, **parameters).step
 
 
-def one_chain(k_sam, state):
-    states, info = inference_loop(k_sam, state, kernel, n_iter)
-    return states.position, info
+def one_chain(k_sam, init_param):
+    init_state = blackjax.nuts(dist.logdensity_fn, **parameters).init(init_param)
+    state, info = inference_loop(k_sam, init_state, kernel, n_iter)
+    return state.position, info
 
 
 k_sample = jax.random.split(k_sample, n_chain)
-samples, infos = jax.vmap(one_chain)(k_sample, init_state)
+samples, infos = jax.vmap(one_chain)(k_sample, dist.init_params)
 tic2 = pd.Timestamp.now()
-print("Runtime for MEADS+GHMC", tic2 - tic1)
+print("Runtime for NUTS", tic2 - tic1)
 ```
 
 ```{code-cell} ipython3
@@ -255,7 +231,6 @@ print_summary(samples)
 ```
 
 ```{code-cell} ipython3
-import arviz as az
 idata = az.from_dict({"posterior": samples})
 az.plot_pair(idata, marginal=True, marginal_kind='kde')
 plt.tight_layout();
