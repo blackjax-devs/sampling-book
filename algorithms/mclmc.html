@@ -65,7 +65,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'algorithms/mclmc';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="The Late Adjusted Parallel Sampler (LAPS)" href="laps.html" />
+    <link rel="next" title="MEADS: Ensemble Adaptation for GHMC" href="meads.html" />
     <link rel="prev" title="Comparing SMC and Persistent Sampling" href="SMCvsPersistentSampling.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -175,6 +175,7 @@
 <li class="toctree-l1"><a class="reference internal" href="SMCvsPersistentSampling.html">Comparing SMC and Persistent Sampling</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Microcanonical Langevin Monte Carlo</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="meads.html">MEADS: Ensemble Adaptation for GHMC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="laps.html">The Late Adjusted Parallel Sampler (LAPS)</a></li>
 
 
@@ -659,8 +660,8 @@ u \\
 <h2>A more complex example<a class="headerlink" href="#a-more-complex-example" title="Link to this heading">#</a></h2>
 <p>We now consider a more complex model, of stock volatility.</p>
 <p>The returns <span class="math notranslate nohighlight">\(r_n\)</span> are modeled by a Student’s-t distribution whose scale (volatility) <span class="math notranslate nohighlight">\(R_n\)</span> is time varying and unknown. The prior for <span class="math notranslate nohighlight">\(\log R_n\)</span> is a Gaussian random walk, with an exponential distribution of the random walk step-size <span class="math notranslate nohighlight">\(\sigma\)</span>. An exponential prior is also taken for the Student’s-t degrees of freedom <span class="math notranslate nohighlight">\(\nu\)</span>. The generative process of the data is:</p>
-<div class="amsmath math notranslate nohighlight" id="equation-d3643a02-700a-473d-9429-3ba2bc903128">
-<span class="eqno">(1)<a class="headerlink" href="#equation-d3643a02-700a-473d-9429-3ba2bc903128" title="Permalink to this equation">#</a></span>\[\begin{align}
+<div class="amsmath math notranslate nohighlight" id="equation-750145c8-b286-48dd-bcbe-e79bb9fa64b8">
+<span class="eqno">(1)<a class="headerlink" href="#equation-750145c8-b286-48dd-bcbe-e79bb9fa64b8" title="Permalink to this equation">#</a></span>\[\begin{align}
     &amp;r_n / R_n \sim \text{Student's-t}(\nu) \qquad
     &amp;&amp;\nu \sim \text{Exp}(\lambda = 1/10) \\ \nonumber
     &amp;\log R_n \sim \mathcal{N}(\log R_{n-1}, \sigma) \qquad
@@ -1031,11 +1032,11 @@ u \\
       </div>
     </a>
     <a class="right-next"
-       href="laps.html"
+       href="meads.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">The Late Adjusted Parallel Sampler (LAPS)</p>
+        <p class="prev-next-title">MEADS: Ensemble Adaptation for GHMC</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -175,6 +175,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/SMCvsPersistentSampling.html">Comparing SMC and Persistent Sampling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/mclmc.html">Microcanonical Langevin Monte Carlo</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="../algorithms/meads.html">MEADS: Ensemble Adaptation for GHMC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../algorithms/laps.html">The Late Adjusted Parallel Sampler (LAPS)</a></li>
 
 
@@ -530,40 +531,18 @@
             <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">},</span>
             <span class="n">dynamic_args</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="c1"># Anchor sigma/rho at an identified basin to avoid regime collapse:</span>
-        <span class="c1"># sigma=[3,10] (unconstrained=log) breaks symmetry;</span>
-        <span class="c1"># rho=0 (unconstrained = constrained 1) stays at its prior mode.</span>
+        <span class="c1"># Separate the two regimes by anchoring sigma at [3, 10] in constrained</span>
+        <span class="c1"># space (numpyro uses log transform, so unconstrained = log(constrained)).</span>
+        <span class="c1"># Without this, chains near sigma[0] ≈ sigma[1] can fall into degenerate</span>
+        <span class="c1"># modes where one regime becomes inactive.</span>
         <span class="n">init_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">init_params</span><span class="p">)</span>
         <span class="n">init_params</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]))</span>
-        <span class="n">init_params</span><span class="p">[</span><span class="s2">&quot;rho&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(())</span>
-        <span class="c1"># Stage 1: NUTS warm-up to reach the posterior and adapt step_size/mass_matrix.</span>
-        <span class="n">k_nuts_warm</span><span class="p">,</span> <span class="n">k_nuts_run</span><span class="p">,</span> <span class="n">k_chains</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="p">(</span><span class="n">nuts_state</span><span class="p">,</span> <span class="n">nuts_params</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">window_adaptation</span><span class="p">(</span>
-            <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logdensity_fn</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">k_nuts_warm</span><span class="p">,</span> <span class="n">init_params</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
-        <span class="c1"># Stage 2: Run n_chain short NUTS chains from the warm endpoint to generate</span>
-        <span class="c1"># diverse starting positions.  MEADS estimates its step-size from the</span>
-        <span class="c1"># inter-chain gradient covariance (λ_max); if all chains start at the same</span>
-        <span class="c1"># point the covariance is ~0 and step_size blows up.  Letting each chain</span>
-        <span class="c1"># explore 200 NUTS steps first ensures the ensemble spans the true posterior</span>
-        <span class="c1"># width, giving MEADS a well-conditioned covariance estimate.</span>
-        <span class="n">nuts_kernel</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">nuts_params</span><span class="p">)</span><span class="o">.</span><span class="n">step</span>
-        <span class="n">flat</span><span class="p">,</span> <span class="n">unravel_fn</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">flatten_util</span><span class="o">.</span><span class="n">ravel_pytree</span><span class="p">(</span><span class="n">nuts_state</span><span class="o">.</span><span class="n">position</span><span class="p">)</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">get_meads_init</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
-            <span class="n">k_noise</span><span class="p">,</span> <span class="n">k_run</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-            <span class="n">noisy_pos</span> <span class="o">=</span> <span class="n">unravel_fn</span><span class="p">(</span><span class="n">flat</span> <span class="o">+</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">k_noise</span><span class="p">,</span> <span class="n">flat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">nuts_params</span><span class="p">)</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">noisy_pos</span><span class="p">)</span>
-
-            <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-                <span class="n">s</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">nuts_kernel</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">s</span><span class="p">,</span> <span class="kc">None</span>
-
-            <span class="n">final_state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">k_run</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">final_state</span><span class="o">.</span><span class="n">position</span>
-
-        <span class="n">kchains</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">k_chains</span><span class="p">,</span> <span class="n">n_chain</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">init_params</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">get_meads_init</span><span class="p">)(</span><span class="n">kchains</span><span class="p">)</span>
+        <span class="n">init_params</span><span class="p">[</span><span class="s2">&quot;rho&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(())</span>  <span class="c1"># log(1) = 0, the prior mode</span>
+        <span class="n">flat</span><span class="p">,</span> <span class="n">unravel_fn</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">flatten_util</span><span class="o">.</span><span class="n">ravel_pytree</span><span class="p">(</span><span class="n">init_params</span><span class="p">)</span>
+        <span class="n">kchain</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">rng_key</span><span class="p">,</span> <span class="n">n_chain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_params</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">unravel_fn</span><span class="p">(</span><span class="n">flat</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">flat</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="p">)(</span><span class="n">kchain</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">logdensity_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">potential_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)(</span><span class="n">params</span><span class="p">)</span>
@@ -601,8 +580,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># num_chains must be divisible by num_folds (4) for MEADS k-fold adaptation</span>
-<span class="n">n_chain</span><span class="p">,</span> <span class="n">n_warm</span><span class="p">,</span> <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">1000</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_chain</span><span class="p">,</span> <span class="n">n_warm</span><span class="p">,</span> <span class="n">n_iter</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">2000</span>
 <span class="n">ksam</span><span class="p">,</span> <span class="n">kinit</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
 <span class="n">dist</span><span class="o">.</span><span class="n">initialize_model</span><span class="p">(</span><span class="n">kinit</span><span class="p">,</span> <span class="n">n_chain</span><span class="p">)</span>
 </pre></div>
@@ -614,29 +592,28 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tic1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
 <span class="n">k_warm</span><span class="p">,</span> <span class="n">k_sample</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">ksam</span><span class="p">)</span>
 
-<span class="c1"># MEADS adaptation with k-fold (Algorithm 3, Hoffman &amp; Sountsov 2022):</span>
-<span class="c1"># splits the ensemble into num_folds groups and estimates geometry from</span>
-<span class="c1"># the held-out folds, giving a more robust covariance estimate.</span>
-<span class="n">warmup</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">meads_adaptation</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="n">num_chains</span><span class="o">=</span><span class="n">n_chain</span><span class="p">,</span> <span class="n">num_folds</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<span class="p">(</span><span class="n">init_state</span><span class="p">,</span> <span class="n">parameters</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">warmup</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">k_warm</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">init_params</span><span class="p">,</span> <span class="n">n_warm</span><span class="p">)</span>
+<span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">parameters</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">window_adaptation</span><span class="p">(</span>
+    <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">logdensity_fn</span>
+<span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">k_warm</span><span class="p">,</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dist</span><span class="o">.</span><span class="n">init_params</span><span class="p">),</span> <span class="n">n_warm</span><span class="p">)</span>
 
-<span class="n">kernel</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">ghmc</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">)</span><span class="o">.</span><span class="n">step</span>
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">)</span><span class="o">.</span><span class="n">step</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">one_chain</span><span class="p">(</span><span class="n">k_sam</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-    <span class="n">states</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">k_sam</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">states</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">info</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">one_chain</span><span class="p">(</span><span class="n">k_sam</span><span class="p">,</span> <span class="n">init_param</span><span class="p">):</span>
+    <span class="n">init_state</span> <span class="o">=</span> <span class="n">blackjax</span><span class="o">.</span><span class="n">nuts</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">logdensity_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">)</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">init_param</span><span class="p">)</span>
+    <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">inference_loop</span><span class="p">(</span><span class="n">k_sam</span><span class="p">,</span> <span class="n">init_state</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">info</span>
 
 
 <span class="n">k_sample</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">k_sample</span><span class="p">,</span> <span class="n">n_chain</span><span class="p">)</span>
-<span class="n">samples</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">one_chain</span><span class="p">)(</span><span class="n">k_sample</span><span class="p">,</span> <span class="n">init_state</span><span class="p">)</span>
+<span class="n">samples</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">one_chain</span><span class="p">)(</span><span class="n">k_sample</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">init_params</span><span class="p">)</span>
 <span class="n">tic2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Runtime for MEADS+GHMC&quot;</span><span class="p">,</span> <span class="n">tic2</span> <span class="o">-</span> <span class="n">tic1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Runtime for NUTS&quot;</span><span class="p">,</span> <span class="n">tic2</span> <span class="o">-</span> <span class="n">tic1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Runtime for MEADS+GHMC 0 days 00:00:28.166424
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Runtime for NUTS 0 days 00:00:39.561966
 </pre></div>
 </div>
 </div>
@@ -649,30 +626,29 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                mean       std    median      5.0%     95.0%     n_eff     r_hat
-  alpha[0]      0.06      0.08      0.06     -0.07      0.20  10352.96      1.01
-  alpha[1]      0.01      0.10      0.01     -0.16      0.17  11053.39      1.00
-      p[0]      2.72      0.40      2.69      2.06      3.35   6857.63      1.01
-      p[1]      1.83      0.86      1.75      0.41      3.18   9242.78      1.01
-       rho     -0.02      0.10     -0.01     -0.18      0.15  10079.09      1.00
-  sigma[0]      1.04      0.05      1.04      0.97      1.12   8965.75      1.01
-  sigma[1]      2.16      0.19      2.15      1.86      2.46   6357.12      1.01
-      xi_0      0.48      1.02      0.45     -1.20      2.12   9064.37      1.00
-       y_0      0.00      0.10      0.00     -0.17      0.16   7304.04      1.01
+  alpha[0]      0.06      0.08      0.06     -0.08      0.20  27827.21      1.00
+  alpha[1]      0.01      0.10      0.01     -0.15      0.18  26813.28      1.00
+      p[0]      2.71      0.42      2.69      2.05      3.37   6837.55      1.00
+      p[1]      1.82      0.91      1.75      0.46      3.26  10453.65      1.00
+       rho     -0.02      0.11     -0.01     -0.18      0.16  26029.82      1.00
+  sigma[0]      1.04      0.05      1.04      0.97      1.12  21694.94      1.00
+  sigma[1]      2.16      0.18      2.14      1.85      2.44  16638.53      1.00
+      xi_0      0.50      1.04      0.47     -1.18      2.24  25371.45      1.00
+       y_0      0.00      0.10      0.00     -0.16      0.17  25656.75      1.00
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">arviz</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">az</span>
-<span class="n">idata</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s2">&quot;posterior&quot;</span><span class="p">:</span> <span class="n">samples</span><span class="p">})</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">idata</span> <span class="o">=</span> <span class="n">az</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s2">&quot;posterior&quot;</span><span class="p">:</span> <span class="n">samples</span><span class="p">})</span>
 <span class="n">az</span><span class="o">.</span><span class="n">plot_pair</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span> <span class="n">marginal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">marginal_kind</span><span class="o">=</span><span class="s1">&#39;kde&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/7eed41c605303cf810e559d775b6f334893391b9d250cc433c7069871bd2e279.png" src="../_images/7eed41c605303cf810e559d775b6f334893391b9d250cc433c7069871bd2e279.png" />
+<img alt="../_images/c17d66a6a61e824d218db7ef19b80ca318f5afed5e663d17f271419d6ca5be2e.png" src="../_images/c17d66a6a61e824d218db7ef19b80ca318f5afed5e663d17f271419d6ca5be2e.png" />
 </div>
 </div>
 </section>
