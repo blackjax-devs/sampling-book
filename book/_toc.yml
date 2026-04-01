@@ -13,6 +13,7 @@ parts:
   - file: algorithms/mclmc.md
   - file: algorithms/meads.md
   - file: algorithms/laps.md
+  - file: algorithms/low_rank_mass_matrix.md
 - caption: Models
   chapters:
   - file: models/change_of_variable_hmc.md
