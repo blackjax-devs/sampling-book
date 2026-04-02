@@ -18,15 +18,6 @@ jobs:
       - name: Checkout the branch
         uses: actions/checkout@v3
 
-      - name: Jupyter Book cache
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: ./jupyter_cache
-          key: jupyter-cache-${{ github.run_id }}
-          restore-keys: |
-            jupyter-cache
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -37,9 +28,10 @@ jobs:
           pip install -r requirements.txt
 
       - name: Build the book
+        env:
+          BASE_URL: /${{ github.event.repository.name }}
         run: |
-          mkdir -p ./jupyter_cache
-          jupyter-book build -nv --keep-going book
+          cd book && jupyter book build --execute --html
 
       - name: Publish to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
