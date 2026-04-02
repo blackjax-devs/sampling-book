@@ -433,7 +433,7 @@ ax.set_ylabel("# uncertain predictions");
 Perhaps unsurprisingly, the digit 8 is overrepresented in the set of examples $i$ for which $\max_d P(y_i=d|x_i) < 0.95$. As a purely academic exercise and sanity test of sort, let us now re-compute the point-wise accuracy ignoring the digits for which the model is uncertain, varying the threshold above which we consider the model to be certain:
 
 ```{code-cell} ipython3
-:args: [hide-cell]
+:tags: [hide-cell]
 
 def compute_accuracy(probs, y):
     predicted = jnp.argmax(probs, axis=1)
@@ -443,7 +443,7 @@ def compute_accuracy(probs, y):
 ```
 
 ```{code-cell} ipython3
-:args: [hide-cell]
+:tags: [hide-cell]
 
 thresholds = np.linspace(0.1, 1.0, 90)
 
@@ -458,7 +458,7 @@ for t in thresholds:
 ```
 
 ```{code-cell} ipython3
-:args: [hide-input]
+:tags: [hide-input]
 
 _, axes = plt.subplots(1, 2, figsize=(10, 4))
 axes[0].plot(thresholds, accuracies)

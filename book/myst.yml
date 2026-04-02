@@ -39,15 +39,12 @@ project:
         - file: models/hierarchical_bnn.md
         - file: models/RegimeSwitchingModel.md
         - file: models/probabilistic_ode_solver_parameter_estimation.md
-execute:
-  enabled: true
-  cache: _build/execute
 site:
   title: The Sampling Book
-  logo: blackjax.png
   actions:
     - title: GitHub
       url: https://github.com/blackjax-devs/sampling-book
   options:
+    logo: blackjax.png
     folders: true
   template: book-theme
