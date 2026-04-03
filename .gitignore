@@ -5,3 +5,4 @@ _build
 *_version.py
 /jupyter_cache/
 .DS_Store
+*.bak
