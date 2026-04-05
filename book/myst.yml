@@ -19,6 +19,7 @@ project:
         - file: algorithms/contour_sgld.md
         - file: algorithms/cyclical_sgld.md
         - file: algorithms/pathfinder.md
+        - file: algorithms/Variational_Inference.md
         - file: algorithms/PeriodicOrbitalMCMC.md
         - file: algorithms/TemperedSMC.md
         - file: algorithms/TemperedSMCWithOptimizedInnerKernel.md
