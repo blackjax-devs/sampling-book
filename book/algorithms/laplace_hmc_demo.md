@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.14.5
 kernelspec:
-  display_name: blackjax
+  display_name: Python 3 (ipykernel)
   language: python
-  name: blackjax
+  name: python3
 ---
 
 # Adjoint-Differentiated Laplace HMC
