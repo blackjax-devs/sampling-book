@@ -23,6 +23,7 @@ numpyro
 optax
 pandas
 scikit-learn
+seaborn
 tfp-nightly[jax]
 probdiffeq
 diffeqzoo

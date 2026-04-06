@@ -21,6 +21,14 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: Cache notebook execution
+        uses: actions/cache@v4
+        with:
+          path: book/_build/execute
+          key: myst-execute-${{ runner.os }}-${{ hashFiles('book/**/*.md', 'requirements.txt') }}
+          restore-keys: |
+            myst-execute-${{ runner.os }}-
+
       - name: Build the book
         run: |
           cd book && jupyter book build --execute --html
