@@ -26,6 +26,7 @@ project:
         - file: algorithms/mclmc.md
         - file: algorithms/meads.md
         - file: algorithms/laps.md
+        - file: algorithms/laplace_hmc_demo.md
         - file: algorithms/low_rank_mass_matrix.md
     - title: Models
       children:
