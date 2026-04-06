@@ -83,8 +83,8 @@ Use LAPS as follows:
 ndims = 2
 
 def logdensity_fn(x):
-        mu2 = 0.03 * (x[0] ** 2 - 100)
-        return -0.5 * (jnp.square(x[0] / 10.0) + jnp.square(x[1] - mu2))
+    mu2 = 0.03 * (x[0] ** 2 - 100)
+    return -0.5 * (jnp.square(x[0] / 10.0) + jnp.square(x[1] - mu2))
 
 
 rng_key_sampling, rng_key_init = jax.random.split(jax.random.key(42))
