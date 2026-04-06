@@ -291,51 +291,43 @@ print(f"phi_2 mean: {float(phi_nuts[:, 1].mean()):.3f}")
 
 ```{code-cell} ipython3
 :tags: [hide-input]
-import matplotlib.gridspec as gridspec
+from matplotlib.lines import Line2D
 
-fig = plt.figure(figsize=(16, 6))
-gs_outer = gridspec.GridSpec(1, 2, figure=fig, wspace=0.35)
+# --- Joint phi posterior using az.plot_joint (overlaid) ---
+idata_laplace = az.from_dict(posterior={
+    "phi_1": phi_samples[None, :, 0], "phi_2": phi_samples[None, :, 1]
+})
+idata_nuts = az.from_dict(posterior={
+    "phi_1": phi_nuts[None, :, 0], "phi_2": phi_nuts[None, :, 1]
+})
 
-# --- Left: jointplot-style density for phi posterior ---
-gs_joint = gridspec.GridSpecFromSubplotSpec(
-    4, 4, subplot_spec=gs_outer[0], hspace=0.05, wspace=0.05
+ax = az.plot_joint(
+    idata_laplace, var_names=["phi_1", "phi_2"], kind="kde",
+    joint_kwargs={"color": "steelblue"},
+    marginal_kwargs={"color": "steelblue"},
+    figsize=(6, 6),
 )
-ax_joint = fig.add_subplot(gs_joint[1:, :-1])
-ax_top   = fig.add_subplot(gs_joint[0, :-1], sharex=ax_joint)
-ax_right = fig.add_subplot(gs_joint[1:, -1], sharey=ax_joint)
-
-for phi_arr, color, label in [
-    (phi_samples, "steelblue", "Laplace-HMC"),
-    (phi_nuts,    "orange",    "NUTS"),
-]:
-    x, y = np.array(phi_arr[:, 0]), np.array(phi_arr[:, 1])
-    cmap = plt.matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", color])
-    az.plot_kde(x, y, contourf=True,
-                contourf_kwargs={"alpha": 0.45, "cmap": cmap},
-                contour_kwargs={"colors": [color]},
-                ax=ax_joint)
-    az.plot_dist(x, kind="kde", label=label, ax=ax_top,
-                 plot_kwargs={"color": color},
-                 fill_kwargs={"alpha": 0.5, "color": color})
-    az.plot_dist(y, kind="kde", ax=ax_right, rotated=True,
-                 plot_kwargs={"color": color},
-                 fill_kwargs={"alpha": 0.5, "color": color})
-
-ax_joint.axvline(float(phi_true[0]), color="r", ls="--", lw=1.2, label="True φ")
+az.plot_joint(
+    idata_nuts, var_names=["phi_1", "phi_2"], kind="kde",
+    joint_kwargs={"color": "orange"},
+    marginal_kwargs={"color": "orange"},
+    ax=ax,
+)
+ax_joint = ax[0]
+ax_joint.axvline(float(phi_true[0]), color="r", ls="--", lw=1.2)
 ax_joint.axhline(float(phi_true[1]), color="r", ls="--", lw=1.2)
 ax_joint.set_xlabel("φ₁ (log σ₁)")
 ax_joint.set_ylabel("φ₂ (log σ₂)")
+ax_joint.set_title("Posterior of φ = (log σ₁, log σ₂)")
+ax_joint.legend(handles=[
+    Line2D([0], [0], color="steelblue", lw=2, label="Laplace-HMC"),
+    Line2D([0], [0], color="orange",    lw=2, label="NUTS"),
+    Line2D([0], [0], color="r", ls="--", lw=1.2, label="True φ"),
+], fontsize=8, loc="lower right")
+plt.show()
 
-plt.setp(ax_top.get_xticklabels(), visible=False)
-plt.setp(ax_right.get_yticklabels(), visible=False)
-ax_top.set_ylabel("")
-ax_right.set_xlabel("")
-ax_top.legend(fontsize=8, loc="upper left")
-ax_joint.legend(fontsize=8, loc="lower right")
-ax_top.set_title("Posterior of φ = (log σ₁, log σ₂)")
-
-# --- Right: latent variable posterior mean ± 2σ ---
-ax2 = fig.add_subplot(gs_outer[1])
+# --- Latent variable posterior mean ± 2σ ---
+fig2, ax2 = plt.subplots(figsize=(7, 5))
 group_idx = 0
 x_idx = jnp.arange(n_latents_per_group)
 for mean, std, fmt, color, label in [
@@ -355,7 +347,7 @@ ax2.set_xlabel("Latent index i")
 ax2.set_ylabel("θᵢ")
 ax2.set_title(f"Latent variables — Group {group_idx + 1}")
 ax2.legend(fontsize=9)
-
+plt.tight_layout()
 plt.show()
 ```
 
