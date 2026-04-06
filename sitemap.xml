@@ -35,6 +35,9 @@
     <loc>http://localhost:3000/algorithms/laps</loc>
   </url>
   <url>
+    <loc>http://localhost:3000/algorithms/laplace-hmc-demo</loc>
+  </url>
+  <url>
     <loc>http://localhost:3000/algorithms/low-rank-mass-matrix</loc>
   </url>
   <url>
