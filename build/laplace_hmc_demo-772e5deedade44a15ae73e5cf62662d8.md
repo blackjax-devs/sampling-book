@@ -290,7 +290,7 @@ print(f"phi_2 mean: {float(phi_nuts[:, 1].mean()):.3f}")
 ```
 
 ```{code-cell} ipython3
-:tags: [hide-cell]
+:tags: [hide-input]
 import matplotlib.gridspec as gridspec
 
 fig = plt.figure(figsize=(16, 6))
