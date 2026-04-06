@@ -42,6 +42,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from jax.flatten_util import ravel_pytree
 
+import arviz as az
+
 import blackjax
 import blackjax.mcmc.laplace_marginal
 from blackjax.optimizers.lbfgs import minimize_lbfgs
@@ -178,8 +180,6 @@ hyperparameters are identifiable, we provide multiple observations per latent va
 $\theta_i$.
 
 ```{code-cell} ipython3
-import seaborn as sns
-
 n_groups = 2
 n_latents_per_group = 20
 n_obs_per_latent = 10
@@ -309,9 +309,17 @@ for phi_arr, color, label in [
     (phi_nuts,    "orange",    "NUTS"),
 ]:
     x, y = np.array(phi_arr[:, 0]), np.array(phi_arr[:, 1])
-    sns.kdeplot(x=x, y=y, fill=True, alpha=0.45, color=color, ax=ax_joint)
-    sns.kdeplot(x=x, fill=True, alpha=0.5, color=color, ax=ax_top, label=label)
-    sns.kdeplot(y=y, fill=True, alpha=0.5, color=color, ax=ax_right)
+    cmap = plt.matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", color])
+    az.plot_kde(x, y, contourf=True,
+                contourf_kwargs={"alpha": 0.45, "cmap": cmap},
+                contour_kwargs={"colors": [color]},
+                ax=ax_joint)
+    az.plot_dist(x, kind="kde", label=label, ax=ax_top,
+                 plot_kwargs={"color": color},
+                 fill_kwargs={"alpha": 0.5, "color": color})
+    az.plot_dist(y, kind="kde", ax=ax_right, rotated=True,
+                 plot_kwargs={"color": color},
+                 fill_kwargs={"alpha": 0.5, "color": color})
 
 ax_joint.axvline(float(phi_true[0]), color="r", ls="--", lw=1.2, label="True φ")
 ax_joint.axhline(float(phi_true[1]), color="r", ls="--", lw=1.2)
