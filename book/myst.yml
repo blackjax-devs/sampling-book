@@ -47,5 +47,6 @@ site:
       url: https://github.com/blackjax-devs/sampling-book
   options:
     logo: blackjax.png
+    favicon: blackjax.png
     folders: true
   template: book-theme
