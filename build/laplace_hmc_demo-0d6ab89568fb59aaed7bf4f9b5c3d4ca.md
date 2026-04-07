@@ -42,8 +42,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from jax.flatten_util import ravel_pytree
 
-import arviz as az
-
 import blackjax
 import blackjax.mcmc.laplace_marginal
 from blackjax.optimizers.lbfgs import minimize_lbfgs
@@ -291,43 +289,26 @@ print(f"phi_2 mean: {float(phi_nuts[:, 1].mean()):.3f}")
 
 ```{code-cell} ipython3
 :tags: [hide-input]
-from matplotlib.lines import Line2D
+import pandas as pd
+import seaborn as sns
 
-# --- Joint phi posterior using az.plot_joint (overlaid) ---
-idata_laplace = az.from_dict(posterior={
-    "phi_1": phi_samples[None, :, 0], "phi_2": phi_samples[None, :, 1]
-})
-idata_nuts = az.from_dict(posterior={
-    "phi_1": phi_nuts[None, :, 0], "phi_2": phi_nuts[None, :, 1]
-})
 
-ax = az.plot_joint(
-    idata_laplace, var_names=["phi_1", "phi_2"], kind="kde",
-    joint_kwargs={"color": "steelblue"},
-    marginal_kwargs={"color": "steelblue"},
-    figsize=(6, 6),
-)
-az.plot_joint(
-    idata_nuts, var_names=["phi_1", "phi_2"], kind="kde",
-    joint_kwargs={"color": "orange"},
-    marginal_kwargs={"color": "orange"},
-    ax=ax,
-)
-ax_joint = ax[0]
-ax_joint.axvline(float(phi_true[0]), color="r", ls="--", lw=1.2)
-ax_joint.axhline(float(phi_true[1]), color="r", ls="--", lw=1.2)
-ax_joint.set_xlabel("φ₁ (log σ₁)")
-ax_joint.set_ylabel("φ₂ (log σ₂)")
-ax_joint.set_title("Posterior of φ = (log σ₁, log σ₂)")
-ax_joint.legend(handles=[
-    Line2D([0], [0], color="steelblue", lw=2, label="Laplace-HMC"),
-    Line2D([0], [0], color="orange",    lw=2, label="NUTS"),
-    Line2D([0], [0], color="r", ls="--", lw=1.2, label="True φ"),
-], fontsize=8, loc="lower right")
+# --- Joint phi posterior ---
+phi_df = pd.concat([
+    pd.DataFrame({"φ₁": np.array(phi_samples[:, 0]), "φ₂": np.array(phi_samples[:, 1]), "sampler": "Laplace-HMC"}),
+    pd.DataFrame({"φ₁": np.array(phi_nuts[:, 0]),    "φ₂": np.array(phi_nuts[:, 1]),    "sampler": "NUTS"}),
+])
+g = sns.jointplot(data=phi_df, x="φ₁", y="φ₂", hue="sampler", kind="kde")
+g.ax_joint.axvline(float(phi_true[0]), color="r", ls="--", lw=1.2, label="True φ")
+g.ax_joint.axhline(float(phi_true[1]), color="r", ls="--", lw=1.2)
+g.figure.suptitle("Posterior of φ = (log σ₁, log σ₂)", y=1.02)
 plt.show()
+```
 
+```{code-cell} ipython3
+:tags: [hide-input]
 # --- Latent variable posterior mean ± 2σ ---
-fig2, ax2 = plt.subplots(figsize=(7, 5))
+fig, ax2 = plt.subplots(figsize=(7, 5))
 group_idx = 0
 x_idx = jnp.arange(n_latents_per_group)
 for mean, std, fmt, color, label in [
