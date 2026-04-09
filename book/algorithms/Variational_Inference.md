@@ -60,7 +60,7 @@ $$
 KL + L = \ln p(x)
 $$
 
-By increasing the lower bound, we reduce the KL divergence. Maximizing the lower bound is often more practical, since the KL divergence involves the joint distribution, whereas the lower bound only requires the joint probability in its numerator. Because we want the KL divergence to be as small as possible, the goal is to make the lower bound as large as possible. Therefore, the key idea is to find a distribution $q(z)$ that maximizes the lower bound. This approach forms the foundation of variational inference. By selecting a tractable form for $q(z)$, the inference problem becomes computationally feasible.
+By increasing the lower bound, we reduce the KL divergence. Maximizing the lower bound is often more practical, since the KL divergence involves the joint distribution, whereas the lower bound only requires the joint probability in its numerator. Because we want the KL divergence to be as small as possible, the goal is to make the lower bound as large as possible. Therefore, the key idea is to find a distribution $q(z)$ that maximizes the lower bound. This approach forms the foundation of variational inference. By selecting a tractable form for $q(z)$, the inference problem becomes computationally feasible. (https://studenttheses.uu.nl/handle/20.500.12932/50019?show=full)
 
 
 
@@ -71,9 +71,9 @@ By increasing the lower bound, we reduce the KL divergence. Maximizing the lower
 
 
 ## 2. Different types of objectives
-In most cases, variational inference is presented with the Kullback-Leibler (KL) divergence as the objective. However, the literature also studies alternative objectives. One important example is the variational Rényi (VR) bound, which extends traditional variational inference to Rényi's \(\alpha\)-divergences.
+In most cases, variational inference is presented with the Kullback-Leibler (KL) divergence as the objective. However, the literature also studies alternative objectives. One important example is the variational Rényi (VR) bound, which extends traditional variational inference to Rényi's alpha-divergences.
 
-For two distributions \(p\) and \(q\), Rényi's \(\alpha\)-divergence is defined as
+For two distributions \(p\) and \(q\), Rényi's alpha-divergence is defined as
 
 $$
 D_\alpha[p \| q]
@@ -83,7 +83,7 @@ D_\alpha[p \| q]
 \qquad \alpha > 0,\ \alpha \neq 1.
 $$
 
-As \(\alpha \to 1\), this expression recovers the Kullback-Leibler divergence. In variational inference, this leads to the variational Rényi bound
+As alpha = 1, this expression recovers the Kullback-Leibler divergence. In variational inference, this leads to the variational Rényi bound
 
 $$
 \mathcal{L}_\alpha(q; x)
@@ -98,7 +98,7 @@ $$
 \right].
 $$
 
-When \(\alpha \to 1\), the variational Rényi bound reduces to the standard evidence lower bound (ELBO). Different values of \(\alpha\) change the behavior of the approximation, allowing a trade-off between mode-seeking and mass-covering behavior. (https://arxiv.org/abs/1602.02311)
+When alpha = 1, the variational Rényi bound reduces to the standard evidence lower bound (ELBO). Different values of alpha change the behavior of the approximation, allowing a trade-off between mode-seeking and mass-covering behavior. (https://arxiv.org/abs/1602.02311)
 
 Tail-adaptive 𝑓-divergence is a variational inference objective designed to keep the mass-covering advantages of α-divergences while avoiding the instability that can arise when importance weights have heavy tails. The key idea is to adapt the divergence to the tail behavior of the density ratio during training, which makes optimization more stable and can improve performance on complex, multimodal problems. (https://arxiv.org/abs/1810.11943)
 
@@ -118,7 +118,7 @@ Robustness to outliers is something that was considered by researchers regarding
 
 ## 3. The use of variational inference in practice 
 
-As an example, we set up a variational inference experiment to approximate a posterior distribution over a 3‑dim variable. The target posterior combines a uniform prior on [−10, 10] with a Gaussian mixture likelihood (3 components) fitted to synthetically generated data. We also compare two variational families: mean‑field (MFVI) and full‑rank (FRVI), and two divergences: KL and Rényi-α. After sampling 10,000 draws from each approximation amd ground-truth generated data, we evaluate the quality by computing means, variances, KL divergence metric to the ground truth posterior and visualise all distributions with a corner plot. The goal is to see which combination of family and divergence yields the most accurate posterior approximation.
+As an example, we set up a variational inference experiment to approximate a posterior distribution over a 3‑dim variable. The target posterior combines a uniform prior on [−10, 10] with a Gaussian mixture likelihood (3 components) fitted to synthetically generated data. We also compare two variational families: mean‑field (MFVI) and full‑rank (FRVI), and two divergences: KL and Rényi-α. After sampling 10,000 draws from each approximation and ground-truth generated data, we evaluate the quality by computing means, variances, KL divergence metric to the ground truth posterior and visualise all distributions with a corner plot. The goal is to see which combination of family and divergence yields the most accurate posterior approximation.
 
 ```{code-cell} python3
 import blackjax
@@ -140,7 +140,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-...
+
 ```
 
 
@@ -190,7 +190,7 @@ class GaussianMixtureLikelihood:
         quad = jax.vmap(quad_form)(diffs, self.chols)
         ll = logsumexp(self.log_w + self.log_norms - 0.5 * quad)
         return ll, jnp.zeros((0,), dtype=ll.dtype)
-...
+
 ```
 
 
@@ -298,7 +298,7 @@ def run_vi_experiment(
     samples = np.array(vi_algo.sample(subkey, state, num_draws))
 
     return samples, state, losses
-...
+
 ```
 
 
@@ -322,7 +322,7 @@ mfvi_kl_samples, mfvi_kl_state, mfvi_kl_losses = run_vi_experiment("mfvi", kl, s
 frvi_kl_samples, frvi_kl_state, frvi_kl_losses = run_vi_experiment("frvi", kl, seed=0)
 mfvi_renyi_samples, mfvi_renyi_state, mfvi_renyi_losses = run_vi_experiment("mfvi", renyi, seed=0)
 frvi_renyi_samples, frvi_renyi_state, frvi_renyi_losses = run_vi_experiment("frvi", renyi, seed=0)
-...
+
 ```
 
 
@@ -369,7 +369,7 @@ def compute_metrics(vi_samples, true_samples):
         'true_mean': true_mean, 'true_var': true_var,
         'kl_divergence': kl_div}
 
-...
+
 ```
 
 
@@ -379,7 +379,7 @@ mfvi_kl_metrics = compute_metrics(mfvi_kl_samples, true_samples_raw)
 frvi_kl_metrics = compute_metrics(frvi_kl_samples, true_samples_raw)
 mfvi_renyi_metrics = compute_metrics(mfvi_renyi_samples, true_samples_raw)
 frvi_renyi_metrics = compute_metrics(frvi_renyi_samples, true_samples_raw)
-...
+
 ```
 
 
@@ -399,7 +399,7 @@ print(pd.DataFrame({
         "MFVI + KL": mfvi_kl_metrics["vi_mean"], "FRVI + KL": frvi_kl_metrics["vi_mean"],
         "MFVI + Renyi": mfvi_renyi_metrics["vi_mean"], "FRVI + Renyi": frvi_renyi_metrics["vi_mean"],
     }).round(6).to_string(index=False))
-...
+
 ```
 
 
@@ -419,7 +419,7 @@ print(
         "MFVI + KL": mfvi_kl_metrics["vi_var"], "FRVI + KL": frvi_kl_metrics["vi_var"],
         "MFVI + Renyi": mfvi_renyi_metrics["vi_var"], "FRVI + Renyi": frvi_renyi_metrics["vi_var"],
     }).round(6).to_string(index=False))
-...
+
 ```
 
 
@@ -439,7 +439,7 @@ print(
                          mfvi_renyi_metrics["kl_divergence"], frvi_renyi_metrics["kl_divergence"],],
     }).round(6).to_string(index=False))
 
-...
+
 ```
 
 
@@ -488,9 +488,9 @@ g = sns.pairplot(
     plot_kws={"fill": False, "levels": 5}, 
     diag_kws={"fill": False})
 
-g.fig.suptitle("Distribution Comparison: True vs All VI Methods", fontsize=16, fontweight="bold", y=1.02)
+g.fig.suptitle("Distribution Comparison: True vs All VI Methods", fontsize=8, fontweight="bold", y=1.02)
 plt.show()
 
-...
+
 ```
 
