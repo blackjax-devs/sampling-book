@@ -17,7 +17,7 @@ Standard HMC preconditioning adapts the mass matrix to match the posterior geome
 
 - **Diagonal** (`window_adaptation` default): adapts a per-parameter scale via Welford's variance estimator. Efficient and robust but ignores correlations.
 - **Dense** (`is_mass_matrix_diagonal=False`): full covariance estimate via Welford's algorithm. Captures all correlations but is $O(D^2)$ in memory/compute and can overfit when warmup samples are few.
-- **Low-rank** ([Sountsov, Carlson & Carpenter, 2025](https://arxiv.org/abs/2603.18845)): finds the best rank-$k$ correction to a diagonal mass matrix by *minimising the Fisher divergence* — the expected squared norm of the difference between the score of the preconditioned distribution and a standard normal. The inverse mass matrix has the form
+- **Low-rank** ([Seyboldt, Carlson & Carpenter, 2026](https://arxiv.org/abs/2603.18845)): finds the best rank-$k$ correction to a diagonal mass matrix by *minimising the Fisher divergence* — the expected squared norm of the difference between the score of the preconditioned distribution and a standard normal. The inverse mass matrix has the form
 
 $$M^{-1} = \operatorname{diag}(\sigma)\bigl(I + U(\Lambda - I)U^\top\bigr)\operatorname{diag}(\sigma)$$
 
