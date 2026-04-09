@@ -28,6 +28,7 @@ project:
         - file: algorithms/laps.md
         - file: algorithms/laplace_hmc_demo.md
         - file: algorithms/low_rank_mass_matrix.md
+        - file: algorithms/Variational_Inference.md
     - title: Models
       children:
         - file: models/change_of_variable_hmc.md
