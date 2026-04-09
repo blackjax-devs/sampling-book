@@ -1,6 +1,17 @@
 version: 1
 project:
-  title: Variational Inference
+  title: The Sampling Book Project
+  authors:
+    - name: The Blackjax Team
+  exclude:
+    - README.md
+  github: blackjax-devs/sampling-book
+  bibliography:
+    - references.bib
+  exports:
+    - format: pdf
+      template: plain_latex_book
+      output: exports/book.pdf
   toc:
     - file: index.md
     - title: Algorithms
