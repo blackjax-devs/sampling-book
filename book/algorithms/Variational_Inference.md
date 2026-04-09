@@ -40,7 +40,7 @@ Where
 - $p(x, z)$ is known
 - $p(x)$ is intractable to compute
 
-Despite the intractability of $p(x)$, it is still possible to approximate the unknown $p(z \mid x)$ by introducing a function $q(z)$ which aims to approximate $p(z \mid x)$. Let KL-divergence, which is the measure of the difference between two probability distributions and discussed in Appendix A, be presented as:
+Despite the intractability of $p(x)$, it is still possible to approximate the unknown $p(z \mid x)$ by introducing a function $q(z)$ which aims to approximate $p(z \mid x)$. Let KL-divergence, which is the measure of the difference between two probability distributions, be presented as:
 
 $$
 KL = - \sum q(z) * \log \frac{p(z \mid x)}{q(x)}
@@ -62,384 +62,215 @@ $$
 
 By increasing the lower bound, we reduce the KL divergence. Maximizing the lower bound is often more practical, since the KL divergence involves the joint distribution, whereas the lower bound only requires the joint probability in its numerator. Because we want the KL divergence to be as small as possible, the goal is to make the lower bound as large as possible. Therefore, the key idea is to find a distribution $q(z)$ that maximizes the lower bound. This approach forms the foundation of variational inference. By selecting a tractable form for $q(z)$, the inference problem becomes computationally feasible.
 
-Let's know take a look at some examples of how to use variational inference. To make an experiment, let's start with a Gaussian mixture generator which will randomly generates Gaussian with the specified number of components per dimension. 
-
-## 2. Random Gaussian generator
-
-```{code-cell} python3
 
 
-import jax 
-import jax.numpy as jnp
-import numpy as np
-import matplotlib.pyplot as plt
-import corner
 
 
-"""The following can be used to improve plotting a bit
-   Credits: https://github.com/ThibeauWouters"""
-params = {
-        "text.usetex" : False,
-        "font.family" : "serif",
-        "ytick.color" : "black",
-        "xtick.color" : "black",
-        "axes.labelcolor" : "black",
-        "axes.edgecolor" : "black",
-        "font.serif" : ["Computer Modern Serif"],
-        "xtick.labelsize": 16,
-        "ytick.labelsize": 16,
-        "axes.labelsize": 16,
-        "legend.fontsize": 16,
-        "legend.title_fontsize": 16,
-        "figure.titlesize": 16
-}
-
-plt.rcParams.update(params)
-
-# Improved corner kwargs -- pass them to corner.corner
-default_corner_kwargs = dict(bins=50, 
-                        smooth=0.5, 
-                        show_titles=False,
-                        label_kwargs=dict(fontsize=16),
-                        title_kwargs=dict(fontsize=16), 
-                        color="blue",
-                        # quantiles=[],
-                        # levels=[0.9],
-                        plot_density=True, 
-                        plot_datapoints=False, 
-                        fill_contours=True,
-                        max_n_ticks=4, 
-                        min_n_ticks=3,
-                        truth_color = "red",
-                        save=False)
 
 
-class GaussianMixtureGenerator:
-    """Utility class to generate samples from a mixture of Gaussians."""
 
-    @staticmethod
-    def generate_gaussian_mixture(n_dim: int,
-                                  n_gaussians: int = None,
-                                  n_samples: int = None,
-                                  means: list = None,
-                                  covariances: list = None,
-                                  weights: list = None,
-                                  width_mean: float = None,
-                                  width_cov: float = None):
-        """
-        Generate samples from a mixture of Gaussians. 
-        This function generates samples from a Gaussian mixture model with specified means, covariances, and weights.
-        If means, covariances, or weights are not provided, they are generated randomly.
-        
-        Args:
-            n_dim (int): The number of dimensions for the samples.
-            n_gaussians (int, optional): The number of Gaussian components in the mixture. Defaults to 1.
-            n_samples (int, optional): The number of samples to generate. Defaults to 10,000.
-            means (list, optional): The mean vectors. If not specified, then they will be generated randomly. Defaults to None.
-            covariances (list, optional): The square covariance matrix of size (n_dim x n_dim). If not specified, then they will be generated randomly. Defaults to None.
-            weights (list, optional): Weights between the different Gaussians. If not specified, equal weights are used. Defaults to None.
-            width_mean (float, optional): The width of the mean distribution. Defaults to 10.0.
-            width_cov (float, optional): The width of the covariance distribution. Defaults to 1.0.
-        """
-        
-        # If no mean vector is given, generate random means
-        seed = np.random.randint(0, 1000)
-        jax_key = jax.random.PRNGKey(seed)
-        if means is None:
-            means = []
-            for _ in range(n_gaussians):
-                # Split the key to ensure different means for each Gaussian
-                jax_key, subkey = jax.random.split(jax_key)
-                this_means = jax.random.uniform(subkey, (n_dim,), minval=-width_mean, maxval=width_mean)
-                #print("this_means")
-                print(this_means)
-                
-                means.append(this_means)
-        #print(f"Means: {means}")
-            
-        # If no covariance matrix is given, generate identity matrices
-        if covariances is None:
-            covariances = []
-            for _ in range(n_gaussians):
-                jax_key, subkey = jax.random.split(jax_key)
-                A = jax.random.uniform(subkey, (n_dim, n_dim), minval=-width_cov, maxval=width_cov)
-                B = jnp.dot(A, A.transpose())
-                covariances.append(B)
-        #print(f"Covariances: {covariances}")
-        
-        # If no weights are given, use equal weights between the Gaussians
-        if weights is None:
-            weights = [1.0 / n_gaussians] * n_gaussians
-        #print(f"Weights: {weights}")
-            
-        # Check if everythingq is consistent
-        if len(means) != n_gaussians or len(covariances) != n_gaussians or len(weights) != n_gaussians:
-            raise ValueError("Means, covariances, and weights must match the number of Gaussians.")
-        
-        # Generate samples
-        samples = []
-        for i in range(n_samples):
-            # Choose a Gaussian component based on weights
-            this_key = jax.random.PRNGKey(i)
-            this_key, sample_key = jax.random.split(this_key)
-            component = np.random.choice(n_gaussians, p=weights)
-            mean = means[component]
-            covariance = covariances[component]
-            
-            # Generate a sample from the chosen Gaussian
-            sample = jax.random.multivariate_normal(sample_key, mean, covariance)
-            samples.append(sample)
-            
-        samples = jnp.array(samples)
-        return samples, means, covariances, weights
 
-...
-```
+## 2. Different types of objectives
+In most cases, variational inference is presented with the Kullback-Leibler (KL) divergence as the objective. However, the literature also studies alternative objectives. One important example is the variational Rényi (VR) bound, which extends traditional variational inference to Rényi's \(\alpha\)-divergences.
 
-## 3. Likelihood function
-The next step is to define multivariate likelihood 
+For two distributions \(p\) and \(q\), Rényi's \(\alpha\)-divergence is defined as
 
+$$
+D_\alpha[p \| q]
+=
+\frac{1}{\alpha - 1}
+\log \int p(z)^\alpha q(z)^{1-\alpha}\,dz,
+\qquad \alpha > 0,\ \alpha \neq 1.
+$$
+
+As \(\alpha \to 1\), this expression recovers the Kullback-Leibler divergence. In variational inference, this leads to the variational Rényi bound
+
+$$
+\mathcal{L}_\alpha(q; x)
+=
+\frac{1}{1-\alpha}
+\log
+\mathbb{E}_{q(z)}
+\left[
+\left(
+\frac{p(x,z)}{q(z)}
+\right)^{1-\alpha}
+\right].
+$$
+
+When \(\alpha \to 1\), the variational Rényi bound reduces to the standard evidence lower bound (ELBO). Different values of \(\alpha\) change the behavior of the approximation, allowing a trade-off between mode-seeking and mass-covering behavior. (https://arxiv.org/abs/1602.02311)
+
+Tail-adaptive 𝑓-divergence is a variational inference objective designed to keep the mass-covering advantages of α-divergences while avoiding the instability that can arise when importance weights have heavy tails. The key idea is to adapt the divergence to the tail behavior of the density ratio during training, which makes optimization more stable and can improve performance on complex, multimodal problems. (https://arxiv.org/abs/1810.11943)
+
+A further generalization is given by the scale-invariant alpha-beta (sAB) divergence. This is a two-parameter family of objectives that includes several well-known divergence-based approaches as special cases, including KL, Rényi, and gamma-type objectives. In variational inference, this objective is optimized directly as a divergence between the variational approximation and the posterior distribution. Its additional flexibility allows one to control both the mass-covering versus mode-seeking behavior of the approximation and its robustness to outliers. (https://arxiv.org/abs/1805.01045)
+
+Robustness to outliers is something that was considered by researchers regarding variational inference. As a result, a few articles replace KL divergence with wth a robust divergences such as $\beta$ and $\gamma$. (https://arxiv.org/abs/1710.06595). 
+
+χ-divergence variational inference replaces the usual KL-based objective with a divergence that encourages more overdispersed approximations and avoids assigning too little mass to regions where the true posterior is nonzero. In this framework, inference is performed by minimizing the χ upper bound (CUBO), which provides an upper bound on the model evidence. (https://arxiv.org/abs/1611.00328)
+
+
+
+
+
+
+
+
+
+## 3. The use of variational inference in practice 
+
+As an example, we set up a variational inference experiment to approximate a posterior distribution over a 3‑dim variable. The target posterior combines a uniform prior on [−10, 10] with a Gaussian mixture likelihood (3 components) fitted to synthetically generated data. We also compare two variational families: mean‑field (MFVI) and full‑rank (FRVI), and two divergences: KL and Rényi-α. After sampling 10,000 draws from each approximation amd ground-truth generated data, we evaluate the quality by computing means, variances, KL divergence metric to the ground truth posterior and visualise all distributions with a corner plot. The goal is to see which combination of family and divergence yields the most accurate posterior approximation.
 
 ```{code-cell} python3
-
-
-
-from typing import Tuple
-import jax
-import jax.numpy as jnp
-import equinox as eqx
-from jax.scipy.linalg import solve_triangular
-from jax.scipy.special import logsumexp
-
-Array = jax.Array
-
-
-class GaussianMixtureParams(eqx.Module):
-    """
-    Parameters for a Gaussian Mixture Model.
-    
-    Parameters:
-    ------------
-        means: Mean vectors for each component, shape (K, D) where K = number of components, 
-               D = data dimension
-        chols: Lower Cholesky factors of covariance matrices, shape (K, D, D). Each chols[k] 
-               is lower-triangular
-        log_w: log weights (log mixing coefficients) for each component, shape (K,)
-        log_norms: Log normalization constants for each Gaussian component, shape (K,).
-    
-    Equal to -0.5 * (D * log(2pi) + log(det(cov_k)))
-
-    """
-    means: Array      # (K, D)
-    chols: Array      # (K, D, D)
-    log_w: Array      # (K,)
-    log_norms: Array  # (K,)
-
-
-def gmm_init_params(
-    means: Array,      # (K, D)
-    covs: Array,       # (K, D, D)
-    weights: Array,    # (K,)
-    *,
-    logits: bool = False,
-    eps: float = 1e-30,
-) -> GaussianMixtureParams:
-    """Initialize Gaussian Mixture Model parameters from raw inputs.
-    
-    Parameters:
-    -----------
-        means: Component means, shape (K, D)
-        covs: Component covariance matrices (must be positive definite), shape (K, D, D)
-        weights: Component weights (mixing coefficients), shape (K,)
-        logits: If True, weights as logits and apply log_softmax.
-                If False, weights as probabilities and normalize to sum to 1 before taking log.
-        eps: constant to avoid log(0) when weights=False
-    """
-    means = jnp.asarray(means)
-    covs = jnp.asarray(covs)
-    weights = jnp.asarray(weights)
-
-    K, D = means.shape
-
-    chols = jax.vmap(jnp.linalg.cholesky)(covs)  # (K, D, D)
-
-    log_dets = 2.0 * jnp.sum(
-        jnp.log(jnp.diagonal(chols, axis1=-2, axis2=-1)),
-        axis=-1,
-    )  # (K,)
-
-    two_pi = jnp.asarray(2.0 * jnp.pi, dtype=means.dtype)
-    log_norms = -0.5 * (jnp.asarray(D, dtype=means.dtype) * jnp.log(two_pi) + log_dets)  # (K,)
-
-    log_w = jax.lax.cond(
-        jnp.asarray(logits),
-        lambda w: jax.nn.log_softmax(w),
-        lambda w: jnp.log((w / jnp.sum(w)) + jnp.asarray(eps, dtype=w.dtype)),
-        weights,
-    )
-
-    return GaussianMixtureParams(means=means, chols=chols, log_w=log_w, log_norms=log_norms)
-
-
-def gmm_log_prob_single(params: GaussianMixtureParams, x: Array) -> Array:
-    """Compute log probability of a single data point.
-    
-    Parameters:
-    -----------
-        params: GaussianMixtureParams with component parameters
-        x: Single data point, shape (D,)
-    
-    Returns:
-    ---------
-        log p(x | params), scalar value
-        """    
-    # x: (D,)
-    diffs = x - params.means  # (K, D)
-
-    def quad_form(diff: Array, L: Array) -> Array:
-        y = solve_triangular(L, diff, lower=True)
-        return jnp.sum(y * y)
-
-    quad = jax.vmap(quad_form)(diffs, params.chols)     # (K,)
-    log_comp = params.log_norms - 0.5 * quad            # (K,)
-    return logsumexp(params.log_w + log_comp)           # scalar
-
-
-def gmm_log_prob(params: GaussianMixtureParams, xs: Array) -> Array:
-    """Compute log prob for a batch of data points."""
-    # xs: (..., D) -> (...,)
-    xs = jnp.asarray(xs)
-    D = params.means.shape[1]
-    flat = xs.reshape((-1, D))
-    flat_lp = jax.vmap(lambda z: gmm_log_prob_single(params, z))(flat)
-    return flat_lp.reshape(xs.shape[:-1])
-
-
-
-
-class GaussianMixtureLikelihood(eqx.Module):
-    params: GaussianMixtureParams  
-
-    def __init__(self, means, covs, weights, *, logits: bool = False):
-        self.params = gmm_init_params(means=means, covs=covs, weights=weights, logits=logits)
-
-    def loglike_single(self, x_1d: Array) -> Tuple[Array, Array]:
-        ll = gmm_log_prob_single(self.params, x_1d)
-        return ll, jnp.zeros((0,), dtype=ll.dtype)  # blobs_dim=0
-
-
-...
-```
-
-
-
-
-
-## 4. Sampling
-
-Now we are ready to sample. The idea is simple:
-
-  (i) Gaussian distributions will be generated randomly in specified parameter space. 
-  (ii) Mean and variance from Gaussian distributions will be passed to likelihood as estimators
-  (iii) prior here is belief about bounds of the parameter space
-
-```{code-cell} python3
-
-
-
-# diagnostic packages
-import numpy as np
-import jax
-import jax.numpy as jnp
-import optax
-from jax import random
-import matplotlib.pyplot as plt
-import corner
-import logging
-logging.getLogger("matplotlib.font_manager").setLevel(logging.ERROR)
-
-# algorithms
-import blackjax
 import blackjax
 from blackjax.vi.fullrank_vi import as_top_level_api as frvi_top_level_api
 from blackjax.vi.meanfield_vi import as_top_level_api as mfvi_top_level_api
 from blackjax.vi._gaussian_vi import KL, RenyiAlpha
 
+from typing import Tuple
+import jax
+import jax.numpy as jnp
+from jax.scipy.linalg import solve_triangular
+from jax.scipy.special import logsumexp
+import optax
+from jax import random
+from sklearn.datasets import make_blobs
+from sklearn.mixture import GaussianMixture
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+...
+```
 
 
 
-print("="*80)
-print("PART 1: TRAINING VARIATIONAL INFERENCE MODELS")
-print("="*80)
 
-# Set seed
-np.random.seed(847)
 
-# Generate target distribution
-print("\n1.1 Generating target Gaussian distribution...")
-true_samples_raw, means, covariances, weights = GaussianMixtureGenerator.generate_gaussian_mixture(
-    n_dim=3, n_gaussians=1, weights=[1.0], n_samples=10_000, width_mean=4.0, width_cov=1.0
+
+
+
+
+
+
+## 4. Likelihood
+
+The `GaussianMixtureLikelihood` class computes the log-likelihood of a point under a pre‑fitted Gaussian mixture model. It pre‑computes Cholesky factors, log‑weights, and log‑normalization constants for efficiency. `loglike_single` method returns the log‑likelihood, which is added to a uniform log‑prior to form the target posterior for variational inference.
+
+
+```{code-cell} python3
+Array = jax.Array
+
+class GaussianMixtureLikelihood:
+    """Defines Gaussian Mixture Likelihood"""
+    def __init__(self, gmm):
+        means = jnp.asarray(gmm.means_)
+        covs = jnp.asarray(gmm.covariances_)
+        weights = jnp.asarray(gmm.weights_)
+
+        self.means = means
+        self.chols = jax.vmap(jnp.linalg.cholesky)(covs)
+
+        log_dets = 2.0 * jnp.sum(
+            jnp.log(jnp.diagonal(self.chols, axis1=-2, axis2=-1)),
+            axis=-1,
+        )
+
+        d = means.shape[1]
+        self.log_w = jnp.log(weights / jnp.sum(weights))
+        self.log_norms = -0.5 * (d * jnp.log(2.0 * jnp.pi) + log_dets)
+
+    def loglike_single(self, x: Array) -> Tuple[Array, Array]:
+        diffs = x - self.means
+
+        def quad_form(diff, L):
+            y = solve_triangular(L, diff, lower=True)
+            return jnp.sum(y * y)
+
+        quad = jax.vmap(quad_form)(diffs, self.chols)
+        ll = logsumexp(self.log_w + self.log_norms - 0.5 * quad)
+        return ll, jnp.zeros((0,), dtype=ll.dtype)
+...
+```
+
+
+
+
+
+
+
+
+## 5. Experiment setup
+
+Next we set up the synthetic ground truth: 10000 3‑dim points are generated from three Gaussian blobs, then a full‑covariance Gaussian mixture model is fitted to them to serve as the true posterior. The target log‑density for variational inference is defined. `run_vi_experiment` function then runs variational inference using mean‑field and full‑rank Gaussian families, optimizes the chosen divergence (KL and Rényi) with Adam over 1000 steps, and returns posterior samples.
+
+
+```{code-cell} python3
+# define parameters
+seed = 847
+n_components = 3
+dim = 3
+n = 10_000
+
+# generate data with scikit-learn
+target_data, blob_labels = make_blobs(
+    n_samples=n,
+    centers=n_components,
+    n_features=dim,
+    cluster_std=[1.0, 1.4, 0.8] if n_components == 3 else [1.0, 1.4],
+    center_box=(-3.0, 3.0),
+    random_state=seed,
 )
-true_samples_raw = np.array(true_samples_raw)
-print(f" Generated {true_samples_raw.shape[0]} samples from {len(means)} component Gaussian")
 
-# Initialize likelihood
-likelihood = GaussianMixtureLikelihood(
-    means=jnp.asarray(means),
-    covs=jnp.asarray(covariances),
-    weights=jnp.asarray(weights),
-    logits=False,
+print(np.unique(blob_labels, return_counts=True))
+
+# fit a Gaussian mixture model to the synthetic data
+gmm = GaussianMixture(
+    n_components=n_components,
+    covariance_type="full",
+    random_state=seed,
 )
+gmm.fit(target_data)
 
-# Define prior bounds
-prior_bounds = {
-    "x0": [-10.0, 10.0], "x1": [-10.0, 10.0], "x2": [-10.0, 10.0],
-}
+# samples from fitted GMM 
+true_samples_raw, _ = gmm.sample(10_000)
 
-low = jnp.array([
-    prior_bounds["x0"][0], prior_bounds["x1"][0], prior_bounds["x2"][0],
-])
+# define likelihood
+likelihood = GaussianMixtureLikelihood(gmm)
 
-high = jnp.array([
-    prior_bounds["x0"][1], prior_bounds["x1"][1], prior_bounds["x2"][1],
-])
+# define bounds
+low = jnp.array([-10.0, -10.0, -10.0])
+high = jnp.array([10.0, 10.0, 10.0])
 
+# define log-density: uniform prior and GMM likelihood
 def logdensity_fn(x):
     lp = jnp.where(jnp.all((x >= low) & (x <= high)), 0.0, -jnp.inf)
     ll, _ = likelihood.loglike_single(x)
     return lp + ll
 
-# Choose objective type
-objective_name = "kl"  # "kl" or "renyi" or "tail_adaptive"
-alpha = 0.5
-tail_beta = -1.0
 
-if objective_name == "kl":
-    objective = KL()
-    stl_estimator = True
-    objective_tag = "kl"
-elif objective_name == "renyi":
-    objective = RenyiAlpha(alpha=alpha)
-    stl_estimator = (alpha == 1.0)
-    objective_tag = f"renyi_alpha_{str(alpha).replace('.', 'p')}"
-#elif objective_name == "tail_adaptive":
-    #objective = TailAdaptive(beta=tail_beta)
-    #stl_estimator = True
-    #objective_tag = f"tail_adaptive_beta_{str(tail_beta).replace('.', 'p').replace('-', 'neg')}"
+def run_vi_experiment(
+    vi_family,
+    objective,
+    seed=0,
+    num_steps=1000,
+    num_mc_samples=100,
+    num_draws=10_000,
+    learning_rate=1e-2,
+):
+    optimizer = optax.adam(learning_rate)
 
-print(f"\n1.2 Objective function: {objective_tag}")
+    # STL is used for KL only
+    if isinstance(objective, RenyiAlpha) and objective.alpha != 1.0:
+        stl_estimator = False
+    else:
+        stl_estimator = True
 
-# Function to run VI experiment
-def run_vi_experiment(vi_family, logdensity_fn, low, high, objective, stl_estimator):
-    """Run a single VI experiment and return samples."""
-    
-    optimizer = optax.adam(0.01)
-    
     if vi_family == "mfvi":
         vi_algo = mfvi_top_level_api(
             logdensity_fn,
             optimizer,
-            num_samples=100,
+            num_samples=num_mc_samples,
             objective=objective,
             stl_estimator=stl_estimator,
         )
@@ -447,63 +278,67 @@ def run_vi_experiment(vi_family, logdensity_fn, low, high, objective, stl_estima
         vi_algo = frvi_top_level_api(
             logdensity_fn,
             optimizer,
-            num_samples=100,
+            num_samples=num_mc_samples,
             objective=objective,
             stl_estimator=stl_estimator,
         )
     else:
-        raise ValueError(f"Unknown vi_family: {vi_family}")
-    
-    key = random.PRNGKey(0)
-    state = vi_algo.init(jnp.array([0.0, 0.0, 0.0]))
-    
-    # optimization
-    print(f"   Training {vi_family.upper()}...")
-    for i in range(1000):
+        raise ValueError("Unknown vi_family")
+    # define optimizer
+    key = random.PRNGKey(seed)
+    state = vi_algo.init(jnp.zeros(dim))
+
+    losses = []
+    for _ in range(num_steps):
         key, subkey = random.split(key)
         state, info = vi_algo.step(subkey, state)
-        if (i + 1) % 500 == 0:
-            objective_value = getattr(info, "objective_value", getattr(info, "elbo", None))
-            print(f"      Step {i+1:4d}, objective = {float(objective_value):.4f}")
-    
-    # get samples
+        losses.append(info)
+
     key, subkey = random.split(key)
-    vi_samples = np.array(vi_algo.sample(subkey, state, 10_000))
-    
-    return vi_samples
+    samples = np.array(vi_algo.sample(subkey, state, num_draws))
 
-# Train both models
-print("\n1.3 Training Full Rank VI...")
-frvi_samples = run_vi_experiment("frvi", logdensity_fn, low, high, objective, stl_estimator)
-
-print("\n1.4 Training Mean Field VI...")
-mfvi_samples = run_vi_experiment("mfvi", logdensity_fn, low, high, objective, stl_estimator)
-
-print("\n Model training complete!\n")
-
-
+    return samples, state, losses
 ...
 ```
 
 
 
 
-## 5. Numerical diagnostics
-
-It is time to compare true vs posterior samples mean and variances. Moreover, KL-divergence metric is used to compare the results. The lower the KL metric the better the variational approximation is.
 
 
 
+
+## 6. Sampling
+
+This code block runs four variational inference experiments: mean‑field and full‑rank VI each with KL divergence, and Rényi-α divergence. Each call to run_vi_experiment optimizes the variational approximation over 1000 steps, returning posterior samples. The resulting samples are later compared against the true posterior drawn from the fitted GMM.
+
+```{code-cell} python3
+# define objectives
+kl = KL()
+renyi = RenyiAlpha(alpha=0.5)
+
+# sample
+mfvi_kl_samples, mfvi_kl_state, mfvi_kl_losses = run_vi_experiment("mfvi", kl, seed=0)
+frvi_kl_samples, frvi_kl_state, frvi_kl_losses = run_vi_experiment("frvi", kl, seed=0)
+mfvi_renyi_samples, mfvi_renyi_state, mfvi_renyi_losses = run_vi_experiment("mfvi", renyi, seed=0)
+frvi_renyi_samples, frvi_renyi_state, frvi_renyi_losses = run_vi_experiment("frvi", renyi, seed=0)
+...
+```
+
+
+
+
+
+
+
+
+## 7. Define diagnostics
+
+Next code defines a `compute_metrics` function that calculates the sample mean and variance of both the variational posterior samples and the true posterior samples, then computes the KL divergence between generated true posterior and posterior samples from variational inference. The function is called on all four variational approximations (MFVI+KL, FRVI+KL, MFVI+Rényi, FRVI+Rényi) to produce comparisons of their accuracy relative to the ground truth.
 
 ```{code-cell} python3
 
-
-
-print("="*100)
-print("DIAGNOSTICS: MEANS, VARIANCES, AND KL DIVERGENCE")
-print("="*100)
-
-# Function to compute metrics
+# function for computing means, variances of true samples and VI samples
 def compute_metrics(vi_samples, true_samples):
     """Compute statistics and KL divergence."""
     vi_samples = np.array(vi_samples)
@@ -514,7 +349,7 @@ def compute_metrics(vi_samples, true_samples):
     true_mean = true_samples.mean(axis=0)
     true_var = true_samples.var(axis=0)
     
-    # KL divergence for diagonal Gaussians
+    # KL divergence metric
     def gau_kl(pm, pv, qm, qv):
         axis = 1 if len(qm.shape) == 2 else 0
         dpv = pv.prod()
@@ -530,62 +365,20 @@ def compute_metrics(vi_samples, true_samples):
     
     kl_div = gau_kl(vi_mean, vi_var, true_mean, true_var)
     
-    return {
-        'vi_mean': vi_mean,
-        'vi_var': vi_var,
-        'true_mean': true_mean,
-        'true_var': true_var,
-        'kl_divergence': kl_div
-    }
+    return {'vi_mean': vi_mean, 'vi_var': vi_var,
+        'true_mean': true_mean, 'true_var': true_var,
+        'kl_divergence': kl_div}
 
-# Compute metrics for both models
-frvi_metrics = compute_metrics(frvi_samples, true_samples_raw)
-mfvi_metrics = compute_metrics(mfvi_samples, true_samples_raw)
-
-# Print means table
-print("\n TABLE 1: MEANS COMPARISON")
-print("-" * 100)
-print(f"{'Variable':<12} {'True Mean':<18} {'Full Rank VI Mean':<22} {'Mean Field VI Mean':<22}")
-print("-" * 100)
-for i in range(3):
-    print(f"x{i:<11} {frvi_metrics['true_mean'][i]:<18.6f} "
-          f"{frvi_metrics['vi_mean'][i]:<22.6f} "
-          f"{mfvi_metrics['vi_mean'][i]:<22.6f}")
-
-# Print variances table
-print("\n TABLE 2: VARIANCES COMPARISON")
-print("-" * 100)
-print(f"{'Variable':<12} {'True Variance':<18} {'Full Rank VI Var':<22} {'Mean Field VI Var':<22}")
-print("-" * 100)
-for i in range(3):
-    print(f"x{i:<11} {frvi_metrics['true_var'][i]:<18.6f} "
-          f"{frvi_metrics['vi_var'][i]:<22.6f} "
-          f"{mfvi_metrics['vi_var'][i]:<22.6f}")
-
-# Print KL divergences
-print("\n TABLE 3: KL DIVERGENCE COMPARISON")
-print("-" * 100)
-print(f"{'Method':<25} {'KL Divergence':<20}")
-print("-" * 100)
-print(f"{'Full Rank VI':<25} {frvi_metrics['kl_divergence']:<20.8f}")
-print(f"{'Mean Field VI':<25} {mfvi_metrics['kl_divergence']:<20.8f}")
-
-# Performance comparison
-print("\n PERFORMANCE SUMMARY")
-print("-" * 100)
-if frvi_metrics['kl_divergence'] < mfvi_metrics['kl_divergence']:
-    improvement = mfvi_metrics['kl_divergence'] - frvi_metrics['kl_divergence']
-    print(f"Full Rank VI performs better")
-    print(f"Lower KL divergence by {improvement:.8f}")
-else:
-    improvement = frvi_metrics['kl_divergence'] - mfvi_metrics['kl_divergence']
-    print(f"Mean Field VI performs better")
-    print(f"Lower KL divergence by {improvement:.8f}")
-
-print("\n" + "="*100)
+...
+```
 
 
-
+```{code-cell} python3
+# compute specified metrics
+mfvi_kl_metrics = compute_metrics(mfvi_kl_samples, true_samples_raw)
+frvi_kl_metrics = compute_metrics(frvi_kl_samples, true_samples_raw)
+mfvi_renyi_metrics = compute_metrics(mfvi_renyi_samples, true_samples_raw)
+frvi_renyi_metrics = compute_metrics(frvi_renyi_samples, true_samples_raw)
 ...
 ```
 
@@ -596,60 +389,107 @@ print("\n" + "="*100)
 
 
 
-## 6. Visual diagnostics
+## 8. Comparing means
 
-A corner plot is a nice tool to visualize results while sampling in high-dimensional parameter space
+```{code-cell} python3
+true_mean = np.asarray(true_samples_raw).mean(axis=0)
+print("\nTABLE 1: MEANS COMPARISON")
+print(pd.DataFrame({
+        "Variable": [f"x{i+1}" for i in range(3)], "True Mean": true_mean,
+        "MFVI + KL": mfvi_kl_metrics["vi_mean"], "FRVI + KL": frvi_kl_metrics["vi_mean"],
+        "MFVI + Renyi": mfvi_renyi_metrics["vi_mean"], "FRVI + Renyi": frvi_renyi_metrics["vi_mean"],
+    }).round(6).to_string(index=False))
+...
+```
+
+
+
+
+
+
+
+## 9. Comparing variances
+
+```{code-cell} python3
+true_var = np.asarray(true_samples_raw).var(axis=0)
+print("\nTABLE 2: VARIANCES COMPARISON")
+print(
+    pd.DataFrame({
+        "Variable": [f"x{i+1}" for i in range(3)], "True Variance": true_var,
+        "MFVI + KL": mfvi_kl_metrics["vi_var"], "FRVI + KL": frvi_kl_metrics["vi_var"],
+        "MFVI + Renyi": mfvi_renyi_metrics["vi_var"], "FRVI + Renyi": frvi_renyi_metrics["vi_var"],
+    }).round(6).to_string(index=False))
+...
+```
+
+
+
+
+
+## 10. Comparing KL DIVERGENCE
+
+```{code-cell} python3
+
+print("\nTABLE 3: KL DIVERGENCE")
+print(
+    pd.DataFrame({
+        "Method": [ "MFVI + KL", "FRVI + KL",
+            "MFVI + Renyi", "FRVI + Renyi",],
+        "KL Divergence": [mfvi_kl_metrics["kl_divergence"], frvi_kl_metrics["kl_divergence"],
+                         mfvi_renyi_metrics["kl_divergence"], frvi_renyi_metrics["kl_divergence"],],
+    }).round(6).to_string(index=False))
+
+...
+```
+
+
+
+
+
+## 11. Visual diagnostics
+
+The plot enables visual comparison of how well each variational family (mean‑field vs. full‑rank) and divergence (KL vs. Rényi) captures the true distributions.
 
 
 
 ```{code-cell} python3
 
+# convert to arrays 
+true_samples_raw = np.asarray(true_samples_raw)
 
-print("GENERATING CORNER PLOT")
-print("="*100)
+# all VI samples for comparison
+frvi_kl_samples_arr = np.asarray(frvi_kl_samples)
+mfvi_kl_samples_arr = np.asarray(mfvi_kl_samples)
+frvi_renyi_samples_arr = np.asarray(frvi_renyi_samples)
+mfvi_renyi_samples_arr = np.asarray(mfvi_renyi_samples)
 
-# Create figure for corner plot
-fig, axes = plt.subplots(3, 3, figsize=(12, 12))
+d = true_samples_raw.shape[1]
+cols = [f"x{i+1}" for i in range(d)]
+# dataframe with all samples
+df_true = pd.DataFrame(true_samples_raw, columns=cols)
+df_true["Source"] = "True Gaussian"
 
-# Plot true Gaussian (red)
-corner.corner(true_samples_raw, color="red", label="True Gaussian", 
-              hist_kwargs={"density": True, "alpha": 0.6, "linewidth": 1.5},
-              fig=fig, axes=axes, show_titles=True, title_fmt=".2f",
-              truth_color="red", truth_linewidth=2)
+# all four VI methods
+df_frvi_kl = pd.DataFrame(frvi_kl_samples_arr, columns=cols)
+df_frvi_kl["Source"] = "FRVI + KL"
+df_mfvi_kl = pd.DataFrame(mfvi_kl_samples_arr, columns=cols)
+df_mfvi_kl["Source"] = "MFVI + KL"
+df_frvi_renyi = pd.DataFrame(frvi_renyi_samples_arr, columns=cols)
+df_frvi_renyi["Source"] = "FRVI + Renyi"
+df_mfvi_renyi = pd.DataFrame(mfvi_renyi_samples_arr, columns=cols)
+df_mfvi_renyi["Source"] = "MFVI + Renyi"
+# all dataframes combined
+df_all = pd.concat([df_true, df_frvi_kl, df_mfvi_kl, df_frvi_renyi, df_mfvi_renyi], ignore_index=True)
 
-# Plot Full Rank VI (blue)
-corner.corner(frvi_samples, color="blue", label="Full Rank VI", 
-              hist_kwargs={"density": True, "alpha": 0.6, "linewidth": 1.5},
-              fig=fig, axes=axes)
+# Create corner-like comparison plot
+g = sns.pairplot( 
+    df_all, vars=cols, hue="Source",
+    corner=True, diag_kind="kde", kind="kde",                        
+    plot_kws={"fill": False, "levels": 5}, 
+    diag_kws={"fill": False})
 
-# Plot Mean Field VI (gold)
-corner.corner(mfvi_samples, color="green", label="Mean Field VI", 
-              hist_kwargs={"density": True, "alpha": 0.6, "linewidth": 1.5},
-              fig=fig, axes=axes)
-
-# Add legend
-handles = [
-    plt.Line2D([], [], color="red", linewidth=2, label="True Gaussian"),
-    plt.Line2D([], [], color="blue", linewidth=2, label="Full Rank VI"),
-    plt.Line2D([], [], color="green", linewidth=2, label="Mean Field VI"),
-]
-fig.legend(handles=handles, loc="upper right", fontsize=12)
-
-# Add title
-fig.suptitle(f'Distribution Comparison', fontsize=16, fontweight='bold', y=0.98)
-
-# Adjust layout
-plt.tight_layout()
-
-# Display the plot
+g.fig.suptitle("Distribution Comparison: True vs All VI Methods", fontsize=16, fontweight="bold", y=1.02)
 plt.show()
-
-print("\nCorner plot displayed successfully!")
-print("="*100)
-print("EXPERIMENT COMPLETE")
-print("="*100)
-
-
 
 ...
 ```
