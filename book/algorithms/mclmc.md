@@ -76,10 +76,8 @@ def run_mclmc(logdensity_fn, num_steps, initial_position, key, transform, desire
     )
 
     # build the kernel
-    kernel = lambda inverse_mass_matrix : blackjax.mcmc.mclmc.build_kernel(
-        logdensity_fn=logdensity_fn,
-        integrator=blackjax.mcmc.integrators.isokinetic_mclachlan,
-        inverse_mass_matrix=inverse_mass_matrix,
+    kernel = blackjax.mcmc.mclmc.build_kernel(
+        integrator=blackjax.mcmc.integrators.isokinetic_mclachlan
     )
 
     # find values for L and step_size
@@ -89,6 +87,7 @@ def run_mclmc(logdensity_fn, num_steps, initial_position, key, transform, desire
         _
     ) = blackjax.mclmc_find_L_and_step_size(
         mclmc_kernel=kernel,
+        logdensity_fn=logdensity_fn,
         num_steps=num_steps,
         state=initial_state,
         rng_key=tune_key,
@@ -394,17 +393,9 @@ def run_adjusted_mclmc_dynamic(
     else:
         integration_steps_fn = lambda avg_num_integration_steps: lambda _: jnp.ceil(avg_num_integration_steps)
 
-    kernel = lambda rng_key, state, avg_num_integration_steps, step_size, inverse_mass_matrix: blackjax.mcmc.adjusted_mclmc_dynamic.build_kernel(
+    kernel = blackjax.mcmc.adjusted_mclmc_dynamic.build_kernel(
         integration_steps_fn=integration_steps_fn(avg_num_integration_steps),
-        inverse_mass_matrix=inverse_mass_matrix,
-    )(
-        rng_key=rng_key,
-        state=state,
-        step_size=step_size,
-        logdensity_fn=logdensity_fn,
-        L_proposal_factor=L_proposal_factor,
     )
-
     target_acc_rate = 0.9 # our recommendation
 
     (
