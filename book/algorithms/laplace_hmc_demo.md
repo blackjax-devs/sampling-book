@@ -35,7 +35,7 @@ unrolling through the optimizer.
 2. **GP Regression and Accuracy** — where the Laplace approximation is exact.
 3. **Comparison of Sampler Variants** — benchmarking fixed/dynamic and standard/multinomial variants.
 
-```python
+```{code-cell} ipython3
 import time
 import jax
 import jax.numpy as jnp
@@ -92,7 +92,7 @@ v &\sim N(0, 3^2) \\
 $$
 In the joint space, as $v$ becomes small, the conditional distribution of $\theta$ becomes very narrow, forcing HMC to take tiny steps. Laplace HMC marginalizes out $\theta$ analytically (the approximation is exact here!), leaving a simple Gaussian for $v$.
 
-```python
+```{code-cell} ipython3
 n_theta = 100
 
 def funnel_model(n_obs=100):
@@ -112,7 +112,7 @@ def nuts_log_joint(params):
 
 ### Laplace HMC vs NUTS
 
-```python
+```{code-cell} ipython3
 # 1. Setup Laplace Marginal
 laplace_funnel = blackjax.mcmc.laplace_marginal.laplace_marginal_factory(
     laplace_log_joint, 
@@ -162,7 +162,7 @@ print(f"Laplace-HMC time: {laplace_time:.2f}s")
 print(f"NUTS time:        {nuts_time:.2f}s")
 ```
 
-```python
+```{code-cell} ipython3
 from blackjax.diagnostics import effective_sample_size
 
 fig, ax = plt.subplots(figsize=(8, 4))
@@ -204,7 +204,7 @@ where $K_\phi$ is the RBF (squared-exponential) kernel.  NUTS must explore the
 full $(n+2)$-dimensional space $(\theta, \phi)$ whose geometry is funnel-shaped;
 Laplace-HMC only explores the 2-dimensional $\phi$ space.
 
-```python
+```{code-cell} ipython3
 # --- Data -----------------------------------------------------------------
 n_gp = 30                                         # 30 training points
 X_gp = jnp.linspace(0, 8, n_gp)
@@ -233,7 +233,7 @@ def log_joint_gp(theta, phi):
     return log_p_phi + log_p_theta + log_lik
 ```
 
-```python
+```{code-cell} ipython3
 # --- NUTS on full joint (theta, phi) for comparison ----------------------
 def nuts_log_joint_gp(params):
     return log_joint_gp(params["theta"], params["phi"])
@@ -261,7 +261,7 @@ phi_nuts_gp     = states_nuts_gp.position["phi"]
 print(f"Sampling full joint with NUTS done in {nuts_gp_time:.1f}s")
 ```
 
-```python
+```{code-cell} ipython3
 # --- Laplace-HMC ----------------------------------------------------------
 FIXED_STEPS = 4
 
@@ -299,11 +299,12 @@ print(f"Sampling GP hyperparameters with Laplace-HMC done in {laplace_gp_time:.1
       f"({phi_gp_samples.shape[0]}x{phi_gp_samples.shape[1]} samples)")
 ```
 
-```python
+```{code-cell} ipython3
 
 ```
 
-```python tags=["hide-input"]
+```{code-cell} ipython3
+:tags: [hide-input]
 theta_gp_mean = np.nanmean(theta_gp_samples, axis=(0, 1))
 theta_gp_std  = np.nanstd(theta_gp_samples, axis=(0, 1))
 
@@ -353,7 +354,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-```python
+```{code-cell} ipython3
 # Normalise by sample count for a fair per-sample comparison
 time_per_sample_laplace = laplace_gp_time / (phi_gp_samples.shape[0] * phi_gp_samples.shape[1])
 time_per_sample_nuts    = nuts_gp_time / (phi_nuts_gp.shape[0] * phi_nuts_gp.shape[1])
@@ -395,7 +396,7 @@ We benchmark all four on the **Gaussian Process Regression** from Section 2
 The `state_gp` and `params_gp` already produced by Section 2's
 `window_adaptation` are reused directly — no extra warmup needed.
 
-```python
+```{code-cell} ipython3
 # ── Step 1: reuse the step_size / mass matrix tuned in Section 2 ─────────────
 step_size_cmp = params_gp["step_size"]
 inv_mass_cmp  = params_gp["inverse_mass_matrix"]
@@ -405,7 +406,7 @@ print(f"  step_size        = {float(step_size_cmp):.4f}")
 print(f"  inv_mass_matrix  = {np.array(inv_mass_cmp)}")
 ```
 
-```python
+```{code-cell} ipython3
 # ── Step 2: build all four samplers with the same hyperparameters ─────────────
 # Dynamic variants draw steps ~ Uniform[.5*FIXED_STEPS, 1.5*FIXED_STEPS], matching the mean
 # trajectory length of the fixed-step variants.
@@ -432,7 +433,7 @@ sampler_dmhmc = blackjax.laplace_dmhmc(
 )
 ```
 
-```python
+```{code-cell} ipython3
 # ── Step 3: initialise states ─────────────────────────────────────────────────
 # Fixed-step variants: init(phi)           → LaplaceHMCState
 # Dynamic variants:    init(phi, rng_key)  → LaplaceDynamicHMCState
@@ -448,7 +449,7 @@ print("LaplaceHMCState fields:        ", list(state_hmc._fields))
 print("LaplaceDynamicHMCState fields: ", list(state_dhmc._fields))
 ```
 
-```python
+```{code-cell} ipython3
 # ── Step 4: sample and compare ───────────────────────────────────────────────
 N_SAMPLES = 400
 
@@ -484,7 +485,8 @@ for name, sampler, state in [
     )
 ```
 
-```python tags=["hide-input"]
+```{code-cell} ipython3
+:tags: [hide-input]
 fig, axes = plt.subplots(1, 3, figsize=(13, 4))
 names  = list(cmp_results.keys())
 colors = ["#4878CF", "#6ACC65", "#D65F5F", "#B47CC7"]
