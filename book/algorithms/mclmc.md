@@ -388,13 +388,13 @@ def run_adjusted_mclmc_dynamic(
     )
 
     if random_trajectory_length:
-        integration_steps_fn = lambda avg_num_integration_steps: lambda k: jnp.ceil(
+        integration_steps_fn = lambda k, avg_num_integration_steps: jnp.ceil(
             jax.random.uniform(k) * rescale(avg_num_integration_steps))
     else:
-        integration_steps_fn = lambda avg_num_integration_steps: lambda _: jnp.ceil(avg_num_integration_steps)
+        integration_steps_fn = lambda _, avg_num_integration_steps: jnp.ceil(avg_num_integration_steps)
 
     kernel = blackjax.mcmc.adjusted_mclmc_dynamic.build_kernel(
-        integration_steps_fn=integration_steps_fn(avg_num_integration_steps),
+        integration_steps_fn=integration_steps_fn,
     )
     target_acc_rate = 0.9 # our recommendation
 
@@ -404,6 +404,7 @@ def run_adjusted_mclmc_dynamic(
         _
     ) = blackjax.adjusted_mclmc_find_L_and_step_size(
         mclmc_kernel=kernel,
+        logdensity_fn=logdensity_fn,
         num_steps=num_steps,
         state=initial_state,
         rng_key=tune_key,
