@@ -4,9 +4,9 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.5
+    jupytext_version: 1.16.0
 kernelspec:
-  display_name: Python 3 (ipykernel)
+  display_name: laplace_hmc_demo
   language: python
   name: python3
 ---
@@ -32,19 +32,17 @@ unrolling through the optimizer.
 
 **This notebook demonstrates:**
 1. **Efficiency on Neal's Funnel** — where Laplace HMC excels by marginalizing away the difficult geometry.
-2. **Vector Hyperparameters and Warmup** — using a multi-group model and automatic adaptation.
+2. **GP Regression and Accuracy** — where the Laplace approximation is exact.
+3. **Comparison of Sampler Variants** — benchmarking fixed/dynamic and standard/multinomial variants.
 
-```{code-cell} ipython3
+```python
 import time
 import jax
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
 import numpy as np
-from jax.flatten_util import ravel_pytree
 
 import blackjax
-import blackjax.mcmc.laplace_marginal
-from blackjax.optimizers.lbfgs import minimize_lbfgs
 
 import numpyro
 import numpyro.distributions as dist
@@ -64,6 +62,23 @@ def inference_loop(rng_key, kernel, initial_state, num_samples):
 
     keys = jax.random.split(rng_key, num_samples)
     return jax.lax.scan(one_step, initial_state, keys)
+
+n_chains_default = 8
+
+def run_chains(rng_key, kernel, initial_state, num_samples, n_chains=n_chains_default):
+    def one_chain(key, state):
+        _, (states, info) = inference_loop(key, kernel, state, num_samples)
+        return states, info
+
+    keys = jax.random.split(rng_key, n_chains)
+    # Replicate initial_state if not already batched
+    leaf = jax.tree.leaves(initial_state)[0]
+    if leaf.ndim == 0 or leaf.shape[0] != n_chains:
+        initial_state = jax.tree.map(
+            lambda x: jnp.repeat(x[None, ...], n_chains, axis=0), initial_state
+        )
+
+    return jax.vmap(one_chain)(keys, initial_state)
 ```
 
 ## Section 1: Neal's Funnel (Speed and Efficiency)
@@ -77,7 +92,7 @@ v &\sim N(0, 3^2) \\
 $$
 In the joint space, as $v$ becomes small, the conditional distribution of $\theta$ becomes very narrow, forcing HMC to take tiny steps. Laplace HMC marginalizes out $\theta$ analytically (the approximation is exact here!), leaving a simple Gaussian for $v$.
 
-```{code-cell} ipython3
+```python
 n_theta = 100
 
 def funnel_model(n_obs=100):
@@ -97,7 +112,7 @@ def nuts_log_joint(params):
 
 ### Laplace HMC vs NUTS
 
-```{code-cell} ipython3
+```python
 # 1. Setup Laplace Marginal
 laplace_funnel = blackjax.mcmc.laplace_marginal.laplace_marginal_factory(
     laplace_log_joint, 
@@ -126,7 +141,7 @@ sampler_laplace = blackjax.laplace_hmc(
 
 print("Running Laplace-HMC sampling on Funnel...")
 key, sample_key = jax.random.split(key)
-_, (states_laplace, _) = inference_loop(sample_key, sampler_laplace.step, state_laplace, 2000)
+states_laplace, _ = run_chains(sample_key, sampler_laplace.step, state_laplace, 400)
 states_laplace.position.block_until_ready()
 laplace_time = time.time() - start
 
@@ -139,7 +154,7 @@ nuts_sampler = blackjax.nuts(nuts_log_joint, **parameters_nuts)
 
 print("Running NUTS on Funnel...")
 key, sample_key = jax.random.split(key)
-_, (states_nuts, _) = inference_loop(sample_key, nuts_sampler.step, state_nuts, 2000)
+states_nuts, _ = run_chains(sample_key, nuts_sampler.step, state_nuts, 400)
 states_nuts.position['v'].block_until_ready()
 nuts_time = time.time() - start
 
@@ -147,21 +162,21 @@ print(f"Laplace-HMC time: {laplace_time:.2f}s")
 print(f"NUTS time:        {nuts_time:.2f}s")
 ```
 
-```{code-cell} ipython3
+```python
 from blackjax.diagnostics import effective_sample_size
 
 fig, ax = plt.subplots(figsize=(8, 4))
-v_laplace = states_laplace.position[1000:]
-v_nuts = states_nuts.position['v'][1000:]
+v_laplace = states_laplace.position
+v_nuts = states_nuts.position['v']
 
-# Compute actual ESS (chains=1, draws, params=1)
-ess_laplace = float(effective_sample_size(v_laplace[None, :, None]))
-ess_nuts    = float(effective_sample_size(v_nuts[None, :, None]))
+# Compute actual ESS (chains, draws, params=1)
+ess_laplace = float(effective_sample_size(v_laplace[..., None]).sum())
+ess_nuts    = float(effective_sample_size(v_nuts[..., None]).sum())
 
-ax.hist(np.array(v_laplace), bins=30, density=True, alpha=0.6, color="steelblue",
-        label=f"Laplace-HMC  ESS/s={ess_laplace/laplace_time:.0f}  ({laplace_time:.1f}s)")
-ax.hist(np.array(v_nuts), bins=30, density=True, alpha=0.5, color="orange",
-        label=f"NUTS  ESS/s={ess_nuts/nuts_time:.0f}  ({nuts_time:.1f}s)")
+ax.hist(np.array(v_laplace.flatten()), bins=30, density=True, alpha=0.6, color="steelblue",
+        label=f"Laplace-HMC  ESS/min={60 * ess_laplace/laplace_time:.0f}  ({laplace_time:.1f}s)")
+ax.hist(np.array(v_nuts.flatten()), bins=30, density=True, alpha=0.5, color="orange",
+        label=f"NUTS  ESS/min={60 * ess_nuts/nuts_time:.0f}  ({nuts_time:.1f}s)")
 # Exact marginal for v is N(0, 3^2)
 v_range = jnp.linspace(-10, 10, 100)
 ax.plot(v_range, jax.scipy.stats.norm.pdf(v_range, 0, 3), 'r--', label="Exact Marginal")
@@ -170,169 +185,7 @@ ax.legend()
 plt.show()
 ```
 
-## Section 2: Vector Hyperparameters and Warmup
-
-In many cases, we have multiple hyperparameters. Here we use a model with two groups,
-each having its own log-sigma hyperparameter $\phi_1, \phi_2$. To ensure the
-hyperparameters are identifiable, we provide multiple observations per latent variable
-$\theta_i$.
-
-```{code-cell} ipython3
-n_groups = 2
-n_latents_per_group = 20
-n_obs_per_latent = 10
-
-# --- Data generation ---
-key, k1, k2, k3 = jax.random.split(key, 4)
-phi_true = jnp.array([0.5, -0.5])
-sigma_true = jnp.exp(phi_true)
-
-theta_true = jnp.concatenate([
-    jax.random.normal(k1, (n_latents_per_group,)) * sigma_true[0],
-    jax.random.normal(k2, (n_latents_per_group,)) * sigma_true[1]
-])
-
-y_prob = jax.nn.sigmoid(theta_true[:, None])
-y_obs = (
-    jax.random.uniform(k3, (n_groups * n_latents_per_group, n_obs_per_latent)) < y_prob
-).astype(jnp.float32)
-# Reshape for NumPyro plates: (obs_per_latent, groups, latents_per_group)
-y_obs = y_obs.T.reshape(n_obs_per_latent, n_groups, n_latents_per_group)
-
-# --- Model ---
-def multi_group_model(y=None):
-    phi = numpyro.sample("phi", dist.Normal(jnp.zeros(n_groups), 2.0))
-    sigma = jnp.exp(phi)[:, None]
-    with numpyro.plate("groups", n_groups, dim=-2):
-        with numpyro.plate("latents", n_latents_per_group, dim=-1):
-            theta = numpyro.sample("theta", dist.Normal(0.0, sigma))
-            with numpyro.plate("observations", n_obs_per_latent, dim=-3):
-                numpyro.sample("y", dist.Bernoulli(logits=theta), obs=y)
-
-init_key, key = jax.random.split(key)
-_, potential_fn_vec, _, _ = initialize_model(
-    init_key, multi_group_model, model_args=(y_obs,)
-)
-
-def log_joint_vec(theta, phi):
-    return -potential_fn_vec({"theta": theta, "phi": phi})
-
-laplace_vec = blackjax.mcmc.laplace_marginal.laplace_marginal_factory(
-    log_joint_vec,
-    theta_init=jnp.zeros((n_groups, n_latents_per_group)),
-    maxiter=100,
-)
-```
-
-```{code-cell} ipython3
-# --- Laplace-HMC: warmup + sampling ---
-warmup = blackjax.window_adaptation(
-    blackjax.laplace_hmc, laplace_vec, num_integration_steps=12
-)
-key, warmup_key = jax.random.split(key)
-
-start = time.time()
-(state_vec, parameters_vec), _ = warmup.run(warmup_key, jnp.zeros(n_groups), num_steps=500)
-sampler_vec = blackjax.laplace_hmc(
-    log_joint_vec,
-    theta_init=jnp.zeros((n_groups, n_latents_per_group)),
-    **parameters_vec,
-)
-key, sample_key = jax.random.split(key)
-_, (states_vec, _) = inference_loop(sample_key, sampler_vec.step, state_vec, 1000)
-states_vec.position.block_until_ready()
-laplace_vec_time = time.time() - start
-
-phi_samples = states_vec.position[500:]
-theta_star_samples = states_vec.theta_star[500:]
-
-# Recover theta ~ N(theta_star, H^{-1}) for each phi sample
-key, rk = jax.random.split(key)
-theta_samples_laplace = jax.vmap(laplace_vec.sample_theta)(
-    jax.random.split(rk, len(phi_samples)), phi_samples, theta_star_samples
-)
-
-print(f"Laplace-HMC  total: {laplace_vec_time:.1f}s  "
-      f"(warmup 500 + sampling 1000, phi dim={n_groups})")
-print(f"phi_1 mean: {float(phi_samples[:, 0].mean()):.3f}  (true {float(phi_true[0]):.1f})")
-print(f"phi_2 mean: {float(phi_samples[:, 1].mean()):.3f}  (true {float(phi_true[1]):.1f})")
-print(f"theta shape: {theta_samples_laplace.shape}")
-```
-
-```{code-cell} ipython3
-# --- NUTS on the full joint (phi, theta) ---
-def nuts_log_joint_vec(params):
-    return -potential_fn_vec(params)
-
-warmup_nuts = blackjax.window_adaptation(blackjax.nuts, nuts_log_joint_vec)
-key, warmup_key = jax.random.split(key)
-
-start = time.time()
-(state_nuts, parameters_nuts), _ = warmup_nuts.run(
-    warmup_key,
-    {"phi": jnp.zeros(n_groups), "theta": jnp.zeros((n_groups, n_latents_per_group))},
-    num_steps=1000,
-)
-nuts_sampler = blackjax.nuts(nuts_log_joint_vec, **parameters_nuts)
-key, sample_key = jax.random.split(key)
-_, (states_nuts, _) = inference_loop(sample_key, nuts_sampler.step, state_nuts, 1000)
-states_nuts.position["phi"].block_until_ready()
-nuts_vec_time = time.time() - start
-
-phi_nuts = states_nuts.position["phi"][500:]
-theta_nuts = states_nuts.position["theta"][500:]
-print(f"NUTS  total: {nuts_vec_time:.1f}s  "
-      f"(warmup 1000 + sampling 1000, joint dim={n_groups + n_groups*n_latents_per_group})")
-print(f"phi_1 mean: {float(phi_nuts[:, 0].mean()):.3f}")
-print(f"phi_2 mean: {float(phi_nuts[:, 1].mean()):.3f}")
-```
-
-```{code-cell} ipython3
-:tags: [hide-input]
-import pandas as pd
-import seaborn as sns
-
-
-# --- Joint phi posterior ---
-phi_df = pd.concat([
-    pd.DataFrame({"φ₁": np.array(phi_samples[:, 0]), "φ₂": np.array(phi_samples[:, 1]), "sampler": "Laplace-HMC"}),
-    pd.DataFrame({"φ₁": np.array(phi_nuts[:, 0]),    "φ₂": np.array(phi_nuts[:, 1]),    "sampler": "NUTS"}),
-])
-g = sns.jointplot(data=phi_df, x="φ₁", y="φ₂", hue="sampler", kind="kde")
-g.ax_joint.axvline(float(phi_true[0]), color="r", ls="--", lw=1.2, label="True φ")
-g.ax_joint.axhline(float(phi_true[1]), color="r", ls="--", lw=1.2)
-g.figure.suptitle("Posterior of φ = (log σ₁, log σ₂)", y=1.02)
-plt.show()
-```
-
-```{code-cell} ipython3
-:tags: [hide-input]
-# --- Latent variable posterior mean ± 2σ ---
-fig, ax2 = plt.subplots(figsize=(7, 5))
-group_idx = 0
-x_idx = jnp.arange(n_latents_per_group)
-for mean, std, fmt, color, label in [
-    (theta_samples_laplace[:, group_idx, :].mean(0),
-     theta_samples_laplace[:, group_idx, :].std(0),
-     "o", "steelblue", "Laplace-HMC"),
-    (theta_nuts[:, group_idx, :].mean(0),
-     theta_nuts[:, group_idx, :].std(0),
-     "x", "orange", "NUTS"),
-]:
-    ax2.errorbar(
-        np.array(x_idx + (0.15 if fmt == "x" else -0.15)),
-        np.array(mean), yerr=2 * np.array(std),
-        fmt=fmt, color=color, alpha=0.7, markersize=4, label=label,
-    )
-ax2.set_xlabel("Latent index i")
-ax2.set_ylabel("θᵢ")
-ax2.set_title(f"Latent variables — Group {group_idx + 1}")
-ax2.legend(fontsize=9)
-plt.tight_layout()
-plt.show()
-```
-
-## Section 3: Gaussian Process Regression (Laplace is Exact)
+## Section 2: Gaussian Process Regression (Laplace is Exact)
 
 In a GP regression model with Gaussian likelihood the Laplace approximation is
 **exact**: the conditional posterior $p(\theta \mid \phi, y)$ is itself Gaussian, so
@@ -351,7 +204,7 @@ where $K_\phi$ is the RBF (squared-exponential) kernel.  NUTS must explore the
 full $(n+2)$-dimensional space $(\theta, \phi)$ whose geometry is funnel-shaped;
 Laplace-HMC only explores the 2-dimensional $\phi$ space.
 
-```{code-cell} ipython3
+```python
 # --- Data -----------------------------------------------------------------
 n_gp = 30                                         # 30 training points
 X_gp = jnp.linspace(0, 8, n_gp)
@@ -380,38 +233,7 @@ def log_joint_gp(theta, phi):
     return log_p_phi + log_p_theta + log_lik
 ```
 
-```{code-cell} ipython3
-# --- Laplace-HMC ----------------------------------------------------------
-laplace_gp = blackjax.mcmc.laplace_marginal.laplace_marginal_factory(
-    log_joint_gp, jnp.zeros(n_gp), maxiter=100
-)
-warmup_gp = blackjax.window_adaptation(
-    blackjax.laplace_hmc, laplace_gp, num_integration_steps=5
-)
-key, warmup_key = jax.random.split(key)
-(state_gp, params_gp), _ = warmup_gp.run(warmup_key, jnp.zeros(2), num_steps=500)
-
-sampler_gp = blackjax.laplace_hmc(log_joint_gp, theta_init=jnp.zeros(n_gp), **params_gp)
-
-print("Sampling GP hyperparameters with Laplace-HMC ...")
-key, sample_key = jax.random.split(key)
-start = time.time()
-_, (states_gp, _) = inference_loop(sample_key, sampler_gp.step, state_gp, 1000)
-states_gp.position.block_until_ready()
-laplace_gp_time = time.time() - start
-print(f"  {laplace_gp_time:.1f}s  (2-D phi space)")
-
-# Recover function values theta ~ N(theta_star, H^{-1}) for each phi sample
-phi_gp_samples    = states_gp.position[500:]
-theta_star_samples = states_gp.theta_star[500:]
-key, rk = jax.random.split(key)
-theta_gp_samples = jax.vmap(laplace_gp.sample_theta)(
-    jax.random.split(rk, len(phi_gp_samples)), phi_gp_samples, theta_star_samples
-)
-print(f"  theta shape: {theta_gp_samples.shape}")
-```
-
-```{code-cell} ipython3
+```python
 # --- NUTS on full joint (theta, phi) for comparison ----------------------
 def nuts_log_joint_gp(params):
     return log_joint_gp(params["theta"], params["phi"])
@@ -425,26 +247,68 @@ key, warmup_key = jax.random.split(key)
 )
 nuts_sampler_gp = blackjax.nuts(nuts_log_joint_gp, **params_nuts_gp)
 
-n_nuts_gp = 500
-print(f"Sampling full ({n_gp+2}-D) joint with NUTS ({n_nuts_gp} samples) ...")
+n_nuts_gp = 400
+print(f"Sampling full ({n_gp+2}-D) joint with NUTS ...")
 key, sample_key = jax.random.split(key)
 start = time.time()
-_, (states_nuts_gp, _) = inference_loop(
+states_nuts_gp, info = run_chains(
     sample_key, nuts_sampler_gp.step, state_nuts_gp, n_nuts_gp
 )
 states_nuts_gp.position["theta"].block_until_ready()
 nuts_gp_time = time.time() - start
-print(f"  {nuts_gp_time:.1f}s  ({n_gp+2}-D joint space)")
+
+phi_nuts_gp     = states_nuts_gp.position["phi"]
+print(f"Sampling full joint with NUTS done in {nuts_gp_time:.1f}s")
 ```
 
-```{code-cell} ipython3
-theta_gp_mean = theta_gp_samples.mean(axis=0)
-theta_gp_std  = theta_gp_samples.std(axis=0)
+```python
+# --- Laplace-HMC ----------------------------------------------------------
+FIXED_STEPS = 4
 
-nuts_burnin = n_nuts_gp // 2
-theta_nuts_mean = states_nuts_gp.position["theta"][nuts_burnin:].mean(axis=0)
-theta_nuts_std  = states_nuts_gp.position["theta"][nuts_burnin:].std(axis=0)
-phi_nuts_gp     = states_nuts_gp.position["phi"][nuts_burnin:]
+laplace_gp = blackjax.mcmc.laplace_marginal.laplace_marginal_factory(
+    log_joint_gp, jnp.zeros(n_gp), maxiter=100
+)
+warmup_gp = blackjax.window_adaptation(
+    blackjax.laplace_mhmc, laplace_gp, num_integration_steps=FIXED_STEPS
+)
+key, warmup_key = jax.random.split(key)
+(state_gp, params_gp), _ = warmup_gp.run(warmup_key, jnp.zeros(2), num_steps=500)
+
+sampler_gp = blackjax.laplace_mhmc(log_joint_gp, theta_init=jnp.zeros(n_gp), **params_gp)
+
+print("Sampling GP hyperparameters with Laplace-HMC ...")
+key, sample_key = jax.random.split(key)
+start = time.time()
+states_gp, _ = run_chains(sample_key, sampler_gp.step, state_gp, 400)
+states_gp.position.block_until_ready()
+laplace_gp_time = time.time() - start
+
+# Recover function values theta ~ N(theta_star, H^{-1}) for each phi sample
+phi_gp_samples    = states_gp.position
+theta_star_samples = states_gp.theta_star
+
+phi_flat = phi_gp_samples.reshape(-1, 2)
+theta_star_flat = theta_star_samples.reshape(-1, n_gp)
+
+key, rk = jax.random.split(key)
+theta_gp_samples_flat = jax.vmap(laplace_gp.sample_theta)(
+    jax.random.split(rk, len(phi_flat)), phi_flat, theta_star_flat
+)
+theta_gp_samples = theta_gp_samples_flat.reshape(n_chains_default, -1, n_gp)
+print(f"Sampling GP hyperparameters with Laplace-HMC done in {laplace_gp_time:.1f}s "
+      f"({phi_gp_samples.shape[0]}x{phi_gp_samples.shape[1]} samples)")
+```
+
+```python
+
+```
+
+```python tags=["hide-input"]
+theta_gp_mean = np.nanmean(theta_gp_samples, axis=(0, 1))
+theta_gp_std  = np.nanstd(theta_gp_samples, axis=(0, 1))
+
+theta_nuts_mean = states_nuts_gp.position["theta"].mean((0, 1))
+theta_nuts_std  = states_nuts_gp.position["theta"].std((0, 1))
 
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
@@ -455,7 +319,7 @@ ax.plot(np.array(X_gp), np.array(f_true), "k--", lw=1.5, label="True f", zorder=
 for mean, std, color, lbl in [
     (theta_gp_mean, theta_gp_std, "steelblue", f"Laplace-HMC ({laplace_gp_time:.0f}s)"),
     (theta_nuts_mean, theta_nuts_std, "orange",
-     f"NUTS on (θ,φ) ({n_nuts_gp} samples, {nuts_gp_time:.0f}s)"),
+     f"NUTS on (θ,φ) ({nuts_gp_time:.0f}s)"),
 ]:
     ax.plot(np.array(X_gp), np.array(mean), color=color, lw=2, label=lbl)
     ax.fill_between(
@@ -472,11 +336,12 @@ ax.legend(fontsize=9)
 # Right: kernel hyperparameter posterior
 ax = axes[1]
 ax.scatter(
-    np.array(phi_gp_samples[:, 0]), np.array(phi_gp_samples[:, 1]),
+    np.array(phi_gp_samples[..., 0].flatten()), np.array(phi_gp_samples[..., 1].flatten()),
     s=8, alpha=0.3, color="steelblue", label="Laplace-HMC",
+    
 )
 ax.scatter(
-    np.array(phi_nuts_gp[:, 0]), np.array(phi_nuts_gp[:, 1]),
+    np.array(phi_nuts_gp[..., 0].flatten()), np.array(phi_nuts_gp[..., 1].flatten()),
     s=8, alpha=0.3, color="orange", label="NUTS",
 )
 ax.set_xlabel("log length-scale  (log ℓ)")
@@ -488,15 +353,201 @@ plt.tight_layout()
 plt.show()
 ```
 
-```{code-cell} ipython3
+```python
 # Normalise by sample count for a fair per-sample comparison
-time_per_sample_laplace = laplace_gp_time / 1000
-time_per_sample_nuts    = nuts_gp_time / n_nuts_gp
+time_per_sample_laplace = laplace_gp_time / (phi_gp_samples.shape[0] * phi_gp_samples.shape[1])
+time_per_sample_nuts    = nuts_gp_time / (phi_nuts_gp.shape[0] * phi_nuts_gp.shape[1])
 speedup = time_per_sample_nuts / time_per_sample_laplace
 print(f"Time / sample — Laplace-HMC: {time_per_sample_laplace*1000:.0f} ms  "
       f"NUTS: {time_per_sample_nuts*1000:.0f} ms  ({speedup:.1f}x speedup)")
-print(f"log length-scale:  Laplace {float(phi_gp_samples[:,0].mean()):.2f}  "
-      f"NUTS {float(phi_nuts_gp[:,0].mean()):.2f}")
-print(f"log amplitude:     Laplace {float(phi_gp_samples[:,1].mean()):.2f}  "
-      f"NUTS {float(phi_nuts_gp[:,1].mean()):.2f}")
+print(f"log length-scale:  Laplace {float(phi_gp_samples[...,0].mean()):.2f}  "
+      f"NUTS {float(phi_nuts_gp[...,0].mean()):.2f}")
+print(f"log amplitude:     Laplace {float(phi_gp_samples[...,1].mean()):.2f}  "
+      f"NUTS {float(phi_nuts_gp[...,1].mean()):.2f}")
 ```
+
+## Section 3: Comparing All Four Laplace-HMC Variants
+
+The four top-level aliases form a 2×2 matrix along two independent axes:
+
+|                                      | **Endpoint + M-H**      | **Multinomial trajectory** |
+| ------------------------------------ | ----------------------- | -------------------------- |
+| **Fixed `num_integration_steps`**    | `blackjax.laplace_hmc`  | `blackjax.laplace_mhmc`    |
+| **Random step count per transition** | `blackjax.laplace_dhmc` | `blackjax.laplace_dmhmc`   |
+
+**Axis 1 — fixed vs. dynamic step count.**
+`laplace_hmc` and `laplace_mhmc` take a fixed `num_integration_steps` and plug
+directly into `window_adaptation`.
+`laplace_dhmc` and `laplace_dmhmc` draw the number of leapfrog steps uniformly at
+random each transition, removing periodic-orbit sensitivity; they require a
+`rng_key` argument at `.init()` and do not support `window_adaptation`.
+
+**Axis 2 — standard M-H vs. multinomial proposal.**
+Standard variants (`hmc`/`dhmc`) propose the trajectory endpoint and apply an M-H
+accept/reject step; `info.acceptance_rate` is the usual Metropolis acceptance
+probability (target ≈ 0.65).
+Multinomial variants (`mhmc`/`dmhmc`) sample any trajectory point proportional to
+`exp(−energy)` — `is_accepted` is always `True`, and `info.acceptance_rate` becomes
+an average trajectory-weight diagnostic, not a reject probability.
+
+We benchmark all four on the **Gaussian Process Regression** from Section 2
+(30 latent variables, 2-D hyperparameter space `φ = (log ℓ, log σ_f)`).
+The `state_gp` and `params_gp` already produced by Section 2's
+`window_adaptation` are reused directly — no extra warmup needed.
+
+```python
+# ── Step 1: reuse the step_size / mass matrix tuned in Section 2 ─────────────
+step_size_cmp = params_gp["step_size"]
+inv_mass_cmp  = params_gp["inverse_mass_matrix"]
+phi_start     = state_gp.position
+
+print(f"  step_size        = {float(step_size_cmp):.4f}")
+print(f"  inv_mass_matrix  = {np.array(inv_mass_cmp)}")
+```
+
+```python
+# ── Step 2: build all four samplers with the same hyperparameters ─────────────
+# Dynamic variants draw steps ~ Uniform[.5*FIXED_STEPS, 1.5*FIXED_STEPS], matching the mean
+# trajectory length of the fixed-step variants.
+integration_steps_fn = lambda k: jax.random.randint(k, (), int(.5 * FIXED_STEPS), int(1.5 * FIXED_STEPS))
+
+theta0        = jnp.zeros(n_gp)
+common_kwargs = dict(step_size=step_size_cmp, inverse_mass_matrix=inv_mass_cmp)
+
+sampler_hmc   = blackjax.laplace_hmc(
+    log_joint_gp, theta_init=theta0,
+    num_integration_steps=FIXED_STEPS, **common_kwargs,
+)
+sampler_mhmc  = blackjax.laplace_mhmc(
+    log_joint_gp, theta_init=theta0,
+    num_integration_steps=FIXED_STEPS, **common_kwargs,
+)
+sampler_dhmc  = blackjax.laplace_dhmc(
+    log_joint_gp, theta_init=theta0,
+    integration_steps_fn=integration_steps_fn, **common_kwargs,
+)
+sampler_dmhmc = blackjax.laplace_dmhmc(
+    log_joint_gp, theta_init=theta0,
+    integration_steps_fn=integration_steps_fn, **common_kwargs,
+)
+```
+
+```python
+# ── Step 3: initialise states ─────────────────────────────────────────────────
+# Fixed-step variants: init(phi)           → LaplaceHMCState
+# Dynamic variants:    init(phi, rng_key)  → LaplaceDynamicHMCState
+#                       rng_key seeds the per-step PRNG sequence
+key, k1, k2 = jax.random.split(key, 3)
+
+state_hmc   = sampler_hmc.init(phi_start)
+state_mhmc  = sampler_mhmc.init(phi_start)
+state_dhmc  = sampler_dhmc.init(phi_start, k1)   # extra rng_key required
+state_dmhmc = sampler_dmhmc.init(phi_start, k2)  # extra rng_key required
+
+print("LaplaceHMCState fields:        ", list(state_hmc._fields))
+print("LaplaceDynamicHMCState fields: ", list(state_dhmc._fields))
+```
+
+```python
+# ── Step 4: sample and compare ───────────────────────────────────────────────
+N_SAMPLES = 400
+
+cmp_results = {}
+for name, sampler, state in [
+    ("laplace_hmc",   sampler_hmc,   state_hmc),
+    ("laplace_mhmc",  sampler_mhmc,  state_mhmc),
+    ("laplace_dhmc",  sampler_dhmc,  state_dhmc),
+    ("laplace_dmhmc", sampler_dmhmc, state_dmhmc),
+]:
+    key, sample_key = jax.random.split(key)
+    t0 = time.time()
+    states, info = run_chains(sample_key, sampler.step, state, N_SAMPLES)
+    states.position.block_until_ready()
+    elapsed = time.time() - t0
+
+    phi_post      = states.position
+    ess_per_param = effective_sample_size(phi_post)   # (chains, draws, params)
+    ess_min       = float(jnp.min(ess_per_param))
+
+    # acceptance_rate semantics differ by proposal type:
+    #   hmc / dhmc  → M-H probability         (target ≈ 0.65)
+    #   mhmc / dmhmc → avg trajectory weight  (diagnostic; is_accepted always True)
+    is_mh     = name in ("laplace_hmc", "laplace_dhmc")
+    acc_mean  = float(info.acceptance_rate.mean())
+    acc_label = "M-H acc" if is_mh else "traj weight"
+
+    cmp_results[name] = dict(ess=ess_min, time=elapsed,
+                             accept=acc_mean, is_mh=is_mh, acc_label=acc_label)
+    print(
+        f"{name:20s}  ESS={ess_min:5.0f}  time={elapsed:.1f}s  "
+        f"ESS/min={60 * ess_min/elapsed:5.0f}  {acc_label}={acc_mean:.2f}"
+    )
+```
+
+```python tags=["hide-input"]
+fig, axes = plt.subplots(1, 3, figsize=(13, 4))
+names  = list(cmp_results.keys())
+colors = ["#4878CF", "#6ACC65", "#D65F5F", "#B47CC7"]
+
+axes[0].bar(names, [cmp_results[n]["ess"]                          for n in names], color=colors)
+axes[0].set_ylabel("Min ESS")
+axes[0].set_title("Effective Sample Size")
+axes[0].tick_params(axis="x", rotation=18)
+
+axes[1].bar(names, [60 * cmp_results[n]["ess"] / cmp_results[n]["time"] for n in names], color=colors)
+axes[1].set_ylabel("Min ESS / minute")
+axes[1].set_title("Sampling Efficiency")
+axes[1].tick_params(axis="x", rotation=18)
+
+ax = axes[2]
+for i, n in enumerate(names):
+    r = cmp_results[n]
+    ax.bar(i, r["accept"], color=colors[i])
+    ax.text(i, r["accept"] + 0.02, r["acc_label"],
+            ha="center", va="bottom", fontsize=7)
+ax.axhline(0.65, ls="--", color="gray", lw=1, label="0.65 M-H target")
+ax.set_ylim(0, 1.35)
+ax.set_xticks(range(len(names)))
+ax.set_xticklabels(names, rotation=18)
+ax.set_ylabel("Mean value")
+ax.set_title("Acceptance / Trajectory Weight")
+ax.legend(fontsize=8)
+
+plt.suptitle(
+    "GP Regression — four Laplace-HMC variants\n"
+    f"(shared step_size={float(step_size_cmp):.3f}, "
+    f"mean trajectory length={FIXED_STEPS} leapfrog steps)",
+    fontsize=10,
+)
+plt.tight_layout()
+plt.show()
+```
+
+**Reading the results.**
+The acceptance rate panel reveals something important: `laplace_hmc` can show acceptable M-H 
+acceptance rate yet produce a very low ESS.
+This could be the classic **periodic-orbit** pathology — a fixed trajectory length that
+happens to nearly return to the starting point, causing the chain to take
+tiny effective steps despite technically accepting.
+`laplace_dhmc` breaks the orbit by randomising the step count each transition, so
+even the same step size yields much better mixing.
+Multinomial variants (`laplace_mhmc`, `laplace_dmhmc`) also avoid the trap: by
+sampling a random point along the trajectory they implicitly vary the effective
+displacement, and `is_accepted` is always `True` so they never waste a trajectory.
+
+This illustrates the core trade-off: **if you can tune `num_integration_steps`
+carefully, `laplace_hmc` is the cheapest option**; if you are unsure of the right
+trajectory length (common in practice), the dynamic and multinomial variants are
+more robust out of the box.
+
+**Quick-reference: when to use each variant.**
+
+| Variant         | Use when                                                                         |
+| --------------- | -------------------------------------------------------------------------------- |
+| `laplace_hmc`   | Default when trajectory length is well-tuned; `window_adaptation` works directly |
+| `laplace_mhmc`  | Drop-in upgrade when M-H acceptance is low or ESS per gradient is poor           |
+| `laplace_dhmc`  | Trajectory length is hard to tune; randomised steps break periodic-orbit traps   |
+| `laplace_dmhmc` | Combines both benefits — best robustness for unknown geometry                    |
+
+
+
