@@ -45,6 +45,7 @@ pd.set_option("display.max_rows", 80)
 :tags: [remove-output]
 
 import jax
+jax.config.update("jax_enable_x64", True)
 
 from datetime import date
 rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
