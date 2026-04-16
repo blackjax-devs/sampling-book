@@ -51,10 +51,9 @@ rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
 ```
 
 ```{code-cell} ipython3
-:tags: [hide-cell]
-
 import arviz as az
 import jax.numpy as jnp
+import numpy as np
 
 import blackjax
 import tensorflow_probability.substrates.jax as tfp
