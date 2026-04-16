@@ -299,9 +299,6 @@ print(f"Sampling GP hyperparameters with Laplace-HMC done in {laplace_gp_time:.1
       f"({phi_gp_samples.shape[0]}x{phi_gp_samples.shape[1]} samples)")
 ```
 
-```{code-cell} ipython3
-
-```
 
 ```{code-cell} ipython3
 :tags: [hide-input]

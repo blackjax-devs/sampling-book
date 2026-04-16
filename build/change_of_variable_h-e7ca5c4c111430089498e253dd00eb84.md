@@ -362,14 +362,14 @@ def arviz_trace_from_states(states, info, burn_in=0):
     for param in position.keys():
         ndims = len(position[param].shape)
         if ndims >= 2:
-            samples[param] = jnp.swapaxes(position[param], 0, 1)[
+            samples[param] = np.asarray(jnp.swapaxes(position[param], 0, 1)[
                 :, burn_in:
-            ]  # swap n_samples and n_chains
-            divergence = jnp.swapaxes(info.is_divergent[burn_in:], 0, 1)
+            ])  # swap n_samples and n_chains
+            divergence = np.asarray(jnp.swapaxes(info.is_divergent[burn_in:], 0, 1))
 
         if ndims == 1:
-            divergence = info.is_divergent
-            samples[param] = position[param]
+            divergence = np.asarray(info.is_divergent)
+            samples[param] = np.asarray(position[param])
 
     trace = az.from_dict({"posterior": samples, "sample_stats": {"diverging": divergence}})
     return trace
