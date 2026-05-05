@@ -4,20 +4,24 @@ The Sampling Book is a series of tutorials on sampling algorithms built with the
 
 ## Setup
 
-Install dependencies into a conda/mamba environment:
+1. Install [uv](https://github.com/astral-sh/uv) if you don't have it:
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+2. Install dependencies:
+   ```bash
+   make install  # runs: uv sync --group book
+   ```
+   This creates a local `.venv/` and installs all dependencies. No need to activate — prefix commands with `uv run`, or run `source .venv/bin/activate` once per shell session.
 
-```bash
-mamba create -n sampling_book python=3.13
-mamba activate sampling_book
-pip install -r requirements.txt
-```
+   **GPU/CUDA users:** `uv sync` installs the CPU build of JAX by default. For GPU work, either run `uv pip install "jax[cuda12]"` afterwards, or use mamba to manage the CUDA toolkit and run `uv sync` inside that conda environment.
 
 ## Building the book
 
 Build the static site with notebook execution:
 
 ```bash
-cd book && jupyter book build --execute --html
+make build  # runs: cd book && uv run jupyter book build --execute --html
 ```
 
 Static HTML output goes to `book/_build/html/`.
@@ -25,7 +29,7 @@ Static HTML output goes to `book/_build/html/`.
 For a local preview with live reload:
 
 ```bash
-cd book && jupyter book start --execute
+make preview  # runs: cd book && uv run jupyter book start --execute
 ```
 
 This serves the book at `http://localhost:3000`.
@@ -56,5 +60,5 @@ Only commit the `.md` files — `.ipynb` files are for local development only.
 Pre-commit hooks enforce formatting (black, isort, flake8) for both Python source and notebooks:
 
 ```bash
-pre-commit run --all-files
+make lint  # runs: uv run pre-commit run --all-files
 ```
