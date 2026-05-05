@@ -12,23 +12,22 @@ jobs:
       - name: Checkout the branch
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: 3.13
+          python-version: '3.13'
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: uv sync --group book
 
       - name: Cache notebook execution
         uses: actions/cache@v4
         with:
           path: book/_build/execute
-          key: myst-execute-${{ runner.os }}-${{ hashFiles('book/**/*.md', 'requirements.txt') }}
+          key: myst-execute-${{ runner.os }}-${{ hashFiles('book/**/*.md', 'uv.lock') }}
           restore-keys: |
             myst-execute-${{ runner.os }}-
 
       - name: Build the book
         run: |
-          cd book && jupyter book build --execute --html
+          cd book && uv run jupyter book build --execute --html
