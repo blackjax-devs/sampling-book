@@ -6,16 +6,39 @@ build-backend = "setuptools.build_meta"
 name = "samplingbook"
 authors= [{name = "The Blackjax team", email = "remi@thetypicalset.com"}]
 description = "Utilities for Blackjax's sampling book"
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 dependencies = [
-    "aesara",
-    "aeppl",
     "jax",
     "jaxlib",
     "numpy",
     "pandas",
 ]
 dynamic = ["version"]
+
+[dependency-groups]
+book = [
+    "blackjax @ git+https://github.com/blackjax-devs/blackjax.git@main",
+    "aeppl",
+    "aesara",
+    "arviz",
+    "datasets",
+    "diffeqzoo",
+    "fastprogress",
+    "flax",
+    "ipython",
+    "jupyter-cache",
+    "jupyter-book>=2",
+    "jupytext",
+    "matplotlib",
+    "numpy",
+    "numpyro",
+    "optax",
+    "pandas",
+    "probdiffeq",
+    "scikit-learn",
+    "seaborn",
+    "tfp-nightly[jax]",
+]
 
 [project.urls]
 homepage = "https://github.com/blackjax-devs/sampling-book"
