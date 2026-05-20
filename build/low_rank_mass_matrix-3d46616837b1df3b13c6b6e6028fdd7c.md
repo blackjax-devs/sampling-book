@@ -88,7 +88,7 @@ def run_nuts(logdensity_fn, init_params, rng_key, *,
     n_grad  : total gradient evaluations across all chains (warmup + sampling)
     """
     if adaptation == "low_rank":
-        warmup = blackjax.low_rank_window_adaptation(
+        warmup = blackjax.window_adaptation_low_rank(
             blackjax.nuts, logdensity_fn, max_rank=max_rank
         )
     else:
