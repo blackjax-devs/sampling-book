@@ -148,8 +148,8 @@ theta_true = u0 + 0.5 * jnp.flip(u0)
 theta_guess = u0  # initial guess
 
 
-# Shared state-space model (isotropic); shape is determined by theta.
-ssm = pdq.state_space_model_isotropic()
+# Shared state-space model (dense covariance); shape is determined by theta.
+ssm = pdq.state_space_model_dense()
 
 # Wrap the autonomous vector field once; reused for every theta.
 _ode = pdq.ode_autonomous(lambda y: vf(y, t=t0, p=()))
@@ -244,14 +244,16 @@ def logposterior_fn(theta, *, data, ts, obs_stdev=0.1):
     # Extract the terminal marginal from the full Markov sequence.
     all_marginals = sol.solution_full.evaluate_marginals()
     terminal = jax.tree.map(lambda x: x[-1], all_marginals)
-    log_lik = _lml_loss(data, marginals=terminal, std=jnp.asarray(obs_stdev))
+    # Dense SSM uses per-component std; broadcast scalar obs_stdev to data shape.
+    std = jnp.full(data.shape, obs_stdev)
+    log_lik = _lml_loss(data, marginals=terminal, std=std)
     log_prior = jax.scipy.stats.multivariate_normal.logpdf(theta, mean=mean, cov=cov)
     return log_lik + log_prior
 
 
 ts = jnp.linspace(t0, t1, endpoint=True, num=100)
 # Terminal position: sol.u.mean[0][-1], shape (2,).
-data = solve_fixed(theta_true, ts=ts).u.mean[0][-1]
+data = jnp.array(solve_fixed(theta_true, ts=ts).u.mean[0])[-1]
 
 log_M = functools.partial(logposterior_fn, data=data, ts=ts)
 ```
