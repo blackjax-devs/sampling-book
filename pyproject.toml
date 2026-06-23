@@ -34,10 +34,14 @@ book = [
     "numpyro",
     "optax",
     "pandas",
-    "probdiffeq",
+    "probdiffeq>=0.9.0",
     "scikit-learn",
     "seaborn",
     "tfp-nightly[jax]",
+    "nbqa>=1.9.1",
+    "black>=26.5.1",
+    "isort>=8.0.1",
+    "flake8>=7.3.0",
 ]
 
 [project.urls]

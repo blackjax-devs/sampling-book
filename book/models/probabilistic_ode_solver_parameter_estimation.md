@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.2
+    jupytext_version: 1.19.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -111,6 +111,7 @@ config.update("jax_enable_x64", True)
 config.update("jax_platform_name", "cpu")
 
 from datetime import date
+
 rng_key = jax.random.key(int(date.today().strftime("%Y%m%d")))
 ```
 
@@ -121,7 +122,8 @@ import blackjax
 import jax
 import jax.numpy as jnp
 from diffeqzoo import backend, ivps
-from probdiffeq import ivpsolve, ivpsolvers, stats, taylor
+from probdiffeq import ivpsolve
+from probdiffeq import probdiffeq as pdq
 
 # IVP examples in JAX
 if not backend.has_been_selected:
@@ -146,33 +148,31 @@ theta_true = u0 + 0.5 * jnp.flip(u0)
 theta_guess = u0  # initial guess
 
 
-# Build the SSM once (shape determined by theta; values don't matter).
-_ref_tcoeffs = taylor.odejet_padded_scan(
-    lambda y: vf(y, t=t0, p=()), (theta_guess,), num=2
-)
-_, _ref_ibm, ssm = ivpsolvers.prior_wiener_integrated(
-    _ref_tcoeffs, ssm_fact="dense", output_scale=10.0
-)
+# Shared state-space model (isotropic); shape is determined by theta.
+ssm = pdq.state_space_model_isotropic()
+
+# Wrap the autonomous vector field once; reused for every theta.
+_ode = pdq.ode_autonomous(lambda y: vf(y, t=t0, p=()))
+_expand = pdq.jetexpand_ode_padded_scan(num=2)
 
 
-def _make_solver(theta, *, strategy_fn):
-    """Build a probdiffeq solver initialised at *theta*, reusing the shared SSM."""
-    tcoeffs = taylor.odejet_padded_scan(
-        lambda y: vf(y, t=t0, p=()), (theta,), num=2
-    )
-    init_cond, ibm, _ = ivpsolvers.prior_wiener_integrated(
-        tcoeffs, ssm_fact="dense", output_scale=10.0
-    )
-    ts0 = ivpsolvers.correction_ts0(vf, ssm=ssm)
-    strategy = strategy_fn(ssm=ssm)
-    solver = ivpsolvers.solver(strategy, correction=ts0, prior=ibm, ssm=ssm)
-    return init_cond, solver
+def _make_prior(theta):
+    """Compute Taylor coefficients and return the IBM prior for *theta*."""
+    tcoeffs, _ = _expand(_ode, [theta], t=t0)
+    return ssm.prior_wiener_integrated(tcoeffs)
+
+
+def _make_solver(*, strategy_fn):
+    """Build a probdiffeq solver with the given strategy constructor."""
+    constraint = ssm.constraint_ode_ts0(_ode)
+    strategy = strategy_fn()
+    return pdq.solver(constraint=constraint, strategy=strategy)
 ```
 
 ```{code-cell} ipython3
 def plot_solution(sol, *, ax, marker=".", **plotting_kwargs):
-    # sol.u is a list of Taylor-coefficient arrays; sol.u[0] holds the trajectory.
-    traj = sol.u[0]  # shape (n_times, 2)
+    # sol.u.mean[0] holds the position trajectory, shape (n_times, 2).
+    traj = sol.u.mean[0]  # shape (n_times, 2)
     for d in [0, 1]:
         ax.plot(sol.t, traj[:, d], marker="None", **plotting_kwargs)
         ax.plot(sol.t[0], traj[0, d], marker=marker, **plotting_kwargs)
@@ -180,14 +180,18 @@ def plot_solution(sol, *, ax, marker=".", **plotting_kwargs):
     return ax
 
 
+# Adaptive solver with a filter strategy (smoother is not compatible with save_at).
+_filter_solver = _make_solver(strategy_fn=pdq.strategy_filter)
+_error = pdq.error_state_std(constraint=ssm.constraint_ode_ts0(_ode))
+_solve_adaptive_fn = ivpsolve.solve_adaptive_save_at(
+    solver=_filter_solver, error=_error
+)
+
+
 @jax.jit
 def solve_adaptive(theta, *, save_at):
-    # Use a filter strategy for visualisation (smoother is not compatible with save_at)
-    init_cond, solver = _make_solver(theta, strategy_fn=ivpsolvers.strategy_filter)
-    adaptive_solver = ivpsolvers.adaptive(solver, ssm=ssm)
-    return ivpsolve.solve_adaptive_save_at(
-        init_cond, save_at=save_at, adaptive_solver=adaptive_solver, dt0=0.1, ssm=ssm
-    )
+    prior = _make_prior(theta)
+    return _solve_adaptive_fn(prior, save_at=save_at, atol=1e-3, rtol=1e-3)
 
 
 save_at = jnp.linspace(t0, t1, num=250, endpoint=True)
@@ -220,26 +224,34 @@ mean = theta_guess
 cov = jnp.eye(2) * 30  # fairly uninformed prior
 
 # Fixed-grid solve for reverse-mode differentiability.
-# Uses a smoother strategy, required by log_marginal_likelihood_terminal_values.
+# Uses a smoother strategy, required by loss_lml_terminal_values.
+_smoother_solver = _make_solver(strategy_fn=pdq.strategy_smoother_fixedinterval)
+_solve_fixed_fn = ivpsolve.solve_fixed_grid(solver=_smoother_solver)
+
+# Log-marginal-likelihood loss for the terminal value (probdiffeq 0.9 API).
+_lml_loss = pdq.loss_lml_terminal_values()
+
+
 @jax.jit
 def solve_fixed(theta, *, ts):
-    init_cond, solver = _make_solver(theta, strategy_fn=ivpsolvers.strategy_smoother)
-    return ivpsolve.solve_fixed_grid(init_cond, grid=ts, solver=solver, ssm=ssm)
+    prior = _make_prior(theta)
+    return _solve_fixed_fn(prior, grid=ts)
 
 
 @jax.jit
 def logposterior_fn(theta, *, data, ts, obs_stdev=0.1):
     sol = solve_fixed(theta, ts=ts)
-    terminal = stats.markov_select_terminal(sol.posterior)
-    log_lik = stats.log_marginal_likelihood_terminal_values(
-        data, standard_deviation=obs_stdev, posterior=terminal, ssm=ssm
-    )
+    # Extract the terminal marginal from the full Markov sequence.
+    all_marginals = sol.solution_full.evaluate_marginals()
+    terminal = jax.tree.map(lambda x: x[-1], all_marginals)
+    log_lik = _lml_loss(data, marginals=terminal, std=jnp.asarray(obs_stdev))
     log_prior = jax.scipy.stats.multivariate_normal.logpdf(theta, mean=mean, cov=cov)
     return log_lik + log_prior
 
 
 ts = jnp.linspace(t0, t1, endpoint=True, num=100)
-data = solve_fixed(theta_true, ts=ts).u[0][-1]  # terminal state, shape (2,)
+# Terminal position: sol.u.mean[0][-1], shape (2,).
+data = solve_fixed(theta_true, ts=ts).u.mean[0][-1]
 
 log_M = functools.partial(logposterior_fn, data=data, ts=ts)
 ```
@@ -276,13 +288,12 @@ initial_position = theta_guess
 
 ```{code-cell} ipython3
 # WARMUP
-warmup = blackjax.window_adaptation(
-    blackjax.nuts, log_M, progress_bar=True
-)
+warmup = blackjax.window_adaptation(blackjax.nuts, log_M, progress_bar=True)
 
 rng_key, warmup_key = jax.random.split(rng_key)
 (initial_state, tuned_parameters), _ = warmup.run(
-    warmup_key, initial_position, num_steps=200)
+    warmup_key, initial_position, num_steps=200
+)
 ```
 
 ```{code-cell} ipython3
@@ -310,7 +321,7 @@ fig, ax = plt.subplots()
 
 sample_kwargs = {"color": "C0"}
 ax.annotate("Samples", (2.75, 31.0), **sample_kwargs)
-for i in range(solution_samples.u[0].shape[0]):
+for i in range(solution_samples.u.mean[0].shape[0]):
     sol_i = jax.tree.map(lambda x: x[i], solution_samples)
     ax = plot_solution(sol_i, ax=ax, linewidth=0.1, alpha=0.75, **sample_kwargs)
 
