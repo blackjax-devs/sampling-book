@@ -2220,6 +2220,15 @@ wheels = [
 ]
 
 [[package]]
+name = "matfree"
+version = "0.6.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/64/a2/2951aa5cf49035d0b9e7568649bf6ce121696d806a678e3f67b654f5570d/matfree-0.6.1.tar.gz", hash = "sha256:9ac6cf0f88d04bb5a1ccb7c333088c3ce36bd4a949448c4ad5fa160bd0e38f90", size = 69563, upload-time = "2026-06-18T12:55:49.705Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/61/6f/8cd5afcf2630b61bb400178ac535e9ff2eae208e9166a2bb59d3aafcecfe/matfree-0.6.1-py3-none-any.whl", hash = "sha256:a27a0e38fd641f4a0e72a5f51a0fb0077538c01075223422ad51a1ce8a025aa5", size = 42248, upload-time = "2026-06-18T12:55:48.435Z" },
+]
+
+[[package]]
 name = "matplotlib"
 version = "3.10.9"
 source = { registry = "https://pypi.org/simple" }
@@ -2580,15 +2589,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/7f/74/d2c27e03cb84251dfe7249b8e82923643c6d48fa4883b9476b025e7dc7eb/multiprocess-0.70.19-py313-none-any.whl", hash = "sha256:8d5eb4ec5017ba2fab4e34a747c6d2c2b6fecfe9e7236e77988db91580ada952", size = 156414, upload-time = "2026-01-19T06:47:35.915Z" },
     { url = "https://files.pythonhosted.org/packages/a0/61/af9115673a5870fd885247e2f1b68c4f1197737da315b520a91c757a861a/multiprocess-0.70.19-py314-none-any.whl", hash = "sha256:e8cc7fbdff15c0613f0a1f1f8744bef961b0a164c0ca29bdff53e9d2d93c5e5f", size = 160318, upload-time = "2026-01-19T06:47:37.497Z" },
     { url = "https://files.pythonhosted.org/packages/7e/82/69e539c4c2027f1e1697e09aaa2449243085a0edf81ae2c6341e84d769b6/multiprocess-0.70.19-py39-none-any.whl", hash = "sha256:0d4b4397ed669d371c81dcd1ef33fd384a44d6c3de1bd0ca7ac06d837720d3c5", size = 133477, upload-time = "2026-01-19T06:47:38.619Z" },
-]
-
-[[package]]
-name = "mypy-extensions"
-version = "1.1.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a2/6e/371856a3fb9d31ca8dac321cda606860fa4548858c0cc45d9d1d4ca2628b/mypy_extensions-1.1.0.tar.gz", hash = "sha256:52e68efc3284861e772bbcd66823fde5ae21fd2fdb51c62a211403730b916558", size = 6343, upload-time = "2025-04-22T14:54:24.164Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/79/7b/2c79738432f5c924bef5071f933bcc9efd0473bac3b4aa584a6f7c1c8df8/mypy_extensions-1.1.0-py3-none-any.whl", hash = "sha256:1be4cccdb0f2482337c4743e60421de3a356cd97508abadd57d47403e94f5505", size = 4963, upload-time = "2025-04-22T14:54:22.983Z" },
 ]
 
 [[package]]
@@ -3025,14 +3025,15 @@ wheels = [
 
 [[package]]
 name = "probdiffeq"
-version = "0.8.2"
+version = "0.9.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "mypy-extensions" },
+    { name = "matfree" },
     { name = "typing-extensions" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/88/89/429b812dad078be8edaae7063fab637061fa344d16d547e18b9b9cca6e5e/probdiffeq-0.9.2.tar.gz", hash = "sha256:1eea991a56e91a3eceb27fc04fc25f95bd8441b4c1f138c4dbe7e005f4366f54", size = 140271, upload-time = "2026-06-22T13:52:39.852Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/19/28/ff3d1133f834accc1fdd782eac523f868b6fa29d54c4ccc93c97261ec8b7/probdiffeq-0.8.2-py3-none-any.whl", hash = "sha256:dfd4812df07782c56b130767e99608b3160a6d063a604df534cec1e06781e045", size = 50095, upload-time = "2025-11-14T11:02:56.344Z" },
+    { url = "https://files.pythonhosted.org/packages/35/01/51a5372c65d754a350b68fa6ae3c2fe187cca599e701a0534e02d21d13a3/probdiffeq-0.9.2-py3-none-any.whl", hash = "sha256:b831515d1402447bc7ec55790043598e80e95d1ad983ac7c5ce8bbadfb22133f", size = 91396, upload-time = "2026-06-22T13:52:38.564Z" },
 ]
 
 [[package]]
@@ -3732,7 +3733,7 @@ book = [
     { name = "numpyro" },
     { name = "optax" },
     { name = "pandas" },
-    { name = "probdiffeq" },
+    { name = "probdiffeq", specifier = ">=0.9.0" },
     { name = "scikit-learn" },
     { name = "seaborn" },
     { name = "tfp-nightly", extras = ["jax"] },
