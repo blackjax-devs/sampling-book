@@ -500,8 +500,8 @@ wheels = [
 
 [[package]]
 name = "blackjax"
-version = "1.6.dev66+gdf5009711"
-source = { git = "https://github.com/blackjax-devs/blackjax.git?rev=main#df500971111f6f7b0636a18cc4b1d51248723467" }
+version = "1.6.dev96+g507819a24"
+source = { git = "https://github.com/blackjax-devs/blackjax.git?rev=main#507819a24ec283f9b509f720fa9812fecc10e9e0" }
 dependencies = [
     { name = "jax" },
     { name = "jaxlib" },
