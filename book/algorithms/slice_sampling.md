@@ -56,8 +56,7 @@ import blackjax
 from blackjax.mcmc.slice import direction_proposal, doubling, stepping_out
 
 # Reproducibility
-from datetime import date
-key = jax.random.key(int(date.today().strftime("%Y%m%d")))
+key = jax.random.key(42)
 
 plt.rcParams.update({"figure.dpi": 120, "font.size": 11})
 
@@ -92,6 +91,9 @@ Neal's funnel in $D + 1$ dimensions has a global scale $\theta$ and $D$
 coordinates $z$ whose spread is set by $\theta$:
 
 $$\theta \sim \mathcal{N}(0, 3), \qquad z_i \mid \theta \sim \mathcal{N}\!\big(0, e^{\theta/2}\big).$$
+
+(Following Neal, $\mathcal{N}(\mu, \sigma)$ is parameterized by **standard
+deviation** $\sigma$, so $\mathcal{N}(0, 3)$ has variance 9.)
 
 The neck (small $\theta$) is narrow and the mouth (large $\theta$) is wide, so the
 *right step size changes with position* — a non-linear, curved geometry. The
@@ -196,8 +198,8 @@ from its full 1-D conditional and each $z_i$ from its conditional given $\theta$
 and the univariate slice auto-brackets to whatever width that conditional has —
 tight in the neck, wide in the mouth. It recovers the marginal essentially
 exactly, and it reaches the neck where gradient-based NUTS's
-single tuned step size barely does (the classic funnel pathology, usually cured by
-reparameterization), all **without gradients or step-size tuning**. Isotropic
+single tuned step size completely fails to (the classic funnel pathology, usually
+cured by reparameterization), all **without gradients or step-size tuning**. Isotropic
 hit-and-run can't follow the curve: a straight direction that lowers $\theta$ drags
 the $z$'s outside the shrinking shell, so the chain can't descend into the neck and
 its left tail stays too light. This is exactly Neal's funnel verdict — the
@@ -256,7 +258,8 @@ In practice you don't have `Sigma`. A cheap way to get it is **Pathfinder**
 pre-run that returns a Gaussian approximation; its covariance is what we feed to
 `direction_proposal(scale=cholesky(cov))`. This is an example of a pre-tuning step
 that works with slice sampling, similar to the `window_adaptation` used earlier to
-pre-tune NUTS.
+pre-tune NUTS. We use a single Pathfinder run for minimal pretuning, but
+multi-path Pathfinder is the more robust standard choice in practice.
 
 ```{code-cell} ipython3
 def pathfinder_cov(rng_key, logdensity_fn, dim, radius=3.0):
