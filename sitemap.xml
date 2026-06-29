@@ -29,6 +29,9 @@
     <loc>http://localhost:3000/algorithms/mclmc</loc>
   </url>
   <url>
+    <loc>http://localhost:3000/algorithms/slice-sampling</loc>
+  </url>
+  <url>
     <loc>http://localhost:3000/algorithms/meads</loc>
   </url>
   <url>
