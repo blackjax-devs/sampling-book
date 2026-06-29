@@ -115,7 +115,7 @@ def nuts_log_joint(params):
 ```{code-cell} ipython3
 # 1. Setup Laplace Marginal
 laplace_funnel = blackjax.mcmc.laplace_marginal.laplace_marginal_factory(
-    laplace_log_joint, 
+    laplace_log_joint,
     theta_init=jnp.zeros(n_theta),
 )
 
@@ -134,8 +134,8 @@ key, warmup_key = jax.random.split(key)
 
 # 3. Sampling
 sampler_laplace = blackjax.laplace_hmc(
-    laplace_log_joint, 
-    theta_init=jnp.zeros(n_theta), 
+    laplace_log_joint,
+    theta_init=jnp.zeros(n_theta),
     **parameters_laplace
 )
 
@@ -336,7 +336,7 @@ ax = axes[1]
 ax.scatter(
     np.array(phi_gp_samples[..., 0].flatten()), np.array(phi_gp_samples[..., 1].flatten()),
     s=8, alpha=0.3, color="steelblue", label="Laplace-HMC",
-    
+
 )
 ax.scatter(
     np.array(phi_nuts_gp[..., 0].flatten()), np.array(phi_nuts_gp[..., 1].flatten()),
@@ -523,7 +523,7 @@ plt.show()
 ```
 
 **Reading the results.**
-The acceptance rate panel reveals something important: `laplace_hmc` can show acceptable M-H 
+The acceptance rate panel reveals something important: `laplace_hmc` can show acceptable M-H
 acceptance rate yet produce a very low ESS.
 This could be the classic **periodic-orbit** pathology — a fixed trajectory length that
 happens to nearly return to the starting point, causing the chain to take
@@ -547,6 +547,3 @@ more robust out of the box.
 | `laplace_mhmc`  | Drop-in upgrade when M-H acceptance is low or ESS per gradient is poor           |
 | `laplace_dhmc`  | Trajectory length is hard to tune; randomised steps break periodic-orbit traps   |
 | `laplace_dmhmc` | Combines both benefits — best robustness for unknown geometry                    |
-
-
-

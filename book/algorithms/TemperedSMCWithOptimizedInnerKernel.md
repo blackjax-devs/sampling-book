@@ -39,7 +39,7 @@ hmc_parameters = dict(
 )
 ```
 these were fixed across all iterations of SMC. The efficiency of an SMC sampler can be improved by
-informing the inner kernel parameters using the particles population. We can tune one or many inner 
+informing the inner kernel parameters using the particles population. We can tune one or many inner
 kernel parameters before mutating the particles in step $i$, using the particles outputted by step $i-1$.
 This notebook illustrates such tuning using IRMH (Independent Rosenbluth Metropolis-Hastings) with a multivariate normal proposal distribution.
 
@@ -113,7 +113,7 @@ def irmh_experiment(dimensions, target_ess, num_mcmc_steps):
         )
     def step(key, state, logdensity):
         return irmh(logdensity, irmh_proposal_distribution,proposal_logdensity_fn).step(key, state)
-    
+
     fixed_proposal_kernel = adaptive_tempered_smc(
         prior_log_prob,
         loglikelihood,
@@ -203,7 +203,7 @@ def tuned_irmh_experiment(dimensions, target_ess, num_mcmc_steps):
             )
 
         return kernel(key, state, logdensity, proposal_distribution, proposal_logdensity_fn)
-            
+
 
     kernel_tuned_proposal = inner_kernel_tuning(
         logprior_fn=prior_log_prob,
@@ -244,7 +244,7 @@ def irmh_full_cov_experiment(dimensions, target_ess, num_mcmc_steps):
             )
 
         return kernel(key, state, logdensity, proposal_distribution, proposal_logdensity_fn)
-            
+
 
     def mcmc_parameter_update_fn(_, state, info):
         covariance = jnp.atleast_2d(particles_covariance_matrix(state.particles))

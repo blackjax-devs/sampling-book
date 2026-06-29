@@ -48,22 +48,22 @@ print(num_cores)
 import blackjax
 from blackjax.adaptation.laps import laps as run_laps
 
-def laps(logdensity_fn, ndims, 
-         sample_init, rng_key, 
-         num_steps1, num_steps2, 
+def laps(logdensity_fn, ndims,
+         sample_init, rng_key,
+         num_steps1, num_steps2,
          num_chains, mesh):
 
-    info, grads_per_step, _acc_prob, final_state = run_laps(    
-        logdensity_fn=logdensity_fn, 
+    info, grads_per_step, _acc_prob, final_state = run_laps(
+        logdensity_fn=logdensity_fn,
         sample_init= sample_init,
-        ndims= ndims, 
-        num_steps1=num_steps1, 
-        num_steps2=num_steps2, 
-        num_chains=num_chains, 
-        mesh=mesh, 
-        rng_key= rng_key, 
+        ndims= ndims,
+        num_steps1=num_steps1,
+        num_steps2=num_steps2,
+        num_chains=num_chains,
+        mesh=mesh,
+        rng_key= rng_key,
         early_stop= False,
-        diagonal_preconditioning= True, 
+        diagonal_preconditioning= True,
         steps_per_sample=15,
         r_end=0.01,
         diagnostics= False,
@@ -90,7 +90,7 @@ def logdensity_fn(x):
 rng_key_sampling, rng_key_init = jax.random.split(jax.random.key(42))
 
 # Function that takes a random seed and produces a vector of parameters. Each chain will be initialized by calling this function with a different random seed.
-sample_init = lambda key: jax.random.normal(key, shape= ndims) 
+sample_init = lambda key: jax.random.normal(key, shape= ndims)
 ```
 
 ## Run sampling:
@@ -107,14 +107,14 @@ print('Number of devices: ', len(jax.devices()))
 info, grads_per_step, _acc_prob, samples = run_laps(
     logdensity_fn=logdensity_fn,
     sample_init= sample_init,
-    ndims= ndims, 
-    num_steps1=num_steps1, 
-    num_steps2=num_steps2, 
-    num_chains=num_chains, 
-    mesh=mesh, 
-    rng_key= jax.random.key(0), 
+    ndims= ndims,
+    num_steps1=num_steps1,
+    num_steps2=num_steps2,
+    num_chains=num_chains,
+    mesh=mesh,
+    rng_key= jax.random.key(0),
     early_stop= False,
-    diagonal_preconditioning= True, 
+    diagonal_preconditioning= True,
     steps_per_sample=15,
     r_end=0.01,
     diagnostics= False,
@@ -160,6 +160,3 @@ error
 ```
 
 This is the error one would obtain from 100 exact independent samples, so we can say that LAPS has given us an effective sample size of 100. To get the same from a sequential method would take a chain at least 10 times longer, so LAPS gives a wallclock speed-up here of at least an order of magnitude (and often quite a bit more - see the [paper](https://arxiv.org/pdf/2601.16696)).
-
-
-
