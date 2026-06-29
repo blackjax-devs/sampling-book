@@ -395,8 +395,8 @@ predicted = jnp.argmax(predict_probs, axis=1)
 
 certain_mask = max_predict_prob > 0.95
 print(
-    f"""    Our model is certain of its classification for 
-    {np.sum(certain_mask) / y_test.shape[0] * 100:.1f}% 
+    f"""    Our model is certain of its classification for
+    {np.sum(certain_mask) / y_test.shape[0] * 100:.1f}%
     of the test set examples.""")
 ```
 

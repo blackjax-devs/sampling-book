@@ -13,7 +13,7 @@ kernelspec:
 
 # Microcanonical Langevin Monte Carlo
 
-This is an algorithm based on [MCHMC](https://www.jmlr.org/papers/volume24/22-1450/22-1450.pdf) and [MCLMC](https://proceedings.mlr.press/v253/robnik24a.html) papers. A website with detailed information can be found [here](https://microcanonical-monte-carlo.netlify.app/). 
+This is an algorithm based on [MCHMC](https://www.jmlr.org/papers/volume24/22-1450/22-1450.pdf) and [MCLMC](https://proceedings.mlr.press/v253/robnik24a.html) papers. A website with detailed information can be found [here](https://microcanonical-monte-carlo.netlify.app/).
 
 <!-- The algorithm is provided in both adjusted (i.e. with an Metropolis-Hastings step) and unadjusted versions; by default we use "MCLMC" to refer to the unadjusted version. -->
 
@@ -199,7 +199,7 @@ So here the change has little effect in this case.
 
 +++
 
-We now consider a more complex model, of stock volatility. 
+We now consider a more complex model, of stock volatility.
 
 The returns $r_n$ are modeled by a Student's-t distribution whose scale (volatility) $R_n$ is time varying and unknown. The prior for $\log R_n$ is a Gaussian random walk, with an exponential distribution of the random walk step-size $\sigma$. An exponential prior is also taken for the Student's-t degrees of freedom $\nu$. The generative process of the data is:
 

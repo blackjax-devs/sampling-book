@@ -14,20 +14,20 @@ kernelspec:
 # Parameter estimation in ODE models with a probabilistic ODE solver
 
 
-This tutorial explains how to estimate unknown parameters of initial value problems (IVPs) using 
+This tutorial explains how to estimate unknown parameters of initial value problems (IVPs) using
 probabilistic solvers as provided by [ProbDiffEq](https://pnkraemer.github.io/probdiffeq/) in combination
 with Markov Chain Monte Carlo (MCMC) methods from [BlackJAX](https://blackjax-devs.github.io/blackjax/).
 
 ## TL;DR
 Compute log-posterior of IVP parameters given observations of the IVP solution with ProbDiffEq. Sample from this posterior using BlackJAX.
-Evaluating the log-likelihood of the data is described [in this paper](https://arxiv.org/abs/2202.01287) {cite:p}`tronarp2022fenrir`. 
+Evaluating the log-likelihood of the data is described [in this paper](https://arxiv.org/abs/2202.01287) {cite:p}`tronarp2022fenrir`.
 Based on this log-likelihood, sampling from the log-posterior is as done [in this paper](https://arxiv.org/abs/2002.09301) {cite:p}`kersting2020differentiable`.
 
 
 ## Technical setup
 Let $f$ be a known vector field. In this example, we use the Lotka-Volterra model.
 (We get our IVP implementations from [DiffEqZoo](https://diffeqzoo.readthedocs.io/en/latest/).)
-Consider an ordinary differential equation 
+Consider an ordinary differential equation
 
 $$
 \dot y(t) = f(y(t)), \quad 0 \leq t \leq T
@@ -49,12 +49,12 @@ p(\text{data}~|~ y(T)) = N(y(T), \sigma^2 I)
 $$
 
 for some $\sigma > 0$.
-We can use these observations to reconstruct $\theta$, for example by sampling from $p(\theta ~|~ \text{data}) \propto p(\text{data}~|~\theta)p(\theta)$ 
+We can use these observations to reconstruct $\theta$, for example by sampling from $p(\theta ~|~ \text{data}) \propto p(\text{data}~|~\theta)p(\theta)$
 (which is a function of $\theta$).
 
-Now, one way of evaluating this posterior is to use any numerical solver, for example a Runge-Kutta method, to approximate $y(T)$ from $\theta$ 
+Now, one way of evaluating this posterior is to use any numerical solver, for example a Runge-Kutta method, to approximate $y(T)$ from $\theta$
 and evaluate $N(y(T), \sigma^2 I)$ to get $p(\text{data} ~|~ \theta)$ (the $p(\theta)$ component is known).
-But this ignores a few crucial concepts (e.g., the numerical error of the approximation; we refer to the references linked above). 
+But this ignores a few crucial concepts (e.g., the numerical error of the approximation; we refer to the references linked above).
 We can use a probabilistic solver instead of "any" numerical solver and build a more comprehensive model:
 
 **We can combine probabilistic IVP solvers with MCMC methods to estimate $\theta$ from $\text{data}$ in a way that quantifies numerical approximation errors (and other model mismatches).**
@@ -391,7 +391,7 @@ Looks great!
 
 ## Conclusion
 
-In conclusion, a log-posterior density function can be provided by ProbDiffEq such that any of BlackJAX' samplers yield parameter estimates of IVPs. 
+In conclusion, a log-posterior density function can be provided by ProbDiffEq such that any of BlackJAX' samplers yield parameter estimates of IVPs.
 
 
 ## What's next

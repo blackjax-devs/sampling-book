@@ -202,8 +202,8 @@ _, axes = plt.subplots(n_row, n_col, figsize=(n_col * 3, n_row * 2))
 axes = axes.flatten()
 for i in range(n_pred):
     ax = axes[i]
-    ax.plot(samples.position["log_lmbda"][...,i], 
-            samples.position["beta"][...,i], 
+    ax.plot(samples.position["log_lmbda"][...,i],
+            samples.position["beta"][...,i],
             'o', ms=.4, alpha=.75)
     ax.set(
         xlabel=rf"$\lambda$[{i}]",

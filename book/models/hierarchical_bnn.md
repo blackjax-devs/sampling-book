@@ -328,7 +328,7 @@ def plot_decision_surfaces_non_hierarchical(nrows=2, ncols=2):
         )
         for i in range(2):
             ax.scatter(
-                X[Y_true == i, 0], X[Y_true == i, 1], 
+                X[Y_true == i, 0], X[Y_true == i, 1],
                 color=cmap(float(i)), label=f"Class {i}", alpha=.8)
         ax.legend()
 ```
@@ -482,7 +482,7 @@ def plot_decision_surfaces_hierarchical(nrows=2, ncols=2):
         )
         for i in range(2):
             ax.scatter(
-                X[Y_true == i, 0], X[Y_true == i, 1], 
+                X[Y_true == i, 0], X[Y_true == i, 1],
                 color=cmap(float(i)), label=f"Class {i}", alpha=.8)
         ax.legend()
 ```
