@@ -27,7 +27,7 @@ This notebook extends the `Use Tempered SMC to Improve Exploration of MCMC Metho
 SMC samplers propagate N particles through a sequence of probability distributions $p_t(\theta)$ for $t = 1, \ldots, T$, using three main steps:
 
 1. **Reweighting**: Adjust particle weights using importance sampling
-2. **Resampling**: Discard low-weight particles and replicate high-weight ones  
+2. **Resampling**: Discard low-weight particles and replicate high-weight ones
 3. **Moving**: Apply MCMC steps to diversify particles
 
 For Bayesian inference with temperature annealing:
@@ -188,7 +188,7 @@ Now we run the same loop for the persistent sampling. Note that there are a few 
 
 - Related to the statement above, the tempering schedule must start at 0. Together with the normalised prior, this guarantees that $Z_0 = 1$. Internally, this is enforced by adding a 0.0 to the beginning of the tempering schedule.
 
-- To keep track of the persistent particles in a JIT-compatible way, all arrays in the PSState must be padded to the length of the tempering schedule (+1 to account for the added 0.0 mentioned above). The values get filled in with each iteration of the sampler. For this reason, the `persistent_sampling_smc` requires an `n_schedule` which MUST match the length of the tempering schedule. This can lead to highly increased memory usage for long tempering schedules. 
+- To keep track of the persistent particles in a JIT-compatible way, all arrays in the PSState must be padded to the length of the tempering schedule (+1 to account for the added 0.0 mentioned above). The values get filled in with each iteration of the sampler. For this reason, the `persistent_sampling_smc` requires an `n_schedule` which MUST match the length of the tempering schedule. This can lead to highly increased memory usage for long tempering schedules.
 
 - The padding is done internally when calling the `init` function. The padding value is 0.
 

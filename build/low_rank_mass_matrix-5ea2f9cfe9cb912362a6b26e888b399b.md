@@ -288,7 +288,7 @@ idata_dict = {}
 for (name, samples) in [("Diagonal", irt_diag), ("Dense", irt_dense), ("Low-rank", irt_lr)]:
     idata_dict[name] = az.from_dict({"posterior": samples})
 
-axes = az.plot_forest(idata_dict, var_names=['b'], combined=True, 
+axes = az.plot_forest(idata_dict, var_names=['b'], combined=True,
                       figure_kwargs={"figsize": (10, 5), "layout": "none"},);
 ```
 
