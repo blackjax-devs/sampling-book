@@ -24,6 +24,7 @@ project:
         - file: algorithms/TemperedSMCWithOptimizedInnerKernel.md
         - file: algorithms/SMCvsPersistentSampling.md
         - file: algorithms/mclmc.md
+        - file: algorithms/slice_sampling.md
         - file: algorithms/meads.md
         - file: algorithms/laps.md
         - file: algorithms/laplace_hmc_demo.md
