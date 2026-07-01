@@ -23,6 +23,7 @@ project:
         - file: algorithms/TemperedSMC.md
         - file: algorithms/TemperedSMCWithOptimizedInnerKernel.md
         - file: algorithms/SMCvsPersistentSampling.md
+        - file: algorithms/nested_sampling.md
         - file: algorithms/mclmc.md
         - file: algorithms/slice_sampling.md
         - file: algorithms/meads.md
