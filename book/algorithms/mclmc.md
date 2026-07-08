@@ -103,14 +103,14 @@ def run_mclmc(logdensity_fn, num_steps, initial_position, key, transform, desire
     )
 
     # run the sampler
-    _, samples = blackjax.util.run_inference_algorithm(
-        rng_key=run_key,
-        initial_state=blackjax_state_after_tuning,
-        inference_algorithm=sampling_alg,
-        num_steps=num_steps,
-        transform=transform,
-        progress_bar=True,
-    )
+    with blackjax.progress_bar():
+        _, samples = blackjax.util.run_inference_algorithm(
+            rng_key=run_key,
+            initial_state=blackjax_state_after_tuning,
+            inference_algorithm=sampling_alg,
+            num_steps=num_steps,
+            transform=transform,
+        )
 
     return samples, blackjax_state_after_tuning, blackjax_mclmc_sampler_params, run_key
 ```
@@ -180,14 +180,14 @@ sampling_alg = blackjax.mclmc(
 )
 
 # run the sampler
-_, new_samples = blackjax.util.run_inference_algorithm(
-    rng_key= chain_key,
-    initial_state=initial_state,
-    inference_algorithm=sampling_alg,
-    num_steps=new_num_steps,
-    transform=transform,
-    progress_bar=True,
-)
+with blackjax.progress_bar():
+    _, new_samples = blackjax.util.run_inference_algorithm(
+        rng_key= chain_key,
+        initial_state=initial_state,
+        inference_algorithm=sampling_alg,
+        num_steps=new_num_steps,
+        transform=transform,
+    )
 
 visualize_results_gauss(new_samples, 'MCLMC', 'red')
 visualize_results_gauss(samples, 'MCLMC', 'teal')
@@ -312,14 +312,14 @@ sampling_alg = blackjax.mclmc(
 
 
 # # run the sampler
-_, new_samples = blackjax.util.run_inference_algorithm(
-    rng_key=chain_key,
-    initial_state=initial_state,
-    inference_algorithm=sampling_alg,
-    num_steps=new_num_steps,
-    transform=lambda state, info : state.position,
-    progress_bar=True,
-)
+with blackjax.progress_bar():
+    _, new_samples = blackjax.util.run_inference_algorithm(
+        rng_key=chain_key,
+        initial_state=initial_state,
+        inference_algorithm=sampling_alg,
+        num_steps=new_num_steps,
+        transform=lambda state, info : state.position,
+    )
 ```
 
 ```{code-cell} ipython3
@@ -434,7 +434,6 @@ def run_adjusted_mclmc_dynamic(
         inference_algorithm=alg,
         num_steps=num_steps,
         transform=transform,
-        progress_bar=False,
     )
 
     return out
