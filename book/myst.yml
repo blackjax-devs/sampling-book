@@ -1,6 +1,8 @@
 version: 1
 project:
   title: The Sampling Book Project
+  settings:
+    output_stderr: remove
   authors:
     - name: The Blackjax Team
   exclude:
