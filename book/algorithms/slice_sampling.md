@@ -146,7 +146,7 @@ hr_funnel = pool(run_chains(blackjax.slice_sampling(funnel_logdensity), sk, x0s,
 ```{code-cell} ipython3
 key, wk = jax.random.split(key)
 warmup = blackjax.window_adaptation(
-    blackjax.nuts, funnel_logdensity, progress_bar=False
+    blackjax.nuts, funnel_logdensity
 )
 (_, nuts_params), _ = warmup.run(wk, jnp.zeros(D + 1), num_steps=1000)
 

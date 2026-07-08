@@ -290,12 +290,13 @@ initial_position = theta_guess
 
 ```{code-cell} ipython3
 # WARMUP
-warmup = blackjax.window_adaptation(blackjax.nuts, log_M, progress_bar=True)
+with blackjax.progress_bar():
+    warmup = blackjax.window_adaptation(blackjax.nuts, log_M)
 
-rng_key, warmup_key = jax.random.split(rng_key)
-(initial_state, tuned_parameters), _ = warmup.run(
-    warmup_key, initial_position, num_steps=200
-)
+    rng_key, warmup_key = jax.random.split(rng_key)
+    (initial_state, tuned_parameters), _ = warmup.run(
+        warmup_key, initial_position, num_steps=200
+    )
 ```
 
 ```{code-cell} ipython3
