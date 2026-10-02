@@ -17,7 +17,7 @@ dynamic = ["version"]
 
 [dependency-groups]
 book = [
-    "blackjax @ git+https://github.com/blackjax-devs/blackjax.git@main",
+    "blackjax[progress] @ git+https://github.com/blackjax-devs/blackjax.git@main",
     "aeppl",
     "aesara",
     "arviz",
