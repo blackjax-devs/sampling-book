@@ -45,7 +45,7 @@ from datasets import load_dataset
 import numpy as np
 
 
-mnist_data = load_dataset("mnist")
+mnist_data = load_dataset("ylecun/mnist")
 data_train, data_test = mnist_data["train"], mnist_data["test"]
 
 X_train = np.stack([np.array(example["image"]) for example in data_train])
