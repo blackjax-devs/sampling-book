@@ -33,4 +33,4 @@ jobs:
 
       - name: Build the book
         run: |
-          cd book && uv run jupyter book build --execute --html
+          cd book && uv run jupyter book build --execute --html --strict
