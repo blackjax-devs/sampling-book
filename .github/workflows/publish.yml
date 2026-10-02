@@ -30,9 +30,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: book/_build/execute
-          key: myst-execute-${{ runner.os }}-${{ hashFiles('book/**/*.md', 'uv.lock') }}
+          # uv.lock hash leads the key AND the restore prefix: a dependency change
+          # must miss the cache entirely (full re-execution), while a notebook-only
+          # change may still restore same-lock outputs and re-run just that notebook.
+          key: myst-execute-${{ runner.os }}-${{ hashFiles('uv.lock') }}-${{ hashFiles('book/**/*.md') }}
           restore-keys: |
-            myst-execute-${{ runner.os }}-
+            myst-execute-${{ runner.os }}-${{ hashFiles('uv.lock') }}-
 
       - name: Build the book
         env:
