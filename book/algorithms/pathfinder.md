@@ -136,7 +136,7 @@ while stop == 0:
 def ellipse_confidence(mu, cov, ax, c, n_std=2.0):
     import numpy as np
 
-    lambda_, v = np.linalg.eig(cov)
+    lambda_, v = np.linalg.eigh(np.asarray(cov))
     lambda_ = np.sqrt(lambda_)
     ellipse = Ellipse(
         xy=(*mu,),
