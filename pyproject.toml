@@ -66,3 +66,18 @@ exclude = [
 
 [tool.setuptools_scm]
 write_to = "src/_version.py"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]   # old flake8 (pycodestyle+pyflakes) + isort + pyupgrade
+ignore = [
+  "E501",                      # line length: ruff-format owns it (was ignored before)
+  "E731",                      # lambda assignment (was ignored before)
+  "UP040", "UP046", "UP047",   # PEP 695 `type`/generic rewrites: change runtime semantics, out of scope
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]

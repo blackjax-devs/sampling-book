@@ -57,7 +57,7 @@ Only commit the `.md` files — `.ipynb` files are for local development only.
 
 ### Linting
 
-Pre-commit hooks enforce formatting (black, isort, flake8) for both Python source and notebooks:
+Pre-commit hooks enforce formatting and linting (ruff, mypy) for the Python source in `src/`:
 
 ```bash
 make lint  # runs: uv run pre-commit run --all-files
