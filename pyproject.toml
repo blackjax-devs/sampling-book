@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "samplingbook"
 authors= [{name = "The Blackjax team", email = "remi@thetypicalset.com"}]
 description = "Utilities for Blackjax's sampling book"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
     "jax",
     "jaxlib",
