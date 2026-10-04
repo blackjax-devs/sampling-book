@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Tuple
+from collections.abc import Callable
 
 import aeppl
 import aesara
@@ -16,7 +16,7 @@ DATA_URL = (
 
 def model(
     X: np.ndarray,
-) -> Tuple[RandomVariable, RandomVariable, RandomVariable, RandomVariable]:
+) -> tuple[RandomVariable, RandomVariable, RandomVariable, RandomVariable]:
     """Build the sparse regression model."""
     X_at = at.as_tensor(X)
 
@@ -35,7 +35,7 @@ def model(
     return tau_rv, lambda_rv, beta_rv, Y_rv
 
 
-def german_credit_dataset() -> Tuple[np.ndarray, np.ndarray]:
+def german_credit_dataset() -> tuple[np.ndarray, np.ndarray]:
     """Download and prepare the German Credit dataset."""
 
     data = pd.read_table(DATA_URL, header=None, delim_whitespace=True)
@@ -56,7 +56,7 @@ def german_credit_dataset() -> Tuple[np.ndarray, np.ndarray]:
     return X, y
 
 
-def logdensity() -> Callable[[Dict], jax.Array]:
+def logdensity() -> Callable[[dict], jax.Array]:
     """Return a function that computes the log-density of the model."""
     X, y = german_credit_dataset()
     tau_rv, lambda_rv, beta_rv, Y_rv = model(X)
@@ -77,7 +77,7 @@ def logdensity() -> Callable[[Dict], jax.Array]:
         list(value_variables), logdensity, mode="JAX"
     )
 
-    def logdensity_fn(position: Dict) -> jax.Array:
+    def logdensity_fn(position: dict) -> jax.Array:
         """Computes the model's logdensity.
 
         Assumes that the position is passed as a dictionary.
