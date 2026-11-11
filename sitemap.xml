@@ -1,79 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="http://localhost:3000/sitemap_style.xsl" ?>
+<?xml-stylesheet type="text/xsl" href="http://pre.render/sitemap_style.xsl" ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://localhost:3000</loc>
+    <loc>http://pre.render</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/contour-sgld</loc>
+    <loc>http://pre.render/algorithms/contour-sgld</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/cyclical-sgld</loc>
+    <loc>http://pre.render/algorithms/cyclical-sgld</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/pathfinder</loc>
+    <loc>http://pre.render/algorithms/pathfinder</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/periodicorbitalmcmc</loc>
+    <loc>http://pre.render/algorithms/periodicorbitalmcmc</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/temperedsmc</loc>
+    <loc>http://pre.render/algorithms/temperedsmc</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/temperedsmcwithoptimizedinnerkernel</loc>
+    <loc>http://pre.render/algorithms/temperedsmcwithoptimizedinnerkernel</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/smcvspersistentsampling</loc>
+    <loc>http://pre.render/algorithms/smcvspersistentsampling</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/nested-sampling</loc>
+    <loc>http://pre.render/algorithms/nested-sampling</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/mclmc</loc>
+    <loc>http://pre.render/algorithms/mclmc</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/slice-sampling</loc>
+    <loc>http://pre.render/algorithms/slice-sampling</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/meads</loc>
+    <loc>http://pre.render/algorithms/meads</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/laps</loc>
+    <loc>http://pre.render/algorithms/laps</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/laplace-hmc-demo</loc>
+    <loc>http://pre.render/algorithms/laplace-hmc-demo</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/algorithms/low-rank-mass-matrix</loc>
+    <loc>http://pre.render/algorithms/low-rank-mass-matrix</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/models/change-of-variable-hmc</loc>
+    <loc>http://pre.render/models/change-of-variable-hmc</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/models/gp-ellipticalslicesampler</loc>
+    <loc>http://pre.render/models/gp-ellipticalslicesampler</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/models/gp-marginal</loc>
+    <loc>http://pre.render/models/gp-marginal</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/models/sparse-regression</loc>
+    <loc>http://pre.render/models/sparse-regression</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/models/logistic-regression</loc>
+    <loc>http://pre.render/models/logistic-regression</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/models/logisticregressionwithlatentgaussiansampler</loc>
+    <loc>http://pre.render/models/logisticregressionwithlatentgaussiansampler</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/models/mlp</loc>
+    <loc>http://pre.render/models/mlp</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/models/hierarchical-bnn</loc>
+    <loc>http://pre.render/models/hierarchical-bnn</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/models/regimeswitchingmodel</loc>
+    <loc>http://pre.render/models/regimeswitchingmodel</loc>
   </url>
   <url>
-    <loc>http://localhost:3000/models/probabilistic-ode-solver-parameter-estimation</loc>
+    <loc>http://pre.render/models/probabilistic-ode-solver-parameter-estimation</loc>
   </url>
 </urlset>
